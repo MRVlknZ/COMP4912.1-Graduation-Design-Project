@@ -1,0 +1,5 @@
+C:\Users\mrtvo\source\repos\sportApp\Business\obj\Release\net8.0\Business.csproj.AssemblyReference.cache
+C:\Users\mrtvo\source\repos\sportApp\Business\obj\Release\net8.0\Business.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\mrtvo\source\repos\sportApp\Business\obj\Release\net8.0\Business.AssemblyInfoInputs.cache
+C:\Users\mrtvo\source\repos\sportApp\Business\obj\Release\net8.0\Business.AssemblyInfo.cs
+C:\Users\mrtvo\source\repos\sportApp\Business\obj\Release\net8.0\Business.csproj.CoreCompileInputs.cache
