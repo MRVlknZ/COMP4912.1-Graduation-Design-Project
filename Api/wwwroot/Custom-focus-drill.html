@@ -1,0 +1,939 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Focus Drill - Custom Setup</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        body {
+            background: #111;
+            color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .frame {
+            width: 90vw;
+            max-width: 1100px;
+            height: 70vh;
+            border: 3px solid #444;
+            border-radius: 16px;
+            padding: 32px 40px;
+            background: #181818;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        h1, h2 {
+            font-weight: 600;
+        }
+
+        .center {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            gap: 12px;
+        }
+
+        .btn-primary {
+            border: none;
+            padding: 10px 24px;
+            font-size: 1rem;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.15s ease;
+            background: #e11d48;
+            color: white;
+            box-shadow: 0 0 0 0 #e11d48;
+        }
+
+            .btn-primary:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 12px 25px rgba(225, 29, 72, 0.35);
+            }
+
+        .top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.95rem;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 6px;
+            background: #333;
+            border-radius: 999px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0;
+            background: #e11d48;
+            transition: width 0.25s ease;
+        }
+
+        .question-card {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 20px;
+            padding: 16px;
+        }
+
+        .question-title {
+            font-size: 1.4rem;
+        }
+
+        .question-desc {
+            font-size: 0.95rem;
+            color: #d4d4d4;
+            max-width: 480px;
+        }
+
+        .question-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 480px;
+        }
+
+        label {
+            font-size: 0.9rem;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #555;
+            background: #111;
+            color: #f5f5f5;
+            font-size: 0.95rem;
+        }
+
+        .bottom-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-arrows {
+            display: flex;
+            gap: 12px;
+        }
+
+        .arrow-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 999px;
+            border: 1px solid #555;
+            background: transparent;
+            color: #f5f5f5;
+            font-size: 1.3rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .arrow-btn:disabled {
+                opacity: 0.3;
+                cursor: default;
+            }
+
+        .countdown-circle {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: 4px solid #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .summary-list {
+            font-size: 0.95rem;
+            max-width: 480px;
+            text-align: left;
+            margin-top: 10px;
+        }
+
+            .summary-list div {
+                margin-bottom: 4px;
+            }
+
+        .total-time-pill {
+            border-radius: 999px;
+            border: 1px solid #555;
+            padding: 6px 14px;
+            font-size: 0.85rem;
+        }
+
+        .error-text {
+            margin-top: 4px;
+            font-size: 0.8rem;
+            color: #f97373;
+        }
+
+        @media (max-width: 700px) {
+            .frame {
+                padding: 20px;
+                height: 80vh;
+            }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 28px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #d4d4d4;
+            background: transparent;
+            color: #d4d4d4;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .close-btn:hover {
+                background: #d4d4d43d;
+                transform: scale(1.08);
+            }
+
+        #step-questions {
+            overflow: auto;
+        }
+
+        #step-ready {
+            overflow: auto;
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+        }
+
+        .modal-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+        }
+
+        .modal-card {
+            position: relative;
+            width: min(560px, 92vw);
+            max-height: 80vh;
+            margin: 8vh auto 0;
+            background: #1b1b1b;
+            border: 1px solid #333;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.55);
+            overflow: hidden;
+        }
+
+        .modal-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+            .modal-head h3 {
+                margin: 0;
+                font-size: 1rem;
+            }
+
+        .modal-x {
+            background: transparent;
+            border: none;
+            color: #ddd;
+            font-size: 22px;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .modal-body {
+            padding: 14px 16px;
+            color: #eaeaea;
+            overflow: auto;
+            max-height: calc(80vh - 110px);
+            white-space: pre-line;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            padding: 12px 16px;
+            border-top: 1px solid #2a2a2a;
+        }
+
+        .modal-btn {
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid #3a3a3a;
+            background: #232323;
+            color: #f5f5f5;
+            cursor: pointer;
+        }
+
+            .modal-btn.primary {
+                border-color: #4a4a4a;
+                background: #2b2b2b;
+            }
+
+            .modal-btn.danger {
+                border-color: #7f1d1d;
+                background: #3a1010;
+            }
+
+        .modal-error .modal-card {
+            background: linear-gradient(180deg, #2a0f0f, #160909);
+            border: 1px solid #7f1d1d;
+        }
+
+        .modal-error .modal-head {
+            border-bottom: 1px solid #7f1d1d;
+        }
+
+            .modal-error .modal-head h3 {
+                color: #fca5a5;
+            }
+
+        .modal-error .modal-body {
+            color: #fee2e2;
+        }
+
+        .modal-error .modal-x {
+            color: #fecaca;
+        }
+
+        .modal-error .modal-btn.primary {
+            background: #7f1d1d;
+            border-color: #991b1b;
+        }
+
+            .modal-error .modal-btn.primary:hover {
+                background: #991b1b;
+            }
+    </style>
+</head>
+<body>
+    <div class="frame">
+        <button id="closeBtn" class="close-btn">✕</button>
+
+        <div id="step-intro" class="step">
+            <div class="center">
+                <div>
+                    <h1>Custom Focus Drill</h1>
+                    <p style="margin-top:6px; font-size:0.95rem; color:#d4d4d4;">
+                        Create a fully customizable focus-based drill. Select target colors, switch intervals, actions to design a drill that sharpens attention and decision-making.
+                    </p>
+                </div>
+                <button class="btn-primary" id="btnStartSetup">Start Setup</button>
+            </div>
+        </div>
+
+        <div id="step-questions" class="step hidden">
+            <div class="top-row">
+                <div>
+                    <div>Question <span id="qIndex">1</span> / <span id="qTotal">4</span></div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+                <div class="total-time-pill">
+                    Total time: <span id="totalTimeLabel">0</span> sec
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div>
+                    <div class="question-title" id="questionTitle"></div>
+                    <div class="question-desc" id="questionDesc"></div>
+                </div>
+                <div class="question-inputs" id="questionInputs"></div>
+            </div>
+
+            <div class="bottom-row">
+                <div class="nav-arrows">
+                    <button class="arrow-btn" id="btnPrev">&lt;</button>
+                    <button class="arrow-btn" id="btnNext">&gt;</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="step-ready" class="step hidden">
+            <div class="center">
+                <div id="descAtEnd">
+                    <h2>Shall we begin?</h2>
+                    <p style="margin-top:6px; font-size:0.95rem; color:#d4d4d4;">
+                        Here is a quick summary of your Custom Focus Drill setup.
+                    </p>
+
+                    <div class="summary-list" id="summaryList"></div>
+                </div>
+
+                <button class="btn-primary" id="btnStartCountdown">Start Countdown</button>
+            </div>
+        </div>
+
+        <div id="step-countdown" class="step hidden">
+            <div class="center">
+                <div class="countdown-circle">
+                    <span id="countdownValue">3</span>
+                </div>
+                <p style="margin-top:10px; font-size:0.95rem;">Get ready…</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="appModal" class="modal hidden" aria-hidden="true">
+        <div class="modal-backdrop" data-close="1"></div>
+
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="appModalTitle">
+            <div class="modal-head">
+                <h3 id="appModalTitle">Title</h3>
+                <button class="modal-x" type="button" data-close="1" aria-label="Close">×</button>
+            </div>
+
+            <div id="appModalBody" class="modal-body"></div>
+
+            <div class="modal-actions" id="appModalActions"></div>
+        </div>
+    </div>
+
+    <script>
+        function uiModal({
+            title = "Info",
+            body = "",
+            variant = "default",
+            buttons = [{ text: "OK", value: true, className: "primary" }]
+        }) {
+            const modal = document.getElementById("appModal");
+            const titleEl = document.getElementById("appModalTitle");
+            const bodyEl = document.getElementById("appModalBody");
+            const actionsEl = document.getElementById("appModalActions");
+
+            if (!modal || !titleEl || !bodyEl || !actionsEl) {
+                console.warn("Modal DOM not found. Message:", title, body);
+                return Promise.resolve(true);
+            }
+
+            let resolve;
+            const p = new Promise(r => (resolve = r));
+
+            modal.classList.remove("modal-default", "modal-error", "modal-success", "modal-warning");
+            modal.classList.add(`modal-${variant}`);
+
+            const onKey = (e) => {
+                if (e.key === "Escape") close(false);
+            };
+
+            const close = (val) => {
+                modal.classList.add("hidden");
+                modal.setAttribute("aria-hidden", "true");
+                document.removeEventListener("keydown", onKey);
+                resolve(val);
+            };
+
+            titleEl.textContent = title;
+            bodyEl.textContent = body;
+            actionsEl.innerHTML = "";
+
+            modal.classList.remove("hidden");
+            modal.setAttribute("aria-hidden", "false");
+            document.addEventListener("keydown", onKey);
+
+            modal.querySelectorAll("[data-close='1']").forEach(el => {
+                el.onclick = () => close(false);
+            });
+
+            buttons.forEach(b => {
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = `modal-btn ${b.className || ""}`.trim();
+                btn.textContent = b.text || "OK";
+                btn.onclick = () => close(b.value);
+                actionsEl.appendChild(btn);
+            });
+
+            setTimeout(() => actionsEl.querySelector("button")?.focus(), 0);
+            return p;
+        }
+
+        function uiAlert(message, title = "Info", variant = "default") {
+            return uiModal({
+                title,
+                body: message,
+                variant,
+                buttons: [{ text: "OK", value: true, className: "primary" }]
+            });
+        }
+
+        function uiConfirm(message, title = "Confirm") {
+            return uiModal({
+                title,
+                body: message,
+                variant: "error",
+                buttons: [
+                    { text: "Cancel", value: false },
+                    { text: "Exit", value: true, className: "danger" }
+                ]
+            });
+        }
+        (function () {
+            const stored = localStorage.getItem("currentUser");
+            if (!stored) {
+                window.location.href = "/login.html";
+                return;
+            }
+        })();
+
+        let allColors = [];
+        async function loadAllColors() {
+            try {
+                const res = await fetch("/api/DrillColors/GetColors");
+                if (!res.ok) {
+                    console.error("Colors could not be loaded");
+                    return;
+                }
+                allColors = await res.json();
+                console.log("All colors:", allColors);
+            } catch (err) {
+                console.error("Error loading colors:", err);
+            }
+        }
+
+        const formState = {
+            drillName: "custom Focus Drill",
+            drillDescription: "",
+            totalDurationSec: null,
+            switchIntervalSec: null,
+            difficulty: "Easy",
+
+            targetColorCount: null,
+            selectedTargetColors: [],
+            actionsByColorId: {}
+        };
+
+        const questions = [
+            {
+                id: "name",
+                title: "Name and Description",
+                desc: "Give your drill a clear name and a short description.",
+                render(container) {
+                    container.innerHTML = `
+          <label for="qName">Name</label>
+          <input id="qName" type="text" placeholder="..." />
+          <div class="error-text" id="qNameError"></div>
+
+          <label for="qDesc" style="margin-top:6px;">Description</label>
+          <input id="qDesc" type="text" placeholder="..." />
+          <div class="error-text" id="qDescError"></div>
+        `;
+                    document.getElementById("qName").value = formState.drillName || "";
+                    document.getElementById("qDesc").value = formState.drillDescription || "";
+                },
+                collect() {
+                    formState.drillName = document.getElementById("qName").value.trim() || "Pre Focus Drill";
+                    formState.drillDescription = document.getElementById("qDesc").value.trim() || "";
+                }
+            },
+
+            {
+                id: "time",
+                title: "Total time and switch interval",
+                desc: "Set total duration and switch interval (seconds).",
+                render(container) {
+                    container.innerHTML = `
+              <label for="qTotalDuration">Total Duration (seconds)</label>
+              <input id="qTotalDuration" type="number" min="1" placeholder="e.g. 60" />
+              <div class="error-text" id="qTotalDurationError"></div>
+
+              <label for="qSwitch" style="margin-top:6px;">Switch Interval (seconds)</label>
+              <input id="qSwitch" type="number" min="0.1" step="0.1" placeholder="e.g. 1.5" />
+              <div class="error-text" id="qSwitchError"></div>
+            `;
+                    document.getElementById("qTotalDuration").value = formState.totalDurationSec ?? "";
+                    document.getElementById("qSwitch").value = formState.switchIntervalSec ?? "";
+                },
+                collect() {
+                    formState.totalDurationSec = Number(document.getElementById("qTotalDuration").value) || null;
+                    formState.switchIntervalSec = Number(document.getElementById("qSwitch").value) || null;
+                }
+            },
+
+            {
+                id: "difficulty",
+                title: "Difficulty level",
+                desc: "Difficulty affects display timing in play mode (fake colors included).",
+                render(container) {
+                    container.innerHTML = `
+              <label for="qDifficulty">Difficulty</label>
+              <select id="qDifficulty">
+                <option value="Easy">Easy</option>
+                <option value="Medium">Medium</option>
+                <option value="Hard">Hard</option>
+              </select>
+            `;
+                    document.getElementById("qDifficulty").value = formState.difficulty;
+                },
+                collect() {
+                    formState.difficulty = document.getElementById("qDifficulty").value;
+                }
+            },
+
+            {
+                id: "targetCount",
+                title: "How many target colors?",
+                desc: "Enter how many target colors you want. Colors will be taken from DrillColors table.",
+                render(container) {
+                    container.innerHTML = `
+              <label for="qTargetCount">Target Color Count</label>
+              <input id="qTargetCount" type="number" min="1" max="20" placeholder="min:1 max:20" />
+              <div class="error-text" id="qTargetCountError"></div>
+            `;
+                    document.getElementById("qTargetCount").value = formState.targetColorCount ?? "";
+                },
+                collect() {
+                    formState.targetColorCount = Number(document.getElementById("qTargetCount").value) || null;
+                }
+            },
+
+            {
+                id: "actions",
+                title: "Actions for target colors",
+                desc: "Based on target color count, define the action for each target color.",
+                render(container) {
+                    const count = formState.targetColorCount || 1;
+
+                    if (!allColors.length) {
+                        container.innerHTML = `
+                <div style="color:#f97373;font-size:0.9rem;">
+                  Colors are still loading. Please wait a second and use the arrows to refresh.
+                </div>`;
+                        return;
+                    }
+
+                    const maxCount = Math.min(count, allColors.length);
+                    const selected = allColors.slice(0, maxCount); 
+                    formState.selectedTargetColors = selected;
+
+                    let html = "";
+                    selected.forEach(c => {
+                        const colorId = c.id || c.Id;
+                        const colorName = c.name || c.Name;
+                        const colorCode = c.code || c.Code || "#ffffff";
+                        const existingAction = formState.actionsByColorId[colorId] || "";
+
+                        html += `
+                <div style="margin-bottom:10px;">
+                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                    <span style="width:16px;height:16px;border-radius:4px;background:${colorCode};display:inline-block;"></span>
+                    <strong>${colorName}</strong>
+                  </div>
+                  <input
+                    id="action_${colorId}"
+                    type="text"
+                    placeholder="e.g. Jab–Cross, Slip, Step Back"
+                    value="${existingAction}"
+                    style="width:100%;padding:6px 8px;border-radius:8px;border:1px solid #555;background:#111;color:#f5f5f5;font-size:0.9rem;"
+                  />
+                </div>
+              `;
+                    });
+
+                    container.innerHTML = html;
+                },
+                collect() {
+                    const map = {};
+                    (formState.selectedTargetColors || []).forEach(c => {
+                        const id = c.id || c.Id;
+                        const input = document.getElementById(`action_${id}`);
+                        map[id] = (input?.value || "").trim();
+                    });
+                    formState.actionsByColorId = map;
+                }
+            }
+        ];
+
+        const stepIntro = document.getElementById("step-intro");
+        const stepQuestions = document.getElementById("step-questions");
+        const stepReady = document.getElementById("step-ready");
+        const stepCountdown = document.getElementById("step-countdown");
+
+        const qIndexSpan = document.getElementById("qIndex");
+        const qTotalSpan = document.getElementById("qTotal");
+        const progressFill = document.getElementById("progressFill");
+        const questionTitle = document.getElementById("questionTitle");
+        const questionDesc = document.getElementById("questionDesc");
+        const questionInputs = document.getElementById("questionInputs");
+        const totalTimeLabel = document.getElementById("totalTimeLabel");
+        const summaryList = document.getElementById("summaryList");
+        const countdownValue = document.getElementById("countdownValue");
+
+        const btnStartSetup = document.getElementById("btnStartSetup");
+        const btnPrev = document.getElementById("btnPrev");
+        const btnNext = document.getElementById("btnNext");
+        const btnStartCountdown = document.getElementById("btnStartCountdown");
+
+        let currentQuestionIndex = 0;
+        qTotalSpan.textContent = questions.length.toString();
+
+        function showStep(step) {
+            [stepIntro, stepQuestions, stepReady, stepCountdown].forEach(s => s.classList.add("hidden"));
+            step.classList.remove("hidden");
+        }
+
+        function renderQuestion() {
+            const q = questions[currentQuestionIndex];
+            qIndexSpan.textContent = (currentQuestionIndex + 1).toString();
+            questionTitle.textContent = q.title;
+            questionDesc.textContent = q.desc;
+            q.render(questionInputs);
+
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            progressFill.style.width = progress + "%";
+
+            btnPrev.disabled = currentQuestionIndex === 0;
+            btnNext.textContent = ">";
+        }
+
+        function updateTotalTimeLabel() {
+            totalTimeLabel.textContent = formState.totalDurationSec || 0;
+        }
+
+        function buildSummary() {
+            const selected = formState.selectedTargetColors || [];
+            let actionsHtml = "";
+
+            if (selected.length > 0) {
+                actionsHtml += `<div style="margin-top:8px;"><strong>Target actions</strong></div>`;
+                selected.forEach(c => {
+                    const id = c.id || c.Id;
+                    const name = c.name || c.Name;
+                    const action = formState.actionsByColorId[id] || "-";
+                    actionsHtml += `<div>${name}: ${action}</div>`;
+                });
+            }
+
+            summaryList.innerHTML = `
+          <div><strong>Drill name:</strong> ${formState.drillName}</div>
+          <div><strong>Description:</strong> ${formState.drillDescription || "-"}</div>
+          <div><strong>Total duration:</strong> ${formState.totalDurationSec || "-"} sec</div>
+          <div><strong>Switch interval:</strong> ${formState.switchIntervalSec || "-"} sec</div>
+          <div><strong>Difficulty:</strong> ${formState.difficulty}</div>
+          <div><strong>Target color count:</strong> ${formState.targetColorCount || "-"}</div>
+          ${actionsHtml}
+          <div style="margin-top:8px;color:#d4d4d4;font-size:0.9rem;">
+            Note: Fake colors will also appear during play mode.
+          </div>
+        `;
+        }
+
+        function clearValidationErrors() {
+            const tdErr = document.getElementById("qTotalDurationError");
+            const swErr = document.getElementById("qSwitchError");
+            const tcErr = document.getElementById("qTargetCountError");
+            if (tdErr) tdErr.textContent = "";
+            if (swErr) swErr.textContent = "";
+            if (tcErr) tcErr.textContent = "";
+        }
+
+        btnStartSetup.addEventListener("click", () => {
+            showStep(stepQuestions);
+            renderQuestion();
+        });
+
+        btnPrev.addEventListener("click", () => {
+            questions[currentQuestionIndex].collect();
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion();
+                updateTotalTimeLabel();
+            }
+        });
+
+        btnNext.addEventListener("click", async () => {
+            questions[currentQuestionIndex].collect();
+
+            clearValidationErrors();
+
+            if (questions[currentQuestionIndex].id === "time") {
+                if (!formState.totalDurationSec || formState.totalDurationSec <= 0) {
+                    document.getElementById("qTotalDurationError").textContent = "Total duration must be > 0.";
+                    return;
+                }
+                if (!formState.switchIntervalSec || formState.switchIntervalSec < 0.1) {
+                    document.getElementById("qSwitchError").textContent = "Switch interval must be >= 0.1 sec.";
+                    return;
+                }
+                if (formState.switchIntervalSec > formState.totalDurationSec) {
+                    document.getElementById("qSwitchError").textContent = "Switch interval cannot exceed total duration.";
+                    return;
+                }
+            }
+
+            if (questions[currentQuestionIndex].id === "targetCount") {
+                if (!formState.targetColorCount || formState.targetColorCount <= 0) {
+                    document.getElementById("qTargetCountError").textContent = "Target color count must be > 0.";
+                    return;
+                }
+                if (allColors.length && formState.targetColorCount > allColors.length) {
+                    document.getElementById("qTargetCountError").textContent =
+                        `Only ${allColors.length} colors exist in DrillColors. Lower the target count.`;
+                    return;
+                }
+            }
+
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion();
+                updateTotalTimeLabel();
+            } else {
+                updateTotalTimeLabel();
+                buildSummary();
+                showStep(stepReady);
+            }
+        });
+
+        btnStartCountdown.addEventListener("click", () => {
+            showStep(stepCountdown);
+            let counter = 3;
+            countdownValue.textContent = counter.toString();
+
+            let started = false;
+            const interval = setInterval(() => {
+                counter--;
+                if (counter <= 0) {
+                    clearInterval(interval);
+                    countdownValue.textContent = "GO";
+                    if (!started) {
+                        started = true;
+                        createCustomFocusDrillAndRedirect();
+                    }
+                } else {
+                    countdownValue.textContent = counter.toString();
+                }
+            }, 1000);
+        });
+
+        async function createCustomFocusDrillAndRedirect() {
+            let currentUser = {};
+            try { currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}"); } catch { }
+
+            const userId = currentUser.id ?? currentUser.Id ?? 0;
+            if (!userId) {
+                await uiAlert("User not found, please login again.", "Error", "error");
+                window.location.href = "/login.html";
+                return;
+            }
+
+            const selectedIds = (formState.selectedTargetColors || []).map(c => c.id || c.Id);
+            const targetColorsStr = selectedIds.join(",");
+
+            const actionsForTargetColors = Object.entries(formState.actionsByColorId || {})
+                .map(([id, act]) => `${id}:${act || "-"}`)
+                .join(";");
+
+            const dto = {
+                id: 0,
+                userId: userId,
+                name: formState.drillName || "Custom Focus Drill",
+                description: formState.drillDescription || "",
+                targetColorCount: selectedIds.length,
+                targetColors: targetColorsStr,
+                actionsForTargetColors: actionsForTargetColors,
+                switchIntervalSec: formState.switchIntervalSec || 0,
+                totalDurationSec: formState.totalDurationSec || 0,
+                difficultyLevel: formState.difficulty || "Easy",
+                AutoIncreaseDifficulty: formState.difficulty !== "Easy"
+            };
+
+            console.log("CFocusDrill DTO:", dto);
+
+            try {
+                const addRes = await fetch("/api/CFocusDrill/Add", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(dto)
+                });
+
+                const text = await addRes.text();
+                let json = null;
+                try { json = text ? JSON.parse(text) : null; } catch { }
+
+                console.log("Add response:", addRes.status, text, json);
+
+                const newId = json?.drill?.id ?? json?.drill?.Id;
+                if (addRes.ok && newId) {
+                    window.location.href = `/c-focus-drill.html?id=${newId}`;
+                    return;
+                }
+
+                const listRes = await fetch(`/api/CFocusDrill/GetByUser?userId=${userId}`);
+                if (listRes.ok) {
+                    const drills = await listRes.json();
+                    if (Array.isArray(drills) && drills.length) {
+                        const active = drills.filter(d => !d.deletedAt && !d.DeletedAt);
+                        const source = active.length ? active : drills;
+                        const latest = source.sort((a, b) => (b.id ?? b.Id ?? 0) - (a.id ?? a.Id ?? 0))[0];
+                        const latestId = latest?.id ?? latest?.Id;
+                        if (latestId) {
+                            window.location.href = `/c-focus-drill.html?id=${latestId}`;
+                            return;
+                        }
+                    }
+                }
+
+                await uiAlert("Drill created but redirect failed.", "Error", "error");
+            } catch (err) {
+                console.error("Unexpected error:", err);
+                await uiAlert("Beklenmeyen bir hata oluştu.", "Error", "error");
+            }
+        }
+
+        document.getElementById("closeBtn")?.addEventListener("click", async () => {
+            const ok = await uiConfirm("Exit setup? Your changes won't be saved.", "Exit Setup");
+            if (!ok) return;
+            window.location.href = "user.html";
+        });
+        loadAllColors();
+        updateTotalTimeLabel();
+    </script>
+
+
+</body>
+</html>

@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Sign up – HollyDrill</title>
+
+    <link rel="stylesheet" href="../css/signup.css" />
+    <link href="https://cdn.boxicons.com/3.0.3/fonts/basic/boxicons.min.css" rel="stylesheet" />
+
+    <script src="../js/layout.js" defer></script>
+    <script src="../js/signup.js" defer></script>
+</head>
+<body>
+    <div id="site-header"></div>
+
+    <div class="body2">
+        <div class="wrapper">
+            <form id="signupForm" novalidate>
+                <a href="home.html" class="back-link">
+                    <i class='bx bx-chevron-left-circle'></i>
+                </a>
+
+                <h1>Signup</h1>
+
+                <div id="signupMessage"></div>
+
+                <div class="input-box">
+                    <input type="email" id="email" name="Email" placeholder="Email" required />
+                    <i class='bx bx-envelope'></i>
+                </div>
+
+                <div class="input-box">
+                    <input type="text" id="firstName" name="FirstName" placeholder="First Name" required />
+                    <i class='bx bx-user'></i>
+                </div>
+
+                <div class="input-box">
+                    <input type="text" id="lastName" name="LastName" placeholder="Last Name" required />
+                    <i class='bx bx-user'></i>
+                </div>
+
+                <div class="input-box">
+                    <input type="password" id="password" name="Password" placeholder="Password" required />
+                    <i class='bx bx-lock'></i>
+                </div>
+
+                <div class="input-box">
+                    <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
+                    <i class='bx bx-lock'></i>
+                </div>
+
+                <button type="submit" class="btn">Signup</button>
+
+                <div class="register-link">
+                    <p>Already have an account? <a href="login.html">Login</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="site-footer"></div>
+
+    <div id="appModal" class="modal hidden" aria-hidden="true">
+        <div class="modal-backdrop" data-close="1"></div>
+
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="appModalTitle">
+            <div class="modal-head">
+                <h3 id="appModalTitle">Title</h3>
+                <button class="modal-x" type="button" data-close="1" aria-label="Close">×</button>
+            </div>
+
+            <div id="appModalBody" class="modal-body"></div>
+
+            <div class="modal-actions" id="appModalActions"></div>
+        </div>
+    </div>
+</body>
+</html>

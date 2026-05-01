@@ -1,0 +1,791 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pre-exjump-drill</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: radial-gradient(circle at top, rgba(43,92,255,0.16), transparent 30%), #0f0f10;
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        .page {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+        }
+
+        .challenge-card {
+            width: 100%;
+            max-width: 820px;
+            background: linear-gradient(180deg, rgba(43,92,255,0.10), rgba(255,255,255,0.02));
+            border: 2px solid rgba(43,92,255,0.40);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+        }
+
+        h1 {
+            margin: 0 0 24px;
+            font-size: 34px;
+        }
+
+        .setup-panel,
+        .session-panel {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(43,92,255,0.25);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .field {
+            margin-bottom: 16px;
+        }
+
+            .field label {
+                display: block;
+                margin-bottom: 8px;
+                font-weight: 700;
+            }
+
+            .field input,
+            .field select {
+                width: 100%;
+                padding: 12px 14px;
+                border-radius: 12px;
+                border: 1px solid rgba(255,255,255,0.15);
+                background: rgba(255,255,255,0.07);
+                color: #fff;
+                font-size: 15px;
+                outline: none;
+            }
+
+                .field select option {
+                    background: #1b1b1b;
+                    color: #fff;
+                }
+
+        .primary-btn,
+        .secondary-btn,
+        .danger-btn {
+            padding: 12px 18px;
+            border-radius: 12px;
+            border: 1px solid transparent;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .primary-btn {
+            background: rgba(43,92,255,0.18);
+            color: #eaf0ff;
+            border-color: rgba(43,92,255,0.55);
+            box-shadow: 0 0 0 1px rgba(43,92,255,0.20) inset;
+        }
+
+            .primary-btn:hover {
+                background: linear-gradient(135deg, rgba(43,92,255,0.35), rgba(43,92,255,0.18));
+                box-shadow: 0 8px 20px rgba(43,92,255,0.28);
+            }
+
+        .secondary-btn {
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            border-color: rgba(255,255,255,0.18);
+        }
+
+            .secondary-btn:hover:not(:disabled) {
+                background: rgba(255,255,255,0.13);
+            }
+
+        .danger-btn {
+            background: rgba(43,92,255,0.18);
+            color: #eaf0ff;
+            border-color: rgba(43,92,255,0.55);
+        }
+
+            .danger-btn:hover {
+                background: rgba(43,92,255,0.28);
+            }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .top-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.10);
+            border-radius: 14px;
+            padding: 14px;
+        }
+
+        .stat-label {
+            display: block;
+            color: rgba(255,255,255,0.65);
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .exercise-display {
+            min-height: 380px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 18px;
+            border: 1px solid rgba(43,92,255,0.25);
+            background: linear-gradient(180deg, rgba(43,92,255,0.16), rgba(43,92,255,0.06));
+            text-align: center;
+            padding: 20px;
+        }
+
+        .exercise-name {
+            font-size: 36px;
+            font-weight: 900;
+            line-height: 1.2;
+            margin-bottom: 18px;
+        }
+
+        .exercise-media-wrap {
+            width: 100%;
+            max-width: 420px;
+            margin: 0 auto 18px;
+        }
+
+        .exercise-media {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: contain;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.14);
+            background: rgba(0,0,0,0.18);
+            padding: 10px;
+            display: block;
+        }
+
+        .exercise-next {
+            font-size: 16px;
+            color: rgba(255,255,255,0.78);
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 28px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #d4d4d4;
+            background: transparent;
+            color: #d4d4d4;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .close-btn:hover {
+                background: #d4d4d43d;
+                transform: scale(1.08);
+            }
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+        }
+
+        .modal-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+        }
+
+        .modal-card {
+            position: relative;
+            width: min(560px, 92vw);
+            max-height: 80vh;
+            margin: 8vh auto 0;
+            background: #1b1b1b;
+            border: 1px solid #333;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.55);
+            overflow: hidden;
+        }
+
+        .modal-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+            .modal-head h3 {
+                margin: 0;
+                font-size: 1rem;
+            }
+
+        .modal-x {
+            background: transparent;
+            border: none;
+            color: #ddd;
+            font-size: 22px;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .modal-body {
+            padding: 14px 16px;
+            color: #eaeaea;
+            overflow: auto;
+            max-height: calc(80vh - 110px);
+            white-space: pre-line;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            padding: 12px 16px;
+            border-top: 1px solid #2a2a2a;
+        }
+
+        .modal-btn {
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid #3a3a3a;
+            background: #232323;
+            color: #f5f5f5;
+            cursor: pointer;
+        }
+
+            .modal-btn.primary {
+                border-color: #4a4a4a;
+                background: #2b2b2b;
+            }
+
+            .modal-btn.danger {
+                border-color: #7f1d1d;
+                background: #3a1010;
+            }
+
+        .modal-error .modal-card {
+            background: linear-gradient(180deg, #2a0f0f, #160909);
+            border: 1px solid #7f1d1d;
+        }
+
+        .modal-error .modal-head {
+            border-bottom: 1px solid #7f1d1d;
+        }
+
+            .modal-error .modal-head h3 {
+                color: #fca5a5;
+            }
+
+        .modal-error .modal-body {
+            color: #fee2e2;
+        }
+
+        .modal-error .modal-x {
+            color: #fecaca;
+        }
+
+        .modal-error .modal-btn.primary {
+            background: #7f1d1d;
+            border-color: #991b1b;
+        }
+
+            .modal-error .modal-btn.primary:hover {
+                background: #991b1b;
+            }
+
+        @media (max-width: 680px) {
+            .top-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .exercise-name {
+                font-size: 28px;
+            }
+
+            .exercise-display {
+                min-height: 320px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <button id="closeBtn" class="close-btn">✕</button>
+        <div class="challenge-card">
+            <h1>Explosive Jump Drill</h1>
+
+            <div class="setup-panel" id="setupPanel">
+                <div class="field">
+                    <label for="durationInput">Total Duration (seconds)</label>
+                    <input type="number" id="durationInput" min="10" step="1" placeholder="e.g. 120" />
+                </div>
+
+                <div class="field">
+                    <label for="modeSelect">Mode</label>
+                    <select id="modeSelect">
+                        <option value="easy">Easy</option>
+                        <option value="medium">Medium</option>
+                        <option value="hard">Hard</option>
+                    </select>
+                </div>
+
+                <button id="startBtn" class="primary-btn">Start Drill</button>
+            </div>
+
+            <div class="session-panel hidden" id="sessionPanel">
+                <div class="top-stats">
+                    <div class="stat-box">
+                        <span class="stat-label">Mode</span>
+                        <span class="stat-value" id="modeLabel">Easy</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Time Left</span>
+                        <span class="stat-value" id="timeLeftLabel">0s</span>
+                    </div>
+                </div>
+
+                <div class="exercise-display">
+                    <div class="exercise-name" id="exerciseName">Press Start</div>
+
+                    <div class="exercise-media-wrap">
+                        <img id="exerciseMedia"
+                             class="exercise-media"
+                             src="assets/exercises/default.png"
+                             alt="Exercise visual" />
+                    </div>
+
+                    <div class="exercise-next" id="nextChangeLabel">Next change in: -</div>
+                </div>
+
+                <div class="controls">
+                    <button id="pauseBtn" class="secondary-btn">Pause</button>
+                    <button id="continueBtn" class="secondary-btn" disabled>Continue</button>
+                    <button id="restartBtn" class="danger-btn">Restart</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="appModal" class="modal hidden" aria-hidden="true">
+        <div class="modal-backdrop" data-close="1"></div>
+
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="appModalTitle">
+            <div class="modal-head">
+                <h3 id="appModalTitle">Title</h3>
+                <button class="modal-x" type="button" data-close="1" aria-label="Close">×</button>
+            </div>
+
+            <div id="appModalBody" class="modal-body"></div>
+
+            <div class="modal-actions" id="appModalActions"></div>
+        </div>
+    </div>
+
+    <script>
+        const LOW_EXERCISES = [
+            { name: "Squat Jump", media: "assets/exercises/squat-jump.jpeg" },
+            { name: "Stance Hold", media: "assets/exercises/stance-hold.jpeg" },
+            { name: "Single Leg Jump", media: "assets/exercises/single-leg-jump.jpeg" },
+            { name: "Squat", media: "assets/exercises/squat.jpeg" },
+            { name: "Jump", media: "assets/exercises/jump.png" },
+            { name: "Split Jump Squat", media: "assets/exercises/split-jump-squat.jpeg" }
+        ];
+
+        const MEDIUM_EXERCISES = [
+            { name: "Quick Tab Jump", media: "assets/exercises/quick-tab-jump.jpeg" },
+            { name: "Broud Jump", media: "assets/exercises/broud-jump.jpeg" },
+            { name: "1-Step Jump", media: "assets/exercises/1-step-jump.gif" },
+            { name: "2-Step Jump", media: "assets/exercises/2-step-jump.gif" },
+            { name: "Tuck Jump", media: "assets/exercises/tuck-jump.jpeg" },
+            { name: "U Hops", media: "assets/exercises/u-hops.png" }
+        ];
+
+        const HARD_EXERCISES = [
+            { name: "Stance + Tab", media: "assets/exercises/stance-tab.gif" },
+            { name: "High Jump", media: "assets/exercises/high-jump.gif" },
+            { name: "Quick High Jump", media: "assets/exercises/quick-high-jump.gif" }
+        ];
+
+        const MIN_INTERVAL = 10;
+        const MAX_INTERVAL = 15;
+
+        const durationInput = document.getElementById("durationInput");
+        const modeSelect = document.getElementById("modeSelect");
+        const startBtn = document.getElementById("startBtn");
+
+        const setupPanel = document.getElementById("setupPanel");
+        const sessionPanel = document.getElementById("sessionPanel");
+
+        const modeLabel = document.getElementById("modeLabel");
+        const timeLeftLabel = document.getElementById("timeLeftLabel");
+        const exerciseName = document.getElementById("exerciseName");
+        const exerciseMedia = document.getElementById("exerciseMedia");
+        const nextChangeLabel = document.getElementById("nextChangeLabel");
+
+        const pauseBtn = document.getElementById("pauseBtn");
+        const continueBtn = document.getElementById("continueBtn");
+        const restartBtn = document.getElementById("restartBtn");
+
+        let totalDuration = 0;
+        let timeLeft = 0;
+        let selectedMode = "easy";
+
+        let sessionTimer = null;
+        let changeTimer = null;
+        let nextChangeCountdownTimer = null;
+
+        let isPaused = false;
+        let currentChangeRemaining = 0;
+        let sessionFinished = false;
+
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function getRandomItem(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function pickExerciseByMode(mode) {
+            const roll = Math.random() * 100;
+
+            if (mode === "easy") {
+                return {
+                    difficulty: "Low",
+                    exercise: getRandomItem(LOW_EXERCISES)
+                };
+            }
+
+            if (mode === "medium") {
+                if (roll < 70) {
+                    return {
+                        difficulty: "Low",
+                        exercise: getRandomItem(LOW_EXERCISES)
+                    };
+                }
+                return {
+                    difficulty: "Medium",
+                    exercise: getRandomItem(MEDIUM_EXERCISES)
+                };
+            }
+
+            if (roll < 50) {
+                return {
+                    difficulty: "Low",
+                    exercise: getRandomItem(LOW_EXERCISES)
+                };
+            } else if (roll < 90) {
+                return {
+                    difficulty: "Medium",
+                    exercise: getRandomItem(MEDIUM_EXERCISES)
+                };
+            } else {
+                return {
+                    difficulty: "Hard",
+                    exercise: getRandomItem(HARD_EXERCISES)
+                };
+            }
+        }
+
+        function showNextExercise() {
+            if (sessionFinished || isPaused) return;
+            if (timeLeft <= 0) return;
+
+            const picked = pickExerciseByMode(selectedMode);
+
+            exerciseName.textContent = picked.exercise.name;
+            exerciseMedia.src = picked.exercise.media;
+            exerciseMedia.alt = picked.exercise.name;
+
+            const interval = Math.min(getRandomInt(MIN_INTERVAL, MAX_INTERVAL), timeLeft);
+            currentChangeRemaining = interval;
+            nextChangeLabel.textContent = `Next change in: ${currentChangeRemaining}s`;
+
+            clearTimeout(changeTimer);
+            clearInterval(nextChangeCountdownTimer);
+
+            nextChangeCountdownTimer = setInterval(() => {
+                if (isPaused || sessionFinished) return;
+
+                currentChangeRemaining--;
+
+                if (currentChangeRemaining > 0) {
+                    nextChangeLabel.textContent = `Next change in: ${currentChangeRemaining}s`;
+                } else {
+                    clearInterval(nextChangeCountdownTimer);
+                    nextChangeLabel.textContent = "Changing...";
+                }
+            }, 1000);
+
+            changeTimer = setTimeout(() => {
+                showNextExercise();
+            }, interval * 1000);
+        }
+
+        async function startSession() {
+            totalDuration = parseInt(durationInput.value, 10);
+            selectedMode = modeSelect.value;
+
+            if (!totalDuration || totalDuration <= 0) {
+                await uiAlert("Please enter a valid total duration.", "Invalid Input", "error");
+                return;
+            }
+
+            if (totalDuration < 10) {
+                await uiAlert("Total duration must be at least 10 seconds.", "Invalid Duration", "error");
+                return;
+            }
+
+            timeLeft = totalDuration;
+            isPaused = false;
+            sessionFinished = false;
+
+            modeLabel.textContent = selectedMode.charAt(0).toUpperCase() + selectedMode.slice(1);
+            timeLeftLabel.textContent = `${timeLeft}s`;
+
+            setupPanel.classList.add("hidden");
+            sessionPanel.classList.remove("hidden");
+
+            pauseBtn.disabled = false;
+            continueBtn.disabled = true;
+
+            clearInterval(sessionTimer);
+            clearTimeout(changeTimer);
+            clearInterval(nextChangeCountdownTimer);
+
+            showNextExercise();
+
+            sessionTimer = setInterval(() => {
+                if (isPaused || sessionFinished) return;
+
+                timeLeft--;
+                timeLeftLabel.textContent = `${timeLeft}s`;
+
+                if (timeLeft <= 0) {
+                    finishSession();
+                }
+            }, 1000);
+        }
+
+        function pauseSession() {
+            if (sessionFinished) return;
+
+            isPaused = true;
+            pauseBtn.disabled = true;
+            continueBtn.disabled = false;
+            nextChangeLabel.textContent = "Paused";
+        }
+
+        function continueSession() {
+            if (sessionFinished) return;
+
+            isPaused = false;
+            pauseBtn.disabled = false;
+            continueBtn.disabled = true;
+            nextChangeLabel.textContent = `Next change in: ${currentChangeRemaining}s`;
+
+            clearTimeout(changeTimer);
+            clearInterval(nextChangeCountdownTimer);
+
+            nextChangeCountdownTimer = setInterval(() => {
+                if (isPaused || sessionFinished) return;
+
+                currentChangeRemaining--;
+
+                if (currentChangeRemaining > 0) {
+                    nextChangeLabel.textContent = `Next change in: ${currentChangeRemaining}s`;
+                } else {
+                    clearInterval(nextChangeCountdownTimer);
+                    nextChangeLabel.textContent = "Changing...";
+                }
+            }, 1000);
+
+            changeTimer = setTimeout(() => {
+                showNextExercise();
+            }, currentChangeRemaining * 1000);
+        }
+
+        function finishSession() {
+            sessionFinished = true;
+
+            clearInterval(sessionTimer);
+            clearTimeout(changeTimer);
+            clearInterval(nextChangeCountdownTimer);
+
+            timeLeft = 0;
+            timeLeftLabel.textContent = "0s";
+            exerciseName.textContent = "Great job!";
+            exerciseMedia.src = "assets/exercises/finished.png";
+            exerciseMedia.alt = "Session finished";
+            nextChangeLabel.textContent = "Challenge finished.";
+
+            pauseBtn.disabled = true;
+            continueBtn.disabled = true;
+        }
+
+        function restartSession() {
+            clearInterval(sessionTimer);
+            clearTimeout(changeTimer);
+            clearInterval(nextChangeCountdownTimer);
+
+            setupPanel.classList.remove("hidden");
+            sessionPanel.classList.add("hidden");
+
+            durationInput.value = "";
+            modeSelect.value = "easy";
+
+            totalDuration = 0;
+            timeLeft = 0;
+            selectedMode = "easy";
+            isPaused = false;
+            currentChangeRemaining = 0;
+            sessionFinished = false;
+
+            exerciseName.textContent = "Press Start";
+            exerciseMedia.src = "assets/exercises/default.png";
+            exerciseMedia.alt = "Exercise visual";
+            nextChangeLabel.textContent = "Next change in: -";
+        }
+
+        startBtn.addEventListener("click", startSession);
+        pauseBtn.addEventListener("click", pauseSession);
+        continueBtn.addEventListener("click", continueSession);
+        restartBtn.addEventListener("click", restartSession);
+
+        function uiModal({
+            title = "Info",
+            body = "",
+            variant = "default",
+            buttons = [{ text: "OK", value: true, className: "primary" }]
+        }) {
+            const modal = document.getElementById("appModal");
+            const titleEl = document.getElementById("appModalTitle");
+            const bodyEl = document.getElementById("appModalBody");
+            const actionsEl = document.getElementById("appModalActions");
+
+            if (!modal || !titleEl || !bodyEl || !actionsEl) {
+                console.warn("Modal DOM not found. Message:", title, body);
+                return Promise.resolve(true);
+            }
+
+            let resolve;
+            const p = new Promise(r => (resolve = r));
+
+            modal.classList.remove("modal-default", "modal-error", "modal-success", "modal-warning");
+            modal.classList.add(`modal-${variant}`);
+
+            const onKey = (e) => {
+                if (e.key === "Escape") close(false);
+            };
+
+            const close = (val) => {
+                modal.classList.add("hidden");
+                modal.setAttribute("aria-hidden", "true");
+                document.removeEventListener("keydown", onKey);
+                resolve(val);
+            };
+
+            titleEl.textContent = title;
+            bodyEl.textContent = body;
+            actionsEl.innerHTML = "";
+
+            modal.classList.remove("hidden");
+            modal.setAttribute("aria-hidden", "false");
+            document.addEventListener("keydown", onKey);
+
+            modal.querySelectorAll("[data-close='1']").forEach(el => {
+                el.onclick = () => close(false);
+            });
+
+            buttons.forEach(b => {
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = `modal-btn ${b.className || ""}`.trim();
+                btn.textContent = b.text || "OK";
+                btn.onclick = () => close(b.value);
+                actionsEl.appendChild(btn);
+            });
+
+            setTimeout(() => actionsEl.querySelector("button")?.focus(), 0);
+            return p;
+        }
+
+        function uiAlert(message, title = "Info", variant = "default") {
+            return uiModal({
+                title,
+                body: message,
+                variant,
+                buttons: [{ text: "OK", value: true, className: "primary" }]
+            });
+        }
+
+        function uiConfirm(message, title = "Confirm") {
+            return uiModal({
+                title,
+                body: message,
+                variant: "error",
+                buttons: [
+                    { text: "Cancel", value: false },
+                    { text: "Exit", value: true, className: "danger" }
+                ]
+            });
+        }
+
+        (function () {
+            const stored = localStorage.getItem("currentUser");
+            if (!stored) {
+                window.location.href = "/login.html";
+                return;
+            }
+        })();
+
+        document.getElementById("closeBtn")?.addEventListener("click", async () => {
+            const ok = await uiConfirm("Exit setup? Your changes won't be saved.", "Exit Setup");
+            if (!ok) return;
+            window.location.href = "user.html";
+        });
+    </script>
+</body>
+</html>

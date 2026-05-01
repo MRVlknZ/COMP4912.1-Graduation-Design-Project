@@ -1,0 +1,811 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Custom Focus Drill – Play</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        body {
+            background: #111;
+            color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .frame {
+            position: relative;
+            width: 90vw;
+            max-width: 1100px;
+            height: 80vh;
+            border: 3px solid #444;
+            border-radius: 16px;
+            padding: 24px 32px;
+            background: #181818;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+        }
+
+        .drill-info h1 {
+            font-size: 1.4rem;
+            margin-bottom: 4px;
+        }
+
+        .drill-info p {
+            font-size: 0.9rem;
+            color: #d4d4d4;
+        }
+
+        .pill {
+            border-radius: 999px;
+            border: 1px solid #555;
+            padding: 6px 14px;
+            font-size: 0.85rem;
+            text-align: right;
+        }
+
+        .center-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .color-box {
+            width: 260px;
+            height: 260px;
+            border-radius: 32px;
+            border: 3px solid #f5f5f5;
+            box-shadow: 0 18px 40px rgba(0,0,0,0.5);
+            background: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .action-text {
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .meta-text {
+            font-size: 0.9rem;
+            color: #d4d4d4;
+        }
+
+        .bottom-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+        }
+
+        .btn-primary, .btn-ghost {
+            border-radius: 999px;
+            padding: 10px 22px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border: none;
+            transition: 0.15s ease;
+        }
+
+        .btn-primary {
+            background: #e11d48;
+            color: #fff;
+        }
+
+            .btn-primary:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 12px 25px rgba(225, 29, 72, 0.35);
+            }
+
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid #555;
+            color: #f5f5f5;
+        }
+
+            .btn-ghost:hover {
+                background: #262626;
+            }
+
+        .status-text {
+            font-size: 0.9rem;
+            color: #d4d4d4;
+        }
+
+        .close-btn {
+            position: fixed;
+            top: 18px;
+            right: 26px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #d4d4d4;
+            background: transparent;
+            color: #d4d4d4;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+
+            .close-btn:hover {
+                background: #d4d4d43d;
+                transform: scale(1.08);
+            }
+
+        @media (max-width: 700px) {
+            .frame {
+                padding: 18px;
+                height: 90vh;
+            }
+
+            .color-box {
+                width: 200px;
+                height: 200px;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+        }
+
+        .modal-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,.6);
+        }
+
+        .modal-card {
+            position: relative;
+            width: min(560px,92vw);
+            max-height: 80vh;
+            margin: 8vh auto 0;
+            background: #1b1b1b;
+            border: 1px solid #333;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,.55);
+            overflow: hidden;
+        }
+
+        .modal-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+            .modal-head h3 {
+                margin: 0;
+                font-size: 1rem;
+            }
+
+        .modal-x {
+            background: transparent;
+            border: none;
+            color: #ddd;
+            font-size: 22px;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .modal-body {
+            padding: 14px 16px;
+            color: #eaeaea;
+            overflow: auto;
+            max-height: calc(80vh - 110px);
+            white-space: pre-line;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            padding: 12px 16px;
+            border-top: 1px solid #2a2a2a;
+        }
+
+        .modal-btn {
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid #3a3a3a;
+            background: #232323;
+            color: #f5f5f5;
+            cursor: pointer;
+        }
+
+            .modal-btn.primary {
+                border-color: #4a4a4a;
+                background: #2b2b2b;
+            }
+
+            .modal-btn.danger {
+                border-color: #7f1d1d;
+                background: #3a1010;
+            }
+
+        .modal-error .modal-card {
+            background: linear-gradient(180deg,#2a0f0f,#160909);
+            border: 1px solid #7f1d1d;
+        }
+
+        .modal-error .modal-head {
+            border-bottom: 1px solid #7f1d1d;
+        }
+
+            .modal-error .modal-head h3 {
+                color: #fca5a5;
+            }
+
+        .modal-error .modal-body {
+            color: #fee2e2;
+        }
+
+        .modal-error .modal-x {
+            color: #fecaca;
+        }
+
+        .modal-error .modal-btn.primary {
+            background: #7f1d1d;
+            border-color: #991b1b;
+        }
+
+            .modal-error .modal-btn.primary:hover {
+                background: #991b1b;
+            }
+    </style>
+</head>
+<body>
+    <div class="frame">
+        <button id="closeBtn" class="close-btn">✕</button>
+
+        <div class="top-row">
+            <div class="drill-info">
+                <h1 id="drillName">Loading…</h1>
+                <p id="drillDesc"></p>
+            </div>
+            <div class="pill">
+                <div>Difficulty: <span id="diffLabel">-</span></div>
+                <div>Time: <span id="elapsedLabel">0</span>s / <span id="totalLabel">0</span>s</div>
+            </div>
+        </div>
+
+        <div class="center-area">
+            <div class="color-box" id="colorBox">
+                <span id="colorName">–</span>
+            </div>
+            <div class="action-text" id="actionText">Waiting…</div>
+            <div class="meta-text" id="metaText"></div>
+        </div>
+
+        <div class="bottom-row">
+            <div>
+                <button class="btn-primary" id="btnStart">Start</button>
+                <button class="btn-ghost" id="btnPause">Pause</button>
+                <button class="btn-ghost" id="btnRestart">Restart</button>
+            </div>
+            <div class="status-text" id="statusText">Ready.</div>
+        </div>
+    </div>
+    <div id="appModal" class="modal hidden" aria-hidden="true">
+        <div class="modal-backdrop" data-close="1"></div>
+
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="appModalTitle">
+            <div class="modal-head">
+                <h3 id="appModalTitle">Title</h3>
+                <button class="modal-x" type="button" data-close="1" aria-label="Close">×</button>
+            </div>
+
+            <div id="appModalBody" class="modal-body"></div>
+
+            <div class="modal-actions" id="appModalActions"></div>
+        </div>
+    </div>
+
+    <script>
+        (async function () {
+            const storedUser = localStorage.getItem("currentUser");
+            if (!storedUser) {
+                window.location.href = "/login.html";
+                return;
+            }
+
+            let currentUser;
+            try {
+                currentUser = JSON.parse(storedUser);
+            } catch {
+                window.location.href = "/login.html";
+                return;
+            }
+
+            const userId = currentUser.id ?? currentUser.Id ?? 0;
+            const params = new URLSearchParams(window.location.search);
+            const drillId = Number(params.get("id") || 0);
+
+            if (!userId || !drillId) {
+                await uiAlert("Drill or user not found.", "Error", "error");
+                window.location.href = "/user.html";
+                return;
+            }
+
+            console.log("focus-drill → userId:", userId, "drillId:", drillId);
+            await loadDrillForUser(userId, drillId);
+        })();
+
+        function getSafeId(obj) {
+            return obj?.id ?? obj?.Id;
+        }
+        function getSafeProp(obj, lower, upper, fallback = "") {
+            return obj?.[lower] ?? obj?.[upper] ?? fallback;
+        }
+
+        let drill = null;
+        let allColors = [];
+        let selectedColors = [];
+        let actionsMap = {};
+
+        let targetFingerprints = new Set();
+
+        let tickTimer = null;
+        let elapsedMs = 0;
+        let totalMs = 0;
+        let switchMs = 0;
+        let nextSwitchAtMs = 0;
+
+        let stepIndex = 0;
+        let AutoIncreaseDifficulty = false;
+        let isRunning = false;
+
+        let showFakeNextEasy = false;
+
+        const drillNameEl = document.getElementById("drillName");
+        const drillDescEl = document.getElementById("drillDesc");
+        const diffLabelEl = document.getElementById("diffLabel");
+        const elapsedLabelEl = document.getElementById("elapsedLabel");
+        const totalLabelEl = document.getElementById("totalLabel");
+        const colorBoxEl = document.getElementById("colorBox");
+        const colorNameEl = document.getElementById("colorName");
+        const actionTextEl = document.getElementById("actionText");
+        const metaTextEl = document.getElementById("metaText");
+        const statusTextEl = document.getElementById("statusText");
+
+        const btnStart = document.getElementById("btnStart");
+        const btnPause = document.getElementById("btnPause");
+        const btnRestart = document.getElementById("btnRestart");
+        const closeBtn = document.getElementById("closeBtn");
+
+
+
+        function clamp(n, min, max) {
+            const v = Number(n);
+            if (!isFinite(v)) return min;
+            return Math.max(min, Math.min(max, v));
+        }
+
+        function normName(x) {
+            return String(x || "").trim().toLowerCase();
+        }
+        function normHex(x) {
+            const s = String(x || "").trim().toLowerCase();
+            if (!s) return "";
+            if (s.startsWith("#") && (s.length === 7 || s.length === 4)) return s;
+            return s.startsWith("#") ? s : ("#" + s);
+        }
+        function randInt(min, max) {
+            return Math.floor(min + Math.random() * (max - min + 1));
+        }
+        function randomHexColor() {
+            const r = randInt(20, 235);
+            const g = randInt(20, 235);
+            const b = randInt(20, 235);
+            const toHex = (n) => n.toString(16).padStart(2, "0");
+            return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+        }
+        function generateFakeColor() {
+            const code = randomHexColor();
+            const name = `FAKE`;
+
+            const fp = `${normName(name)}|${normHex(code)}`;
+            const collides = targetFingerprints && targetFingerprints.has(fp);
+
+            if (collides) {
+                return { id: -Date.now(), name: "BLACK", code: "#000000", isFake: true, collided: true };
+            }
+
+            return { id: -Date.now(), name, code, isFake: true };
+        }
+
+        async function loadDrillForUser(userId, drillId) {
+            try {
+                const listUrl = `/api/CFocusDrill/GetByUser?userId=${userId}`;
+                console.log("GET", listUrl);
+
+                const listRes = await fetch(listUrl);
+                if (!listRes.ok) {
+                    const txt = await listRes.text();
+                    console.log("GetByUser failed:", listRes.status, txt);
+                    await uiAlert("Drills could not be loaded.", "Error", "error");
+                    window.location.href = "/user.html";
+                    return;
+                }
+
+                const drills = await listRes.json();
+                console.log("User focus drills:", drills);
+
+                drill = drills.find(d => Number(d.id ?? d.Id) === Number(drillId));
+
+                if (!drill) {
+                    await uiAlert("Drill not found for this user.", "Not Found", "error");
+                    window.location.href = "/user.html";
+                    return;
+                }
+
+                const colorsRes = await fetch("/api/DrillColors/GetColors");
+                allColors = colorsRes.ok ? await colorsRes.json() : [];
+
+                console.log("Chosen focus drill:", drill);
+                console.log("All colors:", allColors);
+
+                initFromDrill();
+            } catch (err) {
+                console.error("loadDrillForUser error:", err);
+                await uiAlert("Drill could not be loaded.", "Error", "error");
+                window.location.href = "/user.html";
+            }
+        }
+
+        function initFromDrill() {
+            if (!drill) {
+                uiAlert("Drill not found.", "Not Found", "error").then(() => {
+                    window.location.href = "/user.html";
+                });
+                return;
+            }
+
+            const name = getSafeProp(drill, "name", "Name", "Custom Focus Drill");
+            const desc = getSafeProp(drill, "description", "Description", "");
+            const diff = getSafeProp(drill, "difficultyLevel", "DifficultyLevel", "Easy");
+
+            const totalSec = Number(getSafeProp(drill, "totalDurationSec", "TotalDurationSec", 0)) || 0;
+            const swSec = Number(getSafeProp(drill, "switchIntervalSec", "SwitchIntervalSec", 1)) || 1;
+
+            totalMs = Math.max(0, Math.floor(totalSec * 1000));
+            switchMs = Math.max(100, Math.floor(swSec * 1000)); 
+
+            AutoIncreaseDifficulty = (drill?.AutoIncreaseDifficulty ?? drill?.AutoIncreaseDifficulty) === true;
+
+            const targetColorsStr = getSafeProp(drill, "targetColors", "TargetColors", "");
+            const actionsStr = getSafeProp(drill, "actionsForTargetColors", "ActionsForTargetColors", "");
+
+            drillNameEl.textContent = name;
+            drillDescEl.textContent = desc || "Focus drill: react only to target colors.";
+            diffLabelEl.textContent = diff;
+
+            elapsedMs = 0;
+            elapsedLabelEl.textContent = "0";
+            totalLabelEl.textContent = String(totalSec);
+
+            const idList = (targetColorsStr || "")
+                .split(",")
+                .map(s => Number(s.trim()))
+                .filter(n => !isNaN(n) && n > 0);
+
+            selectedColors = allColors.filter(c => idList.includes(Number(getSafeId(c))));
+
+            targetFingerprints = new Set(
+                selectedColors.map(c => `${normName(getSafeProp(c, "name", "Name", ""))}|${normHex(getSafeProp(c, "code", "Code", ""))}`)
+            );
+
+            actionsMap = {};
+            if (actionsStr) {
+                actionsStr.split(";").forEach(pair => {
+                    const [idRaw, actRaw] = pair.split(":");
+                    const cid = Number((idRaw || "").trim());
+                    if (!isNaN(cid) && cid > 0) {
+                        actionsMap[cid] = (actRaw || "").trim();
+                    }
+                });
+            }
+
+            if (!selectedColors.length) {
+                statusTextEl.textContent = "No target colors found for this drill.";
+            } else {
+                statusTextEl.textContent = `Loaded ${selectedColors.length} target colors.`;
+            }
+
+            stepIndex = 0;
+            showFakeNextEasy = false;
+            nextSwitchAtMs = 0;
+
+            renderStepCustomview();
+
+            startTimer();
+        }
+
+        function renderStepCustomview() {
+            if (!selectedColors.length) {
+                colorBoxEl.style.background = "#111";
+                colorNameEl.textContent = "-";
+                actionTextEl.textContent = "No target colors configured.";
+                metaTextEl.textContent = "";
+                return;
+            }
+
+            const first = selectedColors[0];
+            const cid = Number(getSafeId(first));
+            const colorName = getSafeProp(first, "name", "Name", `Color ${cid}`);
+            const colorCode = getSafeProp(first, "code", "Code", "#ffffff");
+            const act = actionsMap[cid] || "-";
+
+            colorBoxEl.style.background = colorCode;
+            colorNameEl.textContent = colorName;
+            actionTextEl.textContent = act;
+
+            const diff = getSafeProp(drill, "difficultyLevel", "DifficultyLevel", "Easy");
+            metaTextEl.textContent =
+                `Mode: ${diff} · Order: ${AutoIncreaseDifficulty ? "Random" : "Sequential"} · Targets: ${selectedColors.length} · switch: ${(switchMs / 1000).toFixed(2)}s`;
+        }
+
+        function pickTargetColor() {
+            if (!selectedColors.length) return null;
+
+            if (AutoIncreaseDifficulty) {
+                const i = Math.floor(Math.random() * selectedColors.length);
+                return selectedColors[i];
+            }
+
+            const c = selectedColors[stepIndex % selectedColors.length];
+            stepIndex++;
+            return c;
+        }
+
+        function renderColorStep(isFake) {
+            if (isFake) {
+                const fake = generateFakeColor();
+                const code = fake?.code || "#000000";
+                const name = fake?.name || "BLACK";
+
+                colorBoxEl.style.background = code;
+                colorNameEl.textContent = name;
+                actionTextEl.textContent = "FAKE!";
+                metaTextEl.textContent = fake.collided ? "Fake matched target -> forced BLACK" : "Fake";
+                return;
+            }
+
+            const color = pickTargetColor();
+            if (!color) return;
+
+            const cid = Number(getSafeId(color));
+            const colorName = getSafeProp(color, "name", "Name", `Color ${cid}`);
+            const colorCode = getSafeProp(color, "code", "Code", "#ffffff");
+            const act = actionsMap[cid] || "-";
+
+            colorBoxEl.style.background = colorCode;
+            colorNameEl.textContent = colorName;
+            actionTextEl.textContent = act;
+            metaTextEl.textContent = `Target #${cid} · ${AutoIncreaseDifficulty ? "Random" : "Seq"}`;
+        }
+
+        function stopTimer(finalText) {
+            if (tickTimer) {
+                clearInterval(tickTimer);
+                tickTimer = null;
+            }
+            isRunning = false;
+            statusTextEl.textContent = finalText || "Paused.";
+            btnStart.textContent = "Start";
+        }
+
+        async function startTimer() {
+            if (!selectedColors.length) {
+                await uiAlert("This drill has no target colors configured.", "Configuration Error", "error");
+                return;
+            }
+            if (totalMs <= 0 || switchMs <= 0) {
+                await uiAlert("Total duration or switch interval is invalid.", "Invalid Configuration", "error");
+                return;
+            }
+            if (isRunning) return;
+
+            const diff = getSafeProp(drill, "difficultyLevel", "DifficultyLevel", "Easy");
+
+
+            function getIntervalMs(isFake) {
+                if (!isFake) return switchMs;
+
+                if (diff === "Easy") {
+                    return switchMs;
+                }
+
+                if (diff === "Medium") {
+                    return Math.max(150, Math.floor(switchMs * 0.75));
+                }
+
+                const min = 100;
+                const max = Math.max(150, switchMs);
+                return Math.floor(min + Math.random() * (max - min));
+            }
+
+            function decideFakeNext() {
+                if (diff === "Easy") {
+                    showFakeNextEasy = !showFakeNextEasy;
+                    return showFakeNextEasy;
+                }
+                if (diff === "Medium") {
+                    return Math.random() < 0.35;
+                }
+                return Math.random() < 0.55;
+            }
+
+            isRunning = true;
+            statusTextEl.textContent = "Running…";
+            btnStart.textContent = "Start";
+
+            if (elapsedMs === 0) {
+                renderColorStep(false);
+                nextSwitchAtMs = getIntervalMs(false);
+            }
+
+            const tickMs = 100;
+
+            if (tickTimer) clearInterval(tickTimer);
+
+            tickTimer = setInterval(() => {
+                elapsedMs += tickMs;
+
+                const elapsedSecNow = Math.min(totalMs, elapsedMs) / 1000;
+                elapsedLabelEl.textContent = String(Math.floor(elapsedSecNow));
+
+                if (elapsedMs >= totalMs) {
+                    stopTimer("Finished.");
+                    actionTextEl.textContent = "Finished!";
+                    metaTextEl.textContent = "";
+                    return;
+                }
+
+                if (elapsedMs >= nextSwitchAtMs) {
+                    const isFake = decideFakeNext();
+                    renderColorStep(isFake);
+
+                    const interval = getIntervalMs(isFake);
+                    nextSwitchAtMs = elapsedMs + interval;
+                }
+            }, tickMs);
+        }
+
+        btnStart.addEventListener("click", async () => {
+            if (!isRunning) await startTimer();
+        });
+
+        btnPause.addEventListener("click", () => {
+            stopTimer("Paused.");
+        });
+
+        btnRestart.addEventListener("click", () => {
+            stopTimer("Restarted.");
+            elapsedMs = 0;
+            stepIndex = 0;
+            elapsedLabelEl.textContent = "0";
+            renderStepCustomview();
+            startTimer();
+        });
+
+        closeBtn?.addEventListener("click", () => {
+            window.location.href = "/user.html";
+        });
+
+        function uiModal({
+            title = "Info",
+            body = "",
+            variant = "default",
+            buttons = [{ text: "OK", value: true, className: "primary" }]
+        }) {
+            const modal = document.getElementById("appModal");
+            const titleEl = document.getElementById("appModalTitle");
+            const bodyEl = document.getElementById("appModalBody");
+            const actionsEl = document.getElementById("appModalActions");
+
+            if (!modal || !titleEl || !bodyEl || !actionsEl) {
+                console.warn("Modal DOM not found. Message:", title, body);
+                return Promise.resolve(true);
+            }
+
+            let resolve;
+            const p = new Promise(r => (resolve = r));
+
+            modal.classList.remove("modal-default", "modal-error", "modal-success", "modal-warning");
+            modal.classList.add(`modal-${variant}`);
+
+            const close = (val) => {
+                modal.classList.add("hidden");
+                modal.setAttribute("aria-hidden", "true");
+                document.removeEventListener("keydown", onKey);
+                resolve(val);
+            };
+
+            const onKey = (e) => {
+                if (e.key === "Escape") close(false);
+            };
+
+            titleEl.textContent = title;
+            bodyEl.textContent = body;
+            actionsEl.innerHTML = "";
+
+            modal.classList.remove("hidden");
+            modal.setAttribute("aria-hidden", "false");
+
+            document.addEventListener("keydown", onKey);
+
+            modal.querySelectorAll("[data-close='1']").forEach(el => {
+                el.onclick = () => close(false);
+            });
+
+            buttons.forEach(b => {
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = `modal-btn ${b.className || ""}`.trim();
+                btn.textContent = b.text || "OK";
+                btn.onclick = () => close(b.value);
+                actionsEl.appendChild(btn);
+            });
+
+            setTimeout(() => actionsEl.querySelector("button")?.focus(), 0);
+            return p;
+        }
+
+        function uiAlert(message, title = "Info", variant = "default") {
+            return uiModal({
+                title,
+                body: message,
+                variant,
+                buttons: [{ text: "OK", value: true, className: "primary" }]
+            });
+        }
+
+        function uiConfirm(message, title = "Confirm") {
+            return uiModal({
+                title,
+                body: message,
+                variant: "error",
+                buttons: [
+                    { text: "Cancel", value: false },
+                    { text: "Delete", value: true, className: "danger" }
+                ]
+            });
+        }
+    </script>
+
+
+
+</body>
+</html>

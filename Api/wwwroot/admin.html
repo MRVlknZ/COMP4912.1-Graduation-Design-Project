@@ -1,0 +1,811 @@
+﻿<!doctype html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Admin Panel (Simple)</title>
+    <style>
+        :root {
+            --bg: #0f0f10;
+            --card: #17181a;
+            --card2: #1f2023;
+            --line: #2b2c31;
+            --txt: #eaeaea;
+            --muted: #a9a9b3;
+            --danger: #ff4d4d;
+            --ok: #5ee07a;
+            --warn: #ffcc66;
+            --btn: #2a2b2f;
+            --btn2: #32343a;
+            --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            --sans: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--txt);
+            font-family: var(--sans);
+            min-height: 100vh
+        }
+
+        .wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 18px 16px 40px
+        }
+
+        .topbar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            padding: 14px 16px;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: linear-gradient(180deg,#15161a,#121317);
+            position: sticky;
+            top: 10px;
+            z-index: 5;
+        }
+
+        .brand {
+            display: flex;
+            flex-direction: column;
+            gap: 2px
+        }
+
+            .brand b {
+                font-size: 16px
+            }
+
+            .brand span {
+                font-size: 12px;
+                color: var(--muted)
+            }
+
+        .row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap
+        }
+
+        .pill {
+            display: inline-flex;
+            gap: 8px;
+            align-items: center;
+            padding: 8px 10px;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            background: rgba(255,255,255,.03);
+            font-size: 12px;
+            color: var(--muted)
+        }
+
+            .pill input {
+                background: transparent;
+                border: none;
+                outline: none;
+                color: var(--txt);
+                width: 320px;
+                font-family: var(--mono);
+                font-size: 12px
+            }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-top: 14px
+        }
+
+        @media(max-width:980px) {
+            .grid {
+                grid-template-columns: 1fr
+            }
+        }
+
+        .card {
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: var(--card);
+            overflow: hidden
+        }
+
+            .card h3 {
+                margin: 0;
+                padding: 12px 14px;
+                font-size: 14px;
+                border-bottom: 1px solid var(--line);
+                background: linear-gradient(180deg,#1a1b20,#15161a);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px
+            }
+
+                .card h3 small {
+                    color: var(--muted);
+                    font-weight: 500;
+                    font-size: 12px
+                }
+
+        .body {
+            padding: 12px 14px
+        }
+
+        select, button, input, textarea {
+            font-family: var(--sans)
+        }
+
+            select, input[type="text"] {
+                background: var(--card2);
+                color: var(--txt);
+                border: 1px solid var(--line);
+                border-radius: 10px;
+                padding: 10px 10px;
+                outline: none;
+            }
+
+        button {
+            background: var(--btn);
+            color: var(--txt);
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 10px 12px;
+            cursor: pointer;
+            transition: .15s ease;
+        }
+
+            button:hover {
+                background: var(--btn2);
+                transform: translateY(-1px)
+            }
+
+            button:disabled {
+                opacity: .45;
+                cursor: not-allowed;
+                transform: none
+            }
+
+        .btn-ok {
+            border-color: rgba(94,224,122,.35)
+        }
+
+        .btn-danger {
+            border-color: rgba(255,77,77,.35)
+        }
+
+        .btn-warn {
+            border-color: rgba(255,204,102,.35)
+        }
+
+        .muted {
+            color: var(--muted);
+            font-size: 12px
+        }
+
+        .k {
+            font-family: var(--mono);
+            font-size: 12px;
+            color: var(--muted)
+        }
+
+        .hr {
+            height: 1px;
+            background: var(--line);
+            margin: 12px 0
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            overflow: hidden
+        }
+
+            .table th, .table td {
+                padding: 10px 10px;
+                border-bottom: 1px solid var(--line);
+                vertical-align: top;
+                font-size: 13px
+            }
+
+            .table th {
+                font-size: 12px;
+                color: var(--muted);
+                text-align: left;
+                background: rgba(255,255,255,.03)
+            }
+
+            .table tr:last-child td {
+                border-bottom: none
+            }
+
+        .actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap
+        }
+
+        .status {
+            font-family: var(--mono);
+            font-size: 12px
+        }
+
+            .status.ok {
+                color: var(--ok)
+            }
+
+            .status.err {
+                color: var(--danger)
+            }
+
+            .status.warn {
+                color: var(--warn)
+            }
+
+        pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: 260px;
+            overflow: auto;
+            background: rgba(0,0,0,.25);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 10px;
+            font-family: var(--mono);
+            font-size: 12px;
+            line-height: 1.35
+        }
+        .lock {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: grid;
+            place-items: center;
+            background: radial-gradient(800px 500px at 50% 30%, rgba(255,255,255,.06), rgba(0,0,0,.72));
+            backdrop-filter: blur(6px);
+        }
+
+            .lock.hidden {
+                display: none
+            }
+
+        .lockCard {
+            width: min(520px,92vw);
+            background: linear-gradient(180deg,#1a1b20,#15161a);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: 0 30px 80px rgba(0,0,0,.65);
+        }
+
+        .lockTitle {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 6px
+        }
+
+        .lockDesc {
+            color: var(--muted);
+            font-size: 12px;
+            margin-bottom: 12px
+        }
+
+        .lockInput {
+            width: 100%;
+            background: var(--card2);
+            color: var(--txt);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 12px 12px;
+            outline: none;
+            font-family: var(--mono);
+            font-size: 13px
+        }
+
+        .lockErr {
+            margin-top: 10px;
+            color: var(--danger);
+            font-size: 12px;
+            min-height: 16px
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Admin Lock (kalıcı oturum yok: her açılışta şifre) -->
+    <div id="adminLock" class="lock hidden" aria-hidden="true">
+        <div class="lockCard" role="dialog" aria-modal="true">
+            <div class="lockTitle">Admin Girişi</div>
+            <div class="lockDesc">Şifreyi gir (DB yok). Şifre: <span class="k">1234</span></div>
+            <input id="adminPass" class="lockInput" type="password" placeholder="Şifre" autocomplete="off" />
+            <div class="row" style="margin-top:12px">
+                <button id="adminEnter" class="btn-ok">Giriş</button>
+                <button id="adminExit" class="btn-danger">Kapat</button>
+            </div>
+            <div id="adminErr" class="lockErr"></div>
+        </div>
+    </div>
+
+    <div class="wrap">
+        <div class="topbar">
+            <div class="brand">
+                <b>Admin Panel (Simple)</b>
+                <span>Users + Drills (tablo) • Delete/SoftDelete + Ban/Unban</span>
+            </div>
+            <div class="row">
+                <span class="pill">
+                    Base URL:
+                    <input id="baseUrl" placeholder="örn: https://localhost:7188" />
+                </span>
+                <button id="btnPing" class="btn-warn">Ping</button>
+            </div>
+        </div>
+
+        <div class="grid">
+            <!-- USERS -->
+            <div class="card">
+                <h3>
+                    <span>Users</span>
+                    <small id="usersMeta">—</small>
+                </h3>
+                <div class="body">
+                    <div class="row">
+                        <button id="btnLoadUsers" class="btn-ok">Load Users</button>
+                        <span class="muted">Satırdan Ban/Unban yap.</span>
+                    </div>
+
+                    <div class="hr"></div>
+
+                    <div style="overflow:auto">
+                        <table class="table" id="usersTable">
+                            <thead>
+                                <tr>
+                                    <th style="width:70px">ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th style="width:180px">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td colspan="4" class="muted">No data.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="hr"></div>
+
+                    <div class="row">
+                        <span class="muted">Seçili User:</span>
+                        <span class="k" id="selectedUser">—</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DRILLS -->
+            <div class="card">
+                <h3>
+                    <span>Drills</span>
+                    <small id="drillsMeta">—</small>
+                </h3>
+                <div class="body">
+                    <div class="row">
+                        <select id="drillType">
+                            <option value="CColorDrill">CColorDrill</option>
+                            <option value="CTextDrill">CTextDrill</option>
+                            <option value="CCombDrill">CCombDrill</option>
+                            <option value="CFocusDrill">CFocusDrill</option>
+                            <option value="CSoundDrill">CSoundDrill</option>
+                            <option value="P4ColorDrill">P4ColorDrill</option>
+                            <option value="PTextDrill">PTextDrill</option>
+                            <option value="PCombDrill">PCombDrill</option>
+                            <option value="PFocusDrill">PFocusDrill</option>
+                            <option value="PSoundDrill">PSoundDrill</option>
+                        </select>
+
+                        <button id="btnLoadDrills" class="btn-ok">Load By Selected User</button>
+                    </div>
+
+                    <div class="hr"></div>
+
+                    <div style="overflow:auto">
+                        <table class="table" id="drillsTable">
+                            <thead>
+                                <tr>
+                                    <th style="width:70px">ID</th>
+                                    <th>Name</th>
+                                    <th style="width:170px">DeletedAt</th>
+                                    <th style="width:240px">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td colspan="4" class="muted">No data.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="hr"></div>
+                    <div class="muted">
+                        Not: Delete/SoftDelete bazen backend’de POST bekliyor. Bu panel otomatik “fallback” deniyor.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESPONSE LOG -->
+        <div class="card" style="margin-top:14px">
+            <h3>
+                <span>Last Response</span>
+                <small class="status warn" id="respStatus">—</small>
+            </h3>
+            <div class="body">
+                <div class="muted k" id="respUrl">—</div>
+                <div style="height:8px"></div>
+                <pre id="respBox">—</pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ENDPOINTS = {
+            Users: {
+                list: { method: "GET", path: "/api/Users/GetUsers" },
+                ban: { method: "POST", path: "/api/Users/Ban" },
+                unban: { method: "POST", path: "/api/Users/Unban" },
+            },
+            CColorDrill: { getByUser: { method: "GET", path: "/api/CColorDrill/GetByUser" }, soft: { method: "POST", path: "/api/CColorDrill/SoftDelete" }, del: { method: "DELETE", path: "/api/CColorDrill/Delete" } },
+            CTextDrill: { getByUser: { method: "GET", path: "/api/CTextDrill/GetByUser" }, soft: { method: "POST", path: "/api/CTextDrill/SoftDelete" }, del: { method: "DELETE", path: "/api/CTextDrill/Delete" } },
+            CCombDrill: { getByUser: { method: "GET", path: "/api/CCombDrill/GetByUser" }, soft: { method: "POST", path: "/api/CCombDrill/SoftDelete" }, del: { method: "DELETE", path: "/api/CCombDrill/Delete" } },
+            CFocusDrill: { getByUser: { method: "GET", path: "/api/CFocusDrill/GetByUser" }, soft: { method: "POST", path: "/api/CFocusDrill/SoftDelete" }, del: { method: "DELETE", path: "/api/CFocusDrill/Delete" } },
+            CSoundDrill: { getByUser: { method: "GET", path: "/api/CSoundDrill/GetByUser" }, soft: { method: "POST", path: "/api/CSoundDrill/SoftDelete" }, del: { method: "DELETE", path: "/api/CSoundDrill/Delete" } },
+            P4ColorDrill: { getByUser: { method: "GET", path: "/api/P4ColorDrill/GetByUser" }, soft: { method: "POST", path: "/api/P4ColorDrill/SoftDelete" }, soft2: { method: "POST", path: "/api/P4ColorDrill/Softdelete" }, del: { method: "DELETE", path: "/api/P4ColorDrill/Delete" } },
+            PTextDrill: { getByUser: { method: "GET", path: "/api/PTextDrill/GetByUser" }, soft: { method: "POST", path: "/api/PTextDrill/SoftDelete" }, del: { method: "DELETE", path: "/api/PTextDrill/Delete" } },
+            PCombDrill: { getByUser: { method: "GET", path: "/api/PCombDrill/GetByUser" }, soft: { method: "POST", path: "/api/PCombDrill/SoftDelete" }, del: { method: "DELETE", path: "/api/PCombDrill/Delete" } },
+            PFocusDrill: { getByUser: { method: "GET", path: "/api/PFocusDrill/GetByUser" }, soft: { method: "POST", path: "/api/PFocusDrill/SoftDelete" }, del: { method: "DELETE", path: "/api/PFocusDrill/Delete" } },
+            PSoundDrill: { getByUser: { method: "GET", path: "/api/PSoundDrill/GetByUser" }, soft: { method: "POST", path: "/api/PSoundDrill/SoftDelete" }, del: { method: "DELETE", path: "/api/PSoundDrill/Delete" } },
+        };
+
+        const $ = (s) => document.querySelector(s);
+        const esc = (str = "") => String(str).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch] || ch));
+
+        function baseUrl() {
+            const v = ($("#baseUrl").value || "").trim();
+            if (!v) return "";  
+            return v.replace(/\/+$/, "");
+        }
+
+        async function rawFetch(method, path, query = "", body = null) {
+            const url = baseUrl() + path + (query || "");
+            const opts = { method, headers: {} };
+            if (body !== null && body !== undefined && method !== "GET") {
+                opts.headers["Content-Type"] = "application/json";
+                opts.body = JSON.stringify(body);
+            }
+            const res = await fetch(url, opts);
+            const ct = (res.headers.get("content-type") || "").toLowerCase();
+            let data = null;
+            if (ct.includes("application/json")) data = await res.json().catch(() => null);
+            else data = await res.text().catch(() => "");
+            return { res, data, url };
+        }
+
+        function setResp(r) {
+            const st = $("#respStatus");
+            st.className = "status " + (r?.res?.ok ? "ok" : "err");
+            st.textContent = r?.res ? `${r.res.status} ${r.res.ok ? "OK" : "ERR"}` : "—";
+            $("#respUrl").textContent = r?.url || "—";
+            $("#respBox").textContent = (typeof r?.data === "string") ? r.data : JSON.stringify(r?.data, null, 2);
+        }
+
+        async function callWithFallback({ method, path, idValue, alsoTryPost = false }) {
+            const keys = ["id", "userId", "Id", "UserId"];
+            const baseMethod = String(method || "GET").toUpperCase();
+            const methods = [baseMethod];
+
+            if (alsoTryPost && baseMethod !== "POST") methods.push("POST");
+
+            let last = null;
+
+            for (const m of methods) {
+                for (const k of keys) {
+                    const q = `?${k}=${encodeURIComponent(String(idValue))}`;
+                    try {
+                        const r = await rawFetch(m, path, q, null);
+                        last = r;
+                        if (r.res.ok && r.data !== false) return r; 
+                    } catch (e) {
+                        last = { res: { ok: false, status: 0 }, data: String(e), url: baseUrl() + path };
+                    }
+                }
+
+                if (m === "POST") {
+                    for (const k of keys) {
+                        const body = { [k]: idValue };
+                        try {
+                            const r = await rawFetch("POST", path, "", body);
+                            last = r;
+                            if (r.res.ok && r.data !== false) return r;
+                        } catch (e) {
+                            last = { res: { ok: false, status: 0 }, data: String(e), url: baseUrl() + path };
+                        }
+                    }
+                }
+            }
+
+            return last;
+        }
+
+        const ADMIN_PASS = "1234";
+
+        function showLock() {
+            $("#adminLock").classList.remove("hidden");
+            $("#adminLock").setAttribute("aria-hidden", "false");
+            $("#adminErr").textContent = "";
+            $("#adminPass").value = "";
+            setTimeout(() => $("#adminPass").focus(), 50);
+        }
+        function hideLock() {
+            $("#adminLock").classList.add("hidden");
+            $("#adminLock").setAttribute("aria-hidden", "true");
+        }
+
+        let selectedUserId = 0;
+        let lastDrills = [];
+        let lastDrillType = "CColorDrill";
+
+
+        async function loadUsers() {
+            $("#usersMeta").textContent = "Loading...";
+            try {
+                const r = await rawFetch(ENDPOINTS.Users.list.method, ENDPOINTS.Users.list.path);
+                setResp(r);
+                if (!r.res.ok) {
+                    $("#usersMeta").textContent = `Error ${r.res.status}`;
+                    return;
+                }
+
+                const users = Array.isArray(r.data) ? r.data : [];
+                $("#usersMeta").textContent = `${users.length} users`;
+
+                const tbody = $("#usersTable tbody");
+                if (users.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4" class="muted">No data.</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = users.map(u => {
+                    const id = u.id ?? u.Id ?? "";
+                    const fn = u.firstName ?? u.FirstName ?? u.name ?? u.Name ?? "";
+                    const ln = u.lastName ?? u.LastName ?? "";
+                    const email = u.email ?? u.Email ?? "";
+                    const full = `${fn} ${ln}`.trim() || "(no name)";
+                    return `
+                    <tr>
+                      <td class="k">${esc(String(id))}</td>
+                      <td>${esc(full)}</td>
+                      <td class="k">${esc(String(email))}</td>
+                      <td>
+                        <div class="actions">
+                          <button class="btn-ok" data-act="select" data-id="${esc(String(id))}">Select</button>
+                          <button class="btn-warn" data-act="ban" data-id="${esc(String(id))}">Ban</button>
+                          <button class="btn-ok" data-act="unban" data-id="${esc(String(id))}">Unban</button>
+                        </div>
+                      </td>
+                    </tr>
+                  `;
+                }).join("");
+
+                tbody.querySelectorAll("button[data-act]").forEach(btn => {
+                    btn.addEventListener("click", async () => {
+                        const act = btn.dataset.act;
+                        const id = Number(btn.dataset.id || 0) || 0;
+                        if (!id) return;
+
+                        if (act === "select") {
+                            selectedUserId = id;
+                            $("#selectedUser").textContent = String(id);
+                            $("#drillsMeta").textContent = "User selected. Choose drill type and Load.";
+                            return;
+                        }
+
+                        if (!confirm(`${act.toUpperCase()} userId=${id} ?`)) return;
+
+                        if (act === "ban") {
+                            const rr = await callWithFallback({
+                                method: ENDPOINTS.Users.ban.method,
+                                path: ENDPOINTS.Users.ban.path,
+                                idValue: id,
+                                alsoTryPost: true
+                            });     
+                            setResp(rr);
+                            await loadUsers();
+                            return;
+                        }
+
+                        if (act === "unban") {
+                            const rr = await callWithFallback({
+                                method: ENDPOINTS.Users.unban.method,
+                                path: ENDPOINTS.Users.unban.path,
+                                idValue: id,
+                                alsoTryPost: true
+                            });
+                            setResp(rr);
+                            await loadUsers();
+                            return;
+                        }
+                    });
+                });
+
+            } catch (err) {
+                $("#usersMeta").textContent = "ERROR";
+                setResp({ res: { ok: false, status: 0 }, data: String(err), url: "" });
+            }
+        }
+        async function loadDrills() {
+            const type = $("#drillType").value;
+            lastDrillType = type;
+
+            if (!selectedUserId) {
+                alert("Önce Users tablosundan Select ile bir user seç.");
+                return;
+            }
+
+            $("#drillsMeta").textContent = `Loading ${type} for userId=${selectedUserId}...`;
+
+            const cfg = ENDPOINTS[type];
+            const query = `?userId=${encodeURIComponent(String(selectedUserId))}`;
+
+            try {
+                const r = await rawFetch(cfg.getByUser.method, cfg.getByUser.path, query);
+                setResp(r);
+
+                if (!r.res.ok) {
+                    $("#drillsMeta").textContent = `Error ${r.res.status}`;
+                    renderDrillsTable([], type);
+                    return;
+                }
+
+                const arr = Array.isArray(r.data) ? r.data : [];
+                lastDrills = arr;
+
+                $("#drillsMeta").textContent = `${type}: ${arr.length} item(s)`;
+                renderDrillsTable(arr, type);
+
+            } catch (err) {
+                $("#drillsMeta").textContent = "ERROR";
+                setResp({ res: { ok: false, status: 0 }, data: String(err), url: "" });
+                renderDrillsTable([], type);
+            }
+        }
+
+        function renderDrillsTable(items, type) {
+            const tbody = $("#drillsTable tbody");
+            if (!items || items.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="muted">No data.</td></tr>`;
+                return;
+            }
+
+            const list = [...items].sort((a, b) => Number(b.id ?? b.Id ?? 0) - Number(a.id ?? a.Id ?? 0));
+
+            tbody.innerHTML = list.map(d => {
+                const id = d.id ?? d.Id ?? "";
+                const name = d.drillName ?? d.DrillName ?? d.name ?? d.Name ?? "(no name)";
+                const del = d.deletedAt ?? d.DeletedAt;
+                const delText = (del === null || del === undefined) ? "—" : String(del);
+
+                return `
+                  <tr>
+                    <td class="k">${esc(String(id))}</td>
+                    <td>${esc(String(name))}</td>
+                    <td class="k">${esc(delText)}</td>
+                    <td>
+                      <div class="actions">
+                        <button class="btn-ok" data-act="view" data-id="${esc(String(id))}">View</button>
+                        <button class="btn-warn" data-act="soft" data-id="${esc(String(id))}">SoftDelete</button>
+                        <button class="btn-danger" data-act="del" data-id="${esc(String(id))}">Delete</button>
+                      </div>
+                    </td>
+                  </tr>
+                `;
+            }).join("");
+
+            tbody.querySelectorAll("button[data-act]").forEach(btn => {
+                btn.addEventListener("click", async () => {
+                    const act = btn.dataset.act;
+                    const idStr = btn.dataset.id;
+                    const id = Number(idStr || 0) || 0;
+                    if (!id) return;
+
+                    if (act === "view") {
+                        const found = list.find(x => String(x.id ?? x.Id) === String(id));
+                        setResp({ res: { ok: true, status: 200 }, data: found ?? {}, url: "(local) view" });
+                        return;
+                    }
+
+                    if (!confirm(`${act === "soft" ? "SoftDelete" : "Delete"} • ${type} • id=${id} ?`)) return;
+
+                    const cfg = ENDPOINTS[type];
+
+                    if (act === "soft") {
+                        const rr = await callWithFallback({
+                            method: cfg.soft.method,
+                            path: cfg.soft.path,
+                            idValue: id,
+                            alsoTryPost: true
+                        });
+                        setResp(rr);
+                        await loadDrills();
+                        return;
+                    }
+
+                    if (act === "del") {
+                        const rr = await callWithFallback({
+                            method: cfg.del.method,
+                            path: cfg.del.path,
+                            idValue: id,
+                            alsoTryPost: true
+                        });
+                        setResp(rr);
+                        await loadDrills();
+                        return;
+                    }
+                });
+            });
+        }
+
+        async function ping() {
+            setResp({ res: { ok: true, status: 0 }, data: "Sending...", url: "—" });
+            try {
+                const r = await rawFetch(ENDPOINTS.Users.list.method, ENDPOINTS.Users.list.path);
+                setResp(r);
+            } catch (err) {
+                setResp({ res: { ok: false, status: 0 }, data: String(err), url: "" });
+            }
+        }
+
+        (function init() {
+            showLock();
+
+            $("#adminEnter").addEventListener("click", () => {
+                const v = ($("#adminPass").value || "").trim();
+                if (v === ADMIN_PASS) {
+                    hideLock(); 
+                } else {
+                    $("#adminErr").textContent = "Şifre yanlış.";
+                    $("#adminPass").focus();
+                    $("#adminPass").select?.();
+                }
+            });
+
+            $("#adminPass").addEventListener("keydown", (e) => {
+                if (e.key === "Enter") $("#adminEnter").click();
+                if (e.key === "Escape") $("#adminExit").click();
+            });
+
+            $("#adminExit").addEventListener("click", () => {
+            
+                showLock();
+            });
+
+            $("#baseUrl").value = ""; 
+
+            $("#btnPing").addEventListener("click", ping);
+            $("#btnLoadUsers").addEventListener("click", loadUsers);
+            $("#btnLoadDrills").addEventListener("click", loadDrills);
+
+            $("#selectedUser").textContent = "—";
+            $("#drillsMeta").textContent = "Önce user seç.";
+        })();
+    </script>
+</body>
+</html>

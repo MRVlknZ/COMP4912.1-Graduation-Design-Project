@@ -1,0 +1,270 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Dashboard</title>
+
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/user.css">
+    <script src="../js/user.js" defer></script>
+</head>
+<body>
+
+    <div class="main-container">
+
+        <aside class="sidebar">
+            <div class="icon-btn" id="profileBtn">
+                <i class='bx bx-user'></i>
+            </div>
+
+            <div class="icon-btn" id="logoutBtn">
+                <i class='bx bx-log-out'></i>
+            </div>
+        </aside>
+
+        <section class="content">
+
+            <!-- PRE DRILLS -->
+            <div class="drill-section pre-section">
+                <h2>Pre Drills</h2>
+
+                <div class="drill-list">
+                    <div class="drill-box pre-box">
+                        <div class="drill-corner-icon has-tooltip">
+                            <img src="assets/icons8-whistle-32 (1).png" />
+                        </div>
+
+                        <h3 class="ellipsis" data-full="Explosive Jump Drill">
+                            <span class="ellipsis-text">Explosive Jump Drill</span>
+                        </h3>
+                        <button class="start-btn" id="startPreExjumpBtn">Start Drill</button>
+                    </div>
+
+
+                        <div class="drill-box pre-box">
+                            <div class="drill-corner-icon has-tooltip">
+                                <img src="assets/icons8-whistle-32 (1).png" />
+                            </div>
+
+                            <h3 class="ellipsis" data-full="Line Drill">
+                                <span class="ellipsis-text">Line Drill</span>
+                            </h3>
+                            <button class="start-btn" id="startPreLineDrillBtn">Start Drill</button>
+                        </div>
+
+                        <div class="drill-box pre-box">
+                            <div class="drill-corner-icon has-tooltip">
+                                <img src="assets/icons8-whistle-32 (1).png" />
+                            </div>
+
+                            <h3 class="ellipsis" data-full="4 Color Drill">
+                                <span class="ellipsis-text">4 Color Drill</span>
+                            </h3>
+                            <button class="start-btn" id="start4Color">Start Drill</button>
+                        </div>
+
+                        <div class="drill-box pre-box">
+                            <div class="drill-corner-icon has-tooltip">
+                                <img src="assets/icons8-whistle-32 (1).png" />
+                            </div>
+
+                            <h3 class="ellipsis" data-full="Text Drill">
+                                <span class="ellipsis-text">Text Drill</span>
+                            </h3>
+                            <button class="start-btn" id="startPreText">Start Drill</button>
+                        </div>
+
+                        <div class="drill-box pre-box">
+                            <div class="drill-corner-icon has-tooltip">
+                                <img src="assets/icons8-whistle-32 (1).png" />
+                            </div>
+
+                            <h3 class="ellipsis" data-full="Combination Drill">
+                                <span class="ellipsis-text">Combination Drill</span>
+                            </h3>
+                            <button class="start-btn" id="startPreComb">Start Drill</button>
+                        </div>
+
+                        <div class="drill-box pre-box">
+                            <div class="drill-corner-icon has-tooltip">
+                                <img src="assets/icons8-whistle-32 (1).png" />
+                            </div>
+
+                            <h3 class="ellipsis" data-full="Focus Drill">
+                                <span class="ellipsis-text">Focus Drill</span>
+                            </h3>
+                            <button class="start-btn" id="startPreFocus">Start Drill</button>
+                        </div>
+
+                        <div class="drill-box pre-box">
+                            <div class="drill-corner-icon has-tooltip">
+                                <img src="assets/icons8-whistle-32 (1).png" />
+                            </div>
+
+                            <h3 class="ellipsis" data-full="Sound Drill">
+                                <span class="ellipsis-text">Sound Drill</span>
+                            </h3>
+                            <button class="start-btn" id="startPreSound">Start Drill</button>
+                        </div>
+
+                    </div>
+                </div>
+
+            <!-- CREATE CUSTOM DRILLS -->
+            <div class="drill-section custom-section">
+                <h2>Create Custom Drills</h2>
+
+                <div class="drill-list" id="createCustomDrillsList">
+
+                    <div class="drill-box custom-box">
+                        <div class="drill-corner-icon has-tooltip">
+                            <img src="assets/icons8-exercise-plan-32.png" />
+                        </div>
+
+                        <h3 class="ellipsis" data-full="Color Drill">
+                            <span class="ellipsis-text">Color Drill</span>
+                        </h3>
+                        <button class="start-btn" id="startCustomColor">Create Drill</button>
+                    </div>
+
+                    <div class="drill-box custom-box">
+                        <div class="drill-corner-icon has-tooltip">
+                            <img src="assets/icons8-exercise-plan-32.png" />
+                        </div>
+                        <h3 class="ellipsis" data-full="Text Drill">
+                            <span class="ellipsis-text">Text Drill</span>
+                        </h3>
+                        <button class="start-btn" id="startCustomTextDrill">Create Drill</button>
+                    </div>
+
+                    <div class="drill-box custom-box">
+                        <div class="drill-corner-icon has-tooltip">
+                            <img src="assets/icons8-exercise-plan-32.png" />
+                        </div>
+                        <h3 class="ellipsis" data-full="Combination Drill">
+                            <span class="ellipsis-text">Combination Drill</span>
+                        </h3>
+                        <button class="start-btn" id="startCustomComb">Create Drill</button>
+                    </div>
+
+                    <div class="drill-box custom-box">
+                        <div class="drill-corner-icon has-tooltip">
+                            <img src="assets/icons8-exercise-plan-32.png" />
+                        </div>
+                        <h3 class="ellipsis" data-full="Focus Drill">
+                            <span class="ellipsis-text">Focus Drill</span>
+                        </h3>
+                        <button class="start-btn" id="startCustomFocusDrill">Create Drill</button>
+                    </div>
+
+                    <div class="drill-box custom-box">
+                        <div class="drill-corner-icon has-tooltip">
+                            <img src="assets/icons8-exercise-plan-32.png" />
+                        </div>
+
+                        <h3 class="ellipsis" data-full="Sound Drill">
+                            <span class="ellipsis-text">Sound Drill</span>
+                        </h3>
+                        <button class="start-btn" id="startCustomSoundDrill">Create Drill</button>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- MY DRILLS -->
+            <div class="drill-section my-section">
+                <div class="drill-section-header">
+                    <h2>My Drills</h2>
+
+                    <select id="customDrillFilter">
+                        <option value="color">Color Drills</option>
+                        <option value="text">Text Drills</option>
+                        <option value="comb">Combination Drills</option>
+                        <option value="focus">Focus Drills</option>
+                        <option value="sound">Sound Drills</option>
+                    </select>
+                </div>
+
+                <div class="drill-list scrollable-drills" id="customDrillsList"></div>
+
+                <p id="noCustomDrills" style="display:none; color:#aaa; margin-top:10px;">
+                    You haven’t created any custom drills yet.
+                </p>
+            </div>
+
+
+            <!--Challanges-->
+            <div class="drill-section challenge-section">
+                <h2>Challenges</h2>
+
+                <div class="drill-list">
+
+                    <div class="drill-box challenge-box">
+                        <div class="drill-corner-icon has-tooltip">
+                            <img src="assets/icons8-race-flag-30.png" />
+                        </div>
+
+                        <h3 class="ellipsis" data-full="Click Challenge">
+                            <span class="ellipsis-text">Click Challenge</span>
+                        </h3>
+                        <button class="start-btn" id="startClickC">Start Drill</button>
+                    </div>
+
+                    <div class="drill-box challenge-box">
+                        <div class="drill-corner-icon has-tooltip">
+                            <img src="assets/icons8-race-flag-30.png" />
+                        </div>
+
+                        <h3 class="ellipsis" data-full="Explosive Jump Challenge">
+                            <span class="ellipsis-text">Explosive Jump Challenge</span>
+                        </h3>
+                        <button class="start-btn" id="ExJumpStartC">Start Drill</button>
+                    </div>
+
+                    <div class="drill-box challenge-box">
+                        <div class="drill-corner-icon has-tooltip">
+                            <img src="assets/icons8-race-flag-30.png" />
+                        </div>
+
+                        <h3 class="ellipsis" data-full="Reaction Challenge">
+                            <span class="ellipsis-text">Reaction Challenge</span>
+                        </h3>
+                        <button class="start-btn" id="ReaClickStartC">Start Drill</button>
+                    </div>
+
+                    <div class="drill-box challenge-box">
+                        <div class="drill-corner-icon has-tooltip">
+                            <img src="assets/icons8-race-flag-30.png" />
+                        </div>
+
+                        <h3 class="ellipsis" data-full="Quick Feet Challenge">
+                            <span class="ellipsis-text">Quick Feet Challenge</span>
+                        </h3>
+                        <button class="start-btn" id="quickFeetStartC">Start Drill</button>
+                    </div>
+
+
+                </div>
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <div id="appModal" class="modal hidden" aria-hidden="true">
+        <div class="modal-backdrop" data-close="1"></div>
+
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="appModalTitle">
+            <div class="modal-head">
+                <h3 id="appModalTitle">Title</h3>
+                <button class="modal-x" type="button" data-close="1" aria-label="Close">×</button>
+            </div>
+
+            <div id="appModalBody" class="modal-body"></div>
+            <div class="modal-actions" id="appModalActions"></div>
+        </div>
+    </div>
+
+</body>
+</html>

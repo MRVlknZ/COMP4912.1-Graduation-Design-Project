@@ -1,0 +1,980 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Sound Drill - Pre Setup</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        body {
+            background: #111;
+            color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .frame {
+            width: 90vw;
+            max-width: 1100px;
+            height: 70vh;
+            border: 3px solid #444;
+            border-radius: 16px;
+            padding: 32px 40px;
+            background: #181818;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        h1, h2 {
+            font-weight: 600;
+        }
+
+        .center {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            gap: 12px;
+        }
+
+        .btn-primary {
+            border: none;
+            padding: 10px 24px;
+            font-size: 1rem;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.15s ease;
+            background: #e11d48;
+            color: white;
+            box-shadow: 0 0 0 0 #e11d48;
+        }
+
+            .btn-primary:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 12px 25px rgba(225, 29, 72, 0.35);
+            }
+
+        .top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.95rem;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 6px;
+            background: #333;
+            border-radius: 999px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0;
+            background: #e11d48;
+            transition: width 0.25s ease;
+        }
+
+        .question-card {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 20px;
+            padding: 16px;
+        }
+
+        .question-title {
+            font-size: 1.4rem;
+        }
+
+        .question-desc {
+            font-size: 0.95rem;
+            color: #d4d4d4;
+            max-width: 480px;
+        }
+
+        .question-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 480px;
+        }
+
+        label {
+            font-size: 0.9rem;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #555;
+            background: #111;
+            color: #f5f5f5;
+            font-size: 0.95rem;
+        }
+
+        .bottom-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-arrows {
+            display: flex;
+            gap: 12px;
+        }
+
+        .arrow-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 999px;
+            border: 1px solid #555;
+            background: transparent;
+            color: #f5f5f5;
+            font-size: 1.3rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .arrow-btn:disabled {
+                opacity: 0.3;
+                cursor: default;
+            }
+
+        .countdown-circle {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: 4px solid #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .summary-list {
+            font-size: 0.95rem;
+            max-width: 480px;
+            text-align: left;
+            margin-top: 10px;
+        }
+
+            .summary-list div {
+                margin-bottom: 4px;
+            }
+
+        .total-time-pill {
+            border-radius: 999px;
+            border: 1px solid #555;
+            padding: 6px 14px;
+            font-size: 0.85rem;
+        }
+
+        .error-text {
+            margin-top: 4px;
+            font-size: 0.8rem;
+            color: #f97373;
+        }
+
+        @media (max-width: 700px) {
+            .frame {
+                padding: 20px;
+                height: 80vh;
+            }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 28px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #d4d4d4;
+            background: transparent;
+            color: #d4d4d4;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .close-btn:hover {
+                background: #d4d4d43d;
+                transform: scale(1.08);
+            }
+
+        #step-questions {
+            overflow: auto;
+        }
+
+        #step-ready {
+            overflow: auto;
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+        }
+
+        .modal-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+        }
+
+        .modal-card {
+            position: relative;
+            width: min(560px, 92vw);
+            max-height: 80vh;
+            margin: 8vh auto 0;
+            background: #1b1b1b;
+            border: 1px solid #333;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.55);
+            overflow: hidden;
+        }
+
+        .modal-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+            .modal-head h3 {
+                margin: 0;
+                font-size: 1rem;
+            }
+
+        .modal-x {
+            background: transparent;
+            border: none;
+            color: #ddd;
+            font-size: 22px;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .modal-body {
+            padding: 14px 16px;
+            color: #eaeaea;
+            overflow: auto;
+            max-height: calc(80vh - 110px);
+            white-space: pre-line;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            padding: 12px 16px;
+            border-top: 1px solid #2a2a2a;
+        }
+
+        .modal-btn {
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid #3a3a3a;
+            background: #232323;
+            color: #f5f5f5;
+            cursor: pointer;
+        }
+
+            .modal-btn.primary {
+                border-color: #4a4a4a;
+                background: #2b2b2b;
+            }
+
+            .modal-btn.danger {
+                border-color: #7f1d1d;
+                background: #3a1010;
+            }
+
+        .modal-error .modal-card {
+            background: linear-gradient(180deg, #2a0f0f, #160909);
+            border: 1px solid #7f1d1d;
+        }
+
+        .modal-error .modal-head {
+            border-bottom: 1px solid #7f1d1d;
+        }
+
+            .modal-error .modal-head h3 {
+                color: #fca5a5;
+            }
+
+        .modal-error .modal-body {
+            color: #fee2e2;
+        }
+
+        .modal-error .modal-x {
+            color: #fecaca;
+        }
+
+        .modal-error .modal-btn.primary {
+            background: #7f1d1d;
+            border-color: #991b1b;
+        }
+
+            .modal-error .modal-btn.primary:hover {
+                background: #991b1b;
+            }
+    </style>
+</head>
+<body>
+    <div class="frame">
+        <button id="closeBtn" class="close-btn">✕</button>
+
+        <div id="step-intro" class="step">
+            <div class="center">
+                <div>
+                    <h1>Pre Sound Drill</h1>
+                    <p style="margin-top:6px; font-size:0.95rem; color:#d4d4d4;">
+                        Quick setup for a sound-based drill. Set voice commands, intervals, and difficulty to train reaction speed and focus using audio cues.
+                    </p>
+                </div>
+                <button class="btn-primary" id="btnStartSetup">Start Setup</button>
+            </div>
+        </div>
+
+        <div id="step-questions" class="step hidden">
+            <div class="top-row">
+                <div>
+                    <div>Question <span id="qIndex">1</span> / <span id="qTotal">4</span></div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+                <div class="total-time-pill">
+                    Total time: <span id="totalTimeLabel">0</span> sec
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div>
+                    <div class="question-title" id="questionTitle"></div>
+                    <div class="question-desc" id="questionDesc"></div>
+                </div>
+                <div class="question-inputs" id="questionInputs"></div>
+            </div>
+
+            <div class="bottom-row">
+                <div class="nav-arrows">
+                    <button class="arrow-btn" id="btnPrev">&lt;</button>
+                    <button class="arrow-btn" id="btnNext">&gt;</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="step-ready" class="step hidden">
+            <div class="center">
+                <div id="descAtEnd">
+                    <h2>Shall we begin?</h2>
+                    <p style="margin-top:6px; font-size:0.95rem; color:#d4d4d4;">
+                        Here is a quick summary of your Pre Sound Drill setup.
+                    </p>
+
+                    <div class="summary-list" id="summaryList"></div>
+                </div>
+
+                <button class="btn-primary" id="btnStartCountdown">Start Countdown</button>
+            </div>
+        </div>
+
+        <div id="step-countdown" class="step hidden">
+            <div class="center">
+                <div class="countdown-circle">
+                    <span id="countdownValue">3</span>
+                </div>
+                <p style="margin-top:10px; font-size:0.95rem;">Get ready…</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="appModal" class="modal hidden" aria-hidden="true">
+        <div class="modal-backdrop" data-close="1"></div>
+
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="appModalTitle">
+            <div class="modal-head">
+                <h3 id="appModalTitle">Title</h3>
+                <button class="modal-x" type="button" data-close="1" aria-label="Close">×</button>
+            </div>
+
+            <div id="appModalBody" class="modal-body"></div>
+
+            <div class="modal-actions" id="appModalActions"></div>
+        </div>
+    </div>
+
+    <script>
+        function uiModal({
+            title = "Info",
+            body = "",
+            variant = "default",
+            buttons = [{ text: "OK", value: true, className: "primary" }]
+        }) {
+            const modal = document.getElementById("appModal");
+            const titleEl = document.getElementById("appModalTitle");
+            const bodyEl = document.getElementById("appModalBody");
+            const actionsEl = document.getElementById("appModalActions");
+
+            if (!modal || !titleEl || !bodyEl || !actionsEl) {
+                console.warn("Modal DOM not found. Message:", title, body);
+                return Promise.resolve(true);
+            }
+
+            let resolve;
+            const p = new Promise(r => (resolve = r));
+
+            modal.classList.remove("modal-default", "modal-error", "modal-success", "modal-warning");
+            modal.classList.add(`modal-${variant}`);
+
+            const onKey = (e) => { if (e.key === "Escape") close(false); };
+
+            const close = (val) => {
+                modal.classList.add("hidden");
+                modal.setAttribute("aria-hidden", "true");
+                document.removeEventListener("keydown", onKey);
+                const safe = document.getElementById("closeBtn") || document.body;
+                try { safe.focus?.(); } catch { }
+                resolve(val);
+            };
+
+            titleEl.textContent = title;
+            bodyEl.textContent = body;
+            actionsEl.innerHTML = "";
+
+            modal.classList.remove("hidden");
+            modal.setAttribute("aria-hidden", "false");
+            document.addEventListener("keydown", onKey);
+
+            modal.querySelectorAll("[data-close='1']").forEach(el => (el.onclick = () => close(false)));
+
+            buttons.forEach(b => {
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = `modal-btn ${b.className || ""}`.trim();
+                btn.textContent = b.text || "OK";
+                btn.onclick = () => close(b.value);
+                actionsEl.appendChild(btn);
+            });
+
+            setTimeout(() => actionsEl.querySelector("button")?.focus(), 0);
+            return p;
+        }
+
+        function uiAlert(message, title = "Info", variant = "default") {
+            return uiModal({
+                title,
+                body: message,
+                variant,
+                buttons: [{ text: "OK", value: true, className: "primary" }]
+            });
+        }
+
+        function uiConfirm(message, title = "Confirm") {
+            return uiModal({
+                title,
+                body: message,
+                variant: "error",
+                buttons: [
+                    { text: "Cancel", value: false },
+                    { text: "Exit", value: true, className: "danger" }
+                ]
+            });
+        }
+
+        (function () {
+            const stored = localStorage.getItem("currentUser");
+            if (!stored) {
+                window.location.href = "/login.html";
+                return;
+            }
+        })();
+
+        function speak(text) {
+            if (!("speechSynthesis" in window)) return false;
+            try {
+                window.speechSynthesis.cancel();
+                const u = new SpeechSynthesisUtterance(text);
+                u.lang = "en-US";
+                u.rate = 1;
+                u.pitch = 1;
+                window.speechSynthesis.speak(u);
+                return true;
+            } catch (e) {
+                console.error("speak error:", e);
+                return false;
+            }
+        }
+
+        const formState = {
+            drillName: "Pre Sound Drill",
+            drillDescription: "",
+            voiceCommands: [""],
+            voiceCommandCount: 0,
+            commandIntervalSec: null, 
+            totalDurationSec: null, 
+            isRandomOrder: false,
+            difficultyLevel: "Easy"
+        };
+
+        const questions = [
+            {
+                id: "commands",
+                title: "Voice commands list",
+                desc: "Add each voice command. These will be spoken during the drill.",
+                render(container) {
+                    const MAX = 5;
+
+                    container.innerHTML = `
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+                <div style="font-size:0.95rem; color:#d4d4d4;">
+                  You can add up to <strong>${MAX}</strong> voice commands.
+                </div>
+                <div id="cmdCountLabel" style="font-size:0.9rem; color:#d4d4d4;"></div>
+              </div>
+
+              <div id="cmdList" style="display:flex; flex-direction:column; gap:10px; margin-top:10px;"></div>
+
+              <button type="button" id="btnAddCmd" class="btn-primary"
+                      style="align-self:flex-start; margin-top:10px;">
+                Add Command
+              </button>
+
+              <div class="error-text" id="qCommandsError" style="margin-top:8px;"></div>
+            `;
+
+                    const cmdList = document.getElementById("cmdList");
+                    const cmdCountLabel = document.getElementById("cmdCountLabel");
+                    const btnAddCmd = document.getElementById("btnAddCmd");
+
+                    function recomputeCount() {
+                        const filled = (formState.voiceCommands || [])
+                            .map(x => (x || "").trim())
+                            .filter(Boolean).length;
+
+                        formState.voiceCommandCount = filled;
+
+                        const rows = (formState.voiceCommands || []).length;
+
+                        btnAddCmd.disabled = rows >= MAX;
+                        btnAddCmd.style.opacity = rows >= MAX ? "0.55" : "1";
+                    }
+
+                    function renderRows() {
+                        cmdList.innerHTML = "";
+
+                        (formState.voiceCommands || []).forEach((_, idx) => {
+                            const row = document.createElement("div");
+                            row.style.border = "1px solid #333";
+                            row.style.borderRadius = "8px";
+                            row.style.padding = "10px";
+                            row.style.display = "flex";
+                            row.style.flexDirection = "column";
+                            row.style.gap = "6px";
+
+                            row.innerHTML = `
+                  <label>Command ${idx + 1}</label>
+                  <input type="text" class="cmd-input" data-index="${idx}" placeholder="e.g. Jab" />
+
+                  <div style="display:flex; gap:10px; margin-top:6px; align-items:center;">
+                    <button type="button" class="btn-primary" data-test="${idx}"
+                            style="padding:8px 14px; font-size:0.85rem;">
+                      Test Voice
+                    </button>
+
+                    ${(formState.voiceCommands.length > 1) ? `
+                      <button type="button" class="arrow-btn" data-remove="${idx}"
+                              style="flex:1; height:36px; font-size:0.85rem;">
+                        Remove
+                      </button>
+                    ` : ""}
+                  </div>
+                `;
+
+                            cmdList.appendChild(row);
+                        });
+
+                        cmdList.querySelectorAll(".cmd-input").forEach(inp => {
+                            const idx = Number(inp.getAttribute("data-index"));
+                            inp.value = formState.voiceCommands[idx] || "";
+                            inp.addEventListener("input", () => {
+                                formState.voiceCommands[idx] = inp.value;
+                                recomputeCount();
+                            });
+                        });
+
+                        cmdList.querySelectorAll("[data-remove]").forEach(btn => {
+                            btn.addEventListener("click", () => {
+                                const idx = Number(btn.getAttribute("data-remove"));
+                                formState.voiceCommands.splice(idx, 1);
+                                if (!formState.voiceCommands.length) formState.voiceCommands = [""];
+                                renderRows();
+                            });
+                        });
+
+                        cmdList.querySelectorAll("[data-test]").forEach(btn => {
+                            btn.addEventListener("click", async () => {
+                                const idx = Number(btn.getAttribute("data-test"));
+                                const sample = (formState.voiceCommands?.[idx] || "").trim() || "Jab";
+                                const ok = speak(sample);
+                                if (!ok) await uiAlert("Speech synthesis is not supported in this browser.", "Not Supported", "error");
+                            });
+                        });
+
+                        recomputeCount();
+                    }
+
+                    btnAddCmd.addEventListener("click", async () => {
+                        if ((formState.voiceCommands || []).length >= MAX) {
+                            await uiAlert(`You can add up to ${MAX} commands.`, "Limit Reached", "warning");
+                            return;
+                        }
+                        formState.voiceCommands.push("");
+                        renderRows();
+                    });
+
+                    if (!formState.voiceCommands?.length) formState.voiceCommands = [""];
+                    if (formState.voiceCommands.length > MAX) formState.voiceCommands = formState.voiceCommands.slice(0, MAX);
+
+                    renderRows();
+                },
+                collect() {
+                    const MAX = 5;
+                    const cleaned = (formState.voiceCommands || [])
+                        .map(x => (x || "").trim())
+                        .filter(Boolean)
+                        .slice(0, MAX);
+
+                    formState.voiceCommands = cleaned;
+                    formState.voiceCommandCount = cleaned.length;
+                }
+            },
+
+            {
+                id: "time",
+                title: "Total time and command interval",
+                desc: "Set total duration and command interval (seconds).",
+                render(container) {
+                    container.innerHTML = `
+              <label for="qTotalDuration">Total Duration (seconds)</label>
+              <input id="qTotalDuration" type="number" min="1" step="1" placeholder="e.g. 60" />
+
+              <label for="qInterval" style="margin-top:6px;">Command Interval (seconds)</label>
+              <input id="qInterval" type="number" min="0.1" step="0.1" placeholder="e.g. 1.5" />
+            `;
+
+                    document.getElementById("qTotalDuration").value = formState.totalDurationSec ?? "";
+                    document.getElementById("qInterval").value = formState.commandIntervalSec ?? "";
+                },
+                collect() {
+                    const total = Number(document.getElementById("qTotalDuration").value);
+                    formState.totalDurationSec = Number.isFinite(total) ? Math.floor(total) : null;
+
+                    const interval = Number(document.getElementById("qInterval").value);
+                    formState.commandIntervalSec = Number.isFinite(interval) ? interval : null;
+                }
+            },
+
+            {
+                id: "difficulty",
+                title: "Difficulty level",
+                desc: "Choose Easy, Medium or Hard.",
+                render(container) {
+                    container.innerHTML = `
+              <label for="qDifficulty">Difficulty</label>
+              <select id="qDifficulty">
+                <option value="Easy">Easy</option>
+                <option value="Medium">Medium</option>
+                <option value="Hard">Hard</option>
+              </select>
+            `;
+                    document.getElementById("qDifficulty").value = formState.difficultyLevel || "Easy";
+                },
+                collect() {
+                    formState.difficultyLevel = document.getElementById("qDifficulty").value;
+                }
+            }
+        ];
+
+        const stepIntro = document.getElementById("step-intro");
+        const stepQuestions = document.getElementById("step-questions");
+        const stepReady = document.getElementById("step-ready");
+        const stepCountdown = document.getElementById("step-countdown");
+
+        const qIndexSpan = document.getElementById("qIndex");
+        const qTotalSpan = document.getElementById("qTotal");
+        const progressFill = document.getElementById("progressFill");
+        const questionTitle = document.getElementById("questionTitle");
+        const questionDesc = document.getElementById("questionDesc");
+        const questionInputs = document.getElementById("questionInputs");
+        const totalTimeLabel = document.getElementById("totalTimeLabel");
+        const summaryList = document.getElementById("summaryList");
+        const countdownValue = document.getElementById("countdownValue");
+
+        const btnStartSetup = document.getElementById("btnStartSetup");
+        const btnPrev = document.getElementById("btnPrev");
+        const btnNext = document.getElementById("btnNext");
+        const btnStartCountdown = document.getElementById("btnStartCountdown");
+
+        let currentQuestionIndex = 0;
+        qTotalSpan.textContent = questions.length.toString();
+
+        function showStep(step) {
+            [stepIntro, stepQuestions, stepReady, stepCountdown].forEach(s => s.classList.add("hidden"));
+            step.classList.remove("hidden");
+        }
+
+        function renderQuestion() {
+            const q = questions[currentQuestionIndex];
+            qIndexSpan.textContent = (currentQuestionIndex + 1).toString();
+            questionTitle.textContent = q.title;
+            questionDesc.textContent = q.desc;
+            q.render(questionInputs);
+
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            progressFill.style.width = progress + "%";
+
+            btnPrev.disabled = currentQuestionIndex === 0;
+        }
+
+        function updateTotalTimeLabel() {
+            totalTimeLabel.textContent = formState.totalDurationSec || 0;
+        }
+
+        function buildSummary() {
+            const count = (formState.voiceCommands || []).length;
+            summaryList.innerHTML = `
+          <div><strong>Drill name:</strong> ${formState.drillName}</div>
+          <div><strong>Total duration:</strong> ${formState.totalDurationSec || 0} sec</div>
+          <div><strong>Command interval:</strong> ${Number(formState.commandIntervalSec || 0).toFixed(1)} sec</div>
+          <div><strong>Difficulty:</strong> ${formState.difficultyLevel || "Easy"}</div>
+          <div><strong>Total commands:</strong> ${count}</div>
+          <div style="margin-top:8px;"><strong>Commands</strong></div>
+          ${(formState.voiceCommands || []).map((n, idx) => {
+                const name = (n || "").trim() || ("Command " + (idx + 1));
+                return "<div>" + (idx + 1) + ") " + name + "</div>";
+            }).join("")}
+        `;
+        }
+
+        btnStartSetup.addEventListener("click", () => {
+            showStep(stepQuestions);
+            renderQuestion();
+            updateTotalTimeLabel();
+        });
+
+        btnPrev.addEventListener("click", () => {
+            questions[currentQuestionIndex].collect();
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion();
+                updateTotalTimeLabel();
+            }
+        });
+
+        btnNext.addEventListener("click", async () => {
+            questions[currentQuestionIndex].collect();
+
+            if (currentQuestionIndex === 0) {
+                const cleaned = (formState.voiceCommands || []).map(x => (x || "").trim()).filter(Boolean);
+                if (cleaned.length < 1) { await uiAlert("Please add at least 1 command.", "Validation", "error"); return; }
+                if (cleaned.length > 5) { await uiAlert("You can add up to 5 commands.", "Validation", "error"); return; }
+            }
+
+            if (currentQuestionIndex === 1) {
+                const interval = Number(formState.commandIntervalSec);
+                const total = Number(formState.totalDurationSec);
+                if (!isFinite(interval) || interval <= 0) { await uiAlert("Command interval must be > 0.", "Validation", "error"); return; }
+                if (!isFinite(total) || total <= 0) { await uiAlert("Total duration must be > 0.", "Validation", "error"); return; }
+            }
+
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion();
+                updateTotalTimeLabel();
+            } else {
+                updateTotalTimeLabel();
+                buildSummary();
+                showStep(stepReady);
+            }
+        });
+
+        btnStartCountdown.addEventListener("click", () => {
+            showStep(stepCountdown);
+            let counter = 3;
+            countdownValue.textContent = counter.toString();
+
+            const interval = setInterval(() => {
+                counter--;
+                if (counter <= 0) {
+                    clearInterval(interval);
+                    countdownValue.textContent = "GO";
+                    createPreSoundDrillAndRedirect();
+                } else {
+                    countdownValue.textContent = counter.toString();
+                }
+            }, 1000);
+        });
+
+        async function createPreSoundDrillAndRedirect() {
+            let currentUser = {};
+            try { currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}"); } catch { }
+            const userId = currentUser.id ?? currentUser.Id ?? 0;
+
+            if (!userId) {
+                await uiAlert("User not found, please login again.", "Error", "error");
+                window.location.href = "/login.html";
+                return;
+            }
+
+            const cleanedCommands = (formState.voiceCommands || [])
+                .map(x => (x || "").trim())
+                .filter(Boolean)
+                .slice(0, 5);
+
+            if (cleanedCommands.length < 1) {
+                await uiAlert("Please add at least 1 command.", "Validation", "error");
+                return;
+            }
+
+            const intervalSec = Number(formState.commandIntervalSec);
+            const totalSec = Number(formState.totalDurationSec);
+
+            if (!isFinite(intervalSec) || intervalSec <= 0) {
+                await uiAlert("Command interval must be > 0.", "Validation", "error");
+                return;
+            }
+            if (!isFinite(totalSec) || totalSec <= 0) {
+                await uiAlert("Total duration must be > 0.", "Validation", "error");
+                return;
+            }
+
+            const dto = {
+                Id: 0,
+                UserId: userId,
+                Name: formState.drillName || "Pre Sound Drill",
+                Description: formState.drillDescription || "",
+                VoiceCommandCount: cleanedCommands.length,
+                VoiceCommandList: cleanedCommands.join(","), 
+                CommandIntervalSec: intervalSec,
+                TotalDurationSec: Math.floor(totalSec), 
+                IsRandomOrder: false,
+                DifficultyLevel: formState.difficultyLevel || "Easy"
+            };
+
+            const addUrl = new URL("/api/PSoundDrill/Add", window.location.origin).toString();
+            const listUrl = new URL(`/api/PSoundDrill/GetByUser?userId=${userId}`, window.location.origin).toString();
+
+            async function fallbackRedirect() {
+                const listRes = await fetch(listUrl);
+                if (!listRes.ok) throw new Error("GetByUser failed: " + listRes.status);
+                const drills = await listRes.json();
+
+                if (!Array.isArray(drills) || drills.length === 0) throw new Error("No drills returned");
+
+
+                const active = drills.filter(d => !d.deletedAt && !d.DeletedAt);
+                const src = active.length ? active : drills;
+
+                const latest = src.sort((a, b) => (b.id ?? b.Id ?? 0) - (a.id ?? a.Id ?? 0))[0];
+                const latestId = latest?.id ?? latest?.Id;
+
+                if (!latestId) throw new Error("Latest drill id missing");
+
+  
+                try {
+                    const head = await fetch("/sound-drill.html", { method: "HEAD" });
+                    if (head.ok) {
+                        window.location.href = `/sound-drill.html?id=${latestId}`;
+                        return;
+                    }
+                } catch { }
+
+                await uiAlert("Drill created ✅ but play page (sound-drill.html) not found.\nRedirecting to user.html", "Success", "success");
+                window.location.href = "user.html";
+            }
+
+            try {
+                const addRes = await fetch(addUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(dto)
+                });
+
+                const raw = await addRes.text();
+                let json = null;
+                try { json = raw ? JSON.parse(raw) : null; } catch { }
+
+                console.log("Add status:", addRes.status, "raw:", raw, "dto:", dto);
+
+                const newId = json?.drill?.Id ?? json?.drill?.id;
+                if (addRes.ok && newId) {
+                    try {
+                        const head = await fetch("/sound-drill.html", { method: "HEAD" });
+                        if (head.ok) {
+                            window.location.href = `/sound-drill.html?id=${newId}`;
+                            return;
+                        }
+                    } catch { }
+                    await uiAlert("Drill created ✅ but play page not found. Redirecting to user.html", "Success", "success");
+                    window.location.href = "user.html";
+                    return;
+                }
+
+                await fallbackRedirect();
+
+            } catch (err) {
+                console.error("Unexpected error:", err);
+                await uiAlert("Beklenmeyen hata:\n" + String(err), "Error", "error");
+            }
+        }
+
+
+
+        document.getElementById("closeBtn")?.addEventListener("click", async () => {
+            const ok = await uiConfirm("Exit setup? Your changes won't be saved.", "Exit Setup");
+            if (!ok) return;
+            window.location.href = "user.html";
+        });
+
+        updateTotalTimeLabel();
+    </script>
+
+
+
+
+
+
+
+</body>
+</html>

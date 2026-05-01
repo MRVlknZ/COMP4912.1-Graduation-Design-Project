@@ -1,0 +1,570 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quick Feet Challenge</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: radial-gradient(circle at top, rgba(239, 68, 68, 0.16), transparent 30%), #0f0f10;
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        .page {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+        }
+
+        .challenge-card {
+            width: 100%;
+            max-width: 760px;
+            background: linear-gradient(180deg, rgba(239,68,68,0.10), rgba(255,255,255,0.02));
+            border: 2px solid rgba(239,68,68,0.40);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: 34px;
+        }
+
+        .subtitle {
+            margin: 0 0 24px;
+            color: rgba(255,255,255,0.75);
+        }
+
+        .setup-panel,
+        .session-panel {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(239,68,68,0.25);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .field {
+            margin-bottom: 16px;
+        }
+
+            .field label {
+                display: block;
+                margin-bottom: 8px;
+                font-weight: 700;
+            }
+
+            .field input,
+            .field select {
+                width: 100%;
+                padding: 12px 14px;
+                border-radius: 12px;
+                border: 1px solid rgba(255,255,255,0.15);
+                background: rgba(255,255,255,0.07);
+                color: #fff;
+                font-size: 15px;
+                outline: none;
+            }
+
+                .field select option {
+                    background: #1b1b1b;
+                    color: #fff;
+                }
+
+        .primary-btn,
+        .secondary-btn,
+        .danger-btn {
+            padding: 12px 18px;
+            border-radius: 12px;
+            border: 1px solid transparent;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .primary-btn {
+            background: rgba(239,68,68,0.18);
+            color: #ffeaea;
+            border-color: rgba(239,68,68,0.55);
+            box-shadow: 0 0 0 1px rgba(239,68,68,0.20) inset;
+        }
+
+            .primary-btn:hover {
+                background: linear-gradient(135deg, rgba(239,68,68,0.35), rgba(239,68,68,0.18));
+                box-shadow: 0 8px 20px rgba(239,68,68,0.28);
+            }
+
+        .secondary-btn {
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            border-color: rgba(255,255,255,0.18);
+        }
+
+            .secondary-btn:hover:not(:disabled) {
+                background: rgba(255,255,255,0.13);
+            }
+
+        .danger-btn {
+            background: rgba(220,38,38,0.18);
+            color: #ffecec;
+            border-color: rgba(220,38,38,0.55);
+        }
+
+            .danger-btn:hover {
+                background: rgba(220,38,38,0.28);
+            }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .top-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.10);
+            border-radius: 14px;
+            padding: 14px;
+        }
+
+        .stat-label {
+            display: block;
+            color: rgba(255,255,255,0.65);
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .exercise-display {
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 18px;
+            border: 1px solid rgba(239,68,68,0.25);
+            background: linear-gradient(180deg, rgba(239,68,68,0.16), rgba(239,68,68,0.06));
+            text-align: center;
+            padding: 20px;
+        }
+
+        .exercise-category {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #ffb4b4;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .exercise-name {
+            font-size: 36px;
+            font-weight: 900;
+            line-height: 1.2;
+            margin-bottom: 14px;
+        }
+
+        .exercise-next {
+            font-size: 16px;
+            color: rgba(255,255,255,0.78);
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .category-low {
+            color: #86efac;
+        }
+
+        .category-medium {
+            color: #facc15;
+        }
+
+        .category-hard {
+            color: #fca5a5;
+        }
+
+        @media (max-width: 680px) {
+            .top-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .exercise-name {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="challenge-card">
+            <h1>Quick Feet Challenge</h1>
+            <p class="subtitle">
+                Set duration and mode, then start the session.
+            </p>
+
+            <div class="setup-panel" id="setupPanel">
+                <div class="field">
+                    <label for="durationInput">Total Duration (seconds)</label>
+                    <input type="number" id="durationInput" min="10" step="1" placeholder="e.g. 120" />
+                </div>
+
+                <div class="field">
+                    <label for="modeSelect">Mode</label>
+                    <select id="modeSelect">
+                        <option value="easy">Easy</option>
+                        <option value="medium">Medium</option>
+                        <option value="hard">Hard</option>
+                    </select>
+                </div>
+
+                <button id="startBtn" class="primary-btn">Start Drill</button>
+            </div>
+
+            <div class="session-panel hidden" id="sessionPanel">
+                <div class="top-stats">
+                    <div class="stat-box">
+                        <span class="stat-label">Mode</span>
+                        <span class="stat-value" id="modeLabel">Easy</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Time Left</span>
+                        <span class="stat-value" id="timeLeftLabel">0s</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Current Category</span>
+                        <span class="stat-value" id="categoryLabel">-</span>
+                    </div>
+                </div>
+
+                <div class="exercise-display">
+                    <div class="exercise-category" id="exerciseCategory">Ready</div>
+                    <div class="exercise-name" id="exerciseName">Press Start</div>
+                    <div class="exercise-next" id="nextChangeLabel">Next change in: -</div>
+                </div>
+
+                <div class="controls">
+                    <button id="pauseBtn" class="secondary-btn">Pause</button>
+                    <button id="continueBtn" class="secondary-btn" disabled>Continue</button>
+                    <button id="restartBtn" class="danger-btn">Restart</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const LOW_EXERCISES = [
+            "Squat Jump",
+            "Stance Hold",
+            "Single Leg Jump",
+            "Squat",
+            "Jump",
+            "Split Jump Squat"
+        ];
+
+        const MEDIUM_EXERCISES = [
+            "Quick Tab Jump",
+            "Broud Jump",
+            "1-Step Jump",
+            "2-Step Jump",
+            "Tuck Jump",
+            "U Hops"
+        ];
+
+        const HARD_EXERCISES = [
+            "Stance + Tab",
+            "High Jump",
+            "Quick High Jump"
+        ];
+
+        const MIN_INTERVAL = 10;
+        const MAX_INTERVAL = 15;
+
+        const durationInput = document.getElementById("durationInput");
+        const modeSelect = document.getElementById("modeSelect");
+        const startBtn = document.getElementById("startBtn");
+
+        const setupPanel = document.getElementById("setupPanel");
+        const sessionPanel = document.getElementById("sessionPanel");
+
+        const modeLabel = document.getElementById("modeLabel");
+        const timeLeftLabel = document.getElementById("timeLeftLabel");
+        const categoryLabel = document.getElementById("categoryLabel");
+        const exerciseCategory = document.getElementById("exerciseCategory");
+        const exerciseName = document.getElementById("exerciseName");
+        const nextChangeLabel = document.getElementById("nextChangeLabel");
+
+        const pauseBtn = document.getElementById("pauseBtn");
+        const continueBtn = document.getElementById("continueBtn");
+        const restartBtn = document.getElementById("restartBtn");
+
+        let totalDuration = 0;
+        let timeLeft = 0;
+        let selectedMode = "easy";
+
+        let sessionTimer = null;
+        let changeTimer = null;
+        let nextChangeCountdownTimer = null;
+
+        let isPaused = false;
+        let currentChangeRemaining = 0;
+        let sessionFinished = false;
+
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function getRandomItem(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function pickExerciseByMode(mode) {
+            const roll = Math.random() * 100;
+
+            if (mode === "easy") {
+                return {
+                    category: "Low",
+                    exercise: getRandomItem(LOW_EXERCISES)
+                };
+            }
+
+            if (mode === "medium") {
+                if (roll < 70) {
+                    return {
+                        category: "Low",
+                        exercise: getRandomItem(LOW_EXERCISES)
+                    };
+                }
+                return {
+                    category: "Medium",
+                    exercise: getRandomItem(MEDIUM_EXERCISES)
+                };
+            }
+
+            // hard
+            if (roll < 50) {
+                return {
+                    category: "Low",
+                    exercise: getRandomItem(LOW_EXERCISES)
+                };
+            } else if (roll < 90) {
+                return {
+                    category: "Medium",
+                    exercise: getRandomItem(MEDIUM_EXERCISES)
+                };
+            } else {
+                return {
+                    category: "Hard",
+                    exercise: getRandomItem(HARD_EXERCISES)
+                };
+            }
+        }
+
+        function updateCategoryStyle(category) {
+            exerciseCategory.classList.remove("category-low", "category-medium", "category-hard");
+
+            if (category === "Low") {
+                exerciseCategory.classList.add("category-low");
+            } else if (category === "Medium") {
+                exerciseCategory.classList.add("category-medium");
+            } else if (category === "Hard") {
+                exerciseCategory.classList.add("category-hard");
+            }
+        }
+
+        function showNextExercise() {
+            if (sessionFinished || isPaused) return;
+            if (timeLeft <= 0) return;
+
+            const picked = pickExerciseByMode(selectedMode);
+
+            exerciseCategory.textContent = `${picked.category} Exercise`;
+            categoryLabel.textContent = picked.category;
+            exerciseName.textContent = picked.exercise;
+            updateCategoryStyle(picked.category);
+
+            const interval = Math.min(getRandomInt(MIN_INTERVAL, MAX_INTERVAL), timeLeft);
+            currentChangeRemaining = interval;
+            nextChangeLabel.textContent = `Next change in: ${currentChangeRemaining}s`;
+
+            clearTimeout(changeTimer);
+            clearInterval(nextChangeCountdownTimer);
+
+            nextChangeCountdownTimer = setInterval(() => {
+                if (isPaused || sessionFinished) return;
+
+                currentChangeRemaining--;
+
+                if (currentChangeRemaining > 0) {
+                    nextChangeLabel.textContent = `Next change in: ${currentChangeRemaining}s`;
+                } else {
+                    clearInterval(nextChangeCountdownTimer);
+                    nextChangeLabel.textContent = "Changing...";
+                }
+            }, 1000);
+
+            changeTimer = setTimeout(() => {
+                showNextExercise();
+            }, interval * 1000);
+        }
+
+        function startSession() {
+            totalDuration = parseInt(durationInput.value, 10);
+            selectedMode = modeSelect.value;
+
+            if (!totalDuration || totalDuration <= 0) {
+                alert("Please enter a valid total duration.");
+                return;
+            }
+
+            if (totalDuration < 10) {
+                alert("Total duration must be at least 10 seconds.");
+                return;
+            }
+
+            timeLeft = totalDuration;
+            isPaused = false;
+            sessionFinished = false;
+
+            modeLabel.textContent = selectedMode.charAt(0).toUpperCase() + selectedMode.slice(1);
+            timeLeftLabel.textContent = `${timeLeft}s`;
+            categoryLabel.textContent = "-";
+
+            setupPanel.classList.add("hidden");
+            sessionPanel.classList.remove("hidden");
+
+            pauseBtn.disabled = false;
+            continueBtn.disabled = true;
+
+            clearInterval(sessionTimer);
+            clearTimeout(changeTimer);
+            clearInterval(nextChangeCountdownTimer);
+
+            showNextExercise();
+
+            sessionTimer = setInterval(() => {
+                if (isPaused || sessionFinished) return;
+
+                timeLeft--;
+                timeLeftLabel.textContent = `${timeLeft}s`;
+
+                if (timeLeft <= 0) {
+                    finishSession();
+                }
+            }, 1000);
+        }
+
+        function pauseSession() {
+            if (sessionFinished) return;
+
+            isPaused = true;
+            pauseBtn.disabled = true;
+            continueBtn.disabled = false;
+            nextChangeLabel.textContent = `Paused`;
+        }
+
+        function continueSession() {
+            if (sessionFinished) return;
+
+            isPaused = false;
+            pauseBtn.disabled = false;
+            continueBtn.disabled = true;
+            nextChangeLabel.textContent = `Next change in: ${currentChangeRemaining}s`;
+
+            clearTimeout(changeTimer);
+            clearInterval(nextChangeCountdownTimer);
+
+            nextChangeCountdownTimer = setInterval(() => {
+                if (isPaused || sessionFinished) return;
+
+                currentChangeRemaining--;
+
+                if (currentChangeRemaining > 0) {
+                    nextChangeLabel.textContent = `Next change in: ${currentChangeRemaining}s`;
+                } else {
+                    clearInterval(nextChangeCountdownTimer);
+                    nextChangeLabel.textContent = "Changing...";
+                }
+            }, 1000);
+
+            changeTimer = setTimeout(() => {
+                showNextExercise();
+            }, currentChangeRemaining * 1000);
+        }
+
+        function finishSession() {
+            sessionFinished = true;
+
+            clearInterval(sessionTimer);
+            clearTimeout(changeTimer);
+            clearInterval(nextChangeCountdownTimer);
+
+            timeLeft = 0;
+            timeLeftLabel.textContent = "0s";
+            categoryLabel.textContent = "Finished";
+            exerciseCategory.textContent = "Session Complete";
+            exerciseName.textContent = "Great job!";
+            nextChangeLabel.textContent = "Challenge finished.";
+
+            pauseBtn.disabled = true;
+            continueBtn.disabled = true;
+        }
+
+        function restartSession() {
+            clearInterval(sessionTimer);
+            clearTimeout(changeTimer);
+            clearInterval(nextChangeCountdownTimer);
+
+            setupPanel.classList.remove("hidden");
+            sessionPanel.classList.add("hidden");
+
+            durationInput.value = "";
+            modeSelect.value = "easy";
+
+            totalDuration = 0;
+            timeLeft = 0;
+            selectedMode = "easy";
+            isPaused = false;
+            currentChangeRemaining = 0;
+            sessionFinished = false;
+
+            exerciseCategory.textContent = "Ready";
+            exerciseName.textContent = "Press Start";
+            nextChangeLabel.textContent = "Next change in: -";
+        }
+
+        startBtn.addEventListener("click", startSession);
+        pauseBtn.addEventListener("click", pauseSession);
+        continueBtn.addEventListener("click", continueSession);
+        restartBtn.addEventListener("click", restartSession);
+    </script>
+</body>
+</html>

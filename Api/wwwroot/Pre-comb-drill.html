@@ -1,0 +1,1070 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Combination Drill - Pre Setup</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        body {
+            background: #111;
+            color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .frame {
+            width: 90vw;
+            max-width: 1100px;
+            height: 70vh;
+            border: 3px solid #444;
+            border-radius: 16px;
+            padding: 32px 40px;
+            background: #181818;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        h1, h2 {
+            font-weight: 600;
+        }
+
+        .center {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            gap: 12px;
+        }
+
+        .btn-primary {
+            border: none;
+            padding: 10px 24px;
+            font-size: 1rem;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.15s ease;
+            background: #e11d48;
+            color: white;
+            box-shadow: 0 0 0 0 #e11d48;
+        }
+
+            .btn-primary:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 12px 25px rgba(225, 29, 72, 0.35);
+            }
+
+        .top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.95rem;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 6px;
+            background: #333;
+            border-radius: 999px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0;
+            background: #e11d48;
+            transition: width 0.25s ease;
+        }
+
+        .question-card {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 20px;
+            padding: 16px;
+        }
+
+        .question-title {
+            font-size: 1.4rem;
+        }
+
+        .question-desc {
+            font-size: 0.95rem;
+            color: #d4d4d4;
+            max-width: 480px;
+        }
+
+        .question-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 480px;
+        }
+
+        label {
+            font-size: 0.9rem;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #555;
+            background: #111;
+            color: #f5f5f5;
+            font-size: 0.95rem;
+        }
+
+        .bottom-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-arrows {
+            display: flex;
+            gap: 12px;
+        }
+
+        .arrow-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 999px;
+            border: 1px solid #555;
+            background: transparent;
+            color: #f5f5f5;
+            font-size: 1.3rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .arrow-btn:disabled {
+                opacity: 0.3;
+                cursor: default;
+            }
+
+        .countdown-circle {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: 4px solid #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .summary-list {
+            font-size: 0.95rem;
+            max-width: 480px;
+            text-align: left;
+            margin-top: 10px;
+        }
+
+            .summary-list div {
+                margin-bottom: 4px;
+            }
+
+        .total-time-pill {
+            border-radius: 999px;
+            border: 1px solid #555;
+            padding: 6px 14px;
+            font-size: 0.85rem;
+        }
+
+        .error-text {
+            margin-top: 4px;
+            font-size: 0.8rem;
+            color: #f97373;
+        }
+
+        @media (max-width: 700px) {
+            .frame {
+                padding: 20px;
+                height: 80vh;
+            }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 28px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #d4d4d4;
+            background: transparent;
+            color: #d4d4d4;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .close-btn:hover {
+                background: #d4d4d43d;
+                transform: scale(1.08);
+            }
+
+        #step-questions {
+            overflow: auto;
+        }
+
+        #step-ready {
+            overflow: auto;
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+        }
+
+        .modal-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+        }
+
+        .modal-card {
+            position: relative;
+            width: min(560px, 92vw);
+            max-height: 80vh;
+            margin: 8vh auto 0;
+            background: #1b1b1b;
+            border: 1px solid #333;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.55);
+            overflow: hidden;
+        }
+
+        .modal-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+            .modal-head h3 {
+                margin: 0;
+                font-size: 1rem;
+            }
+
+        .modal-x {
+            background: transparent;
+            border: none;
+            color: #ddd;
+            font-size: 22px;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .modal-body {
+            padding: 14px 16px;
+            color: #eaeaea;
+            overflow: auto;
+            max-height: calc(80vh - 110px);
+            white-space: pre-line;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            padding: 12px 16px;
+            border-top: 1px solid #2a2a2a;
+        }
+
+        .modal-btn {
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid #3a3a3a;
+            background: #232323;
+            color: #f5f5f5;
+            cursor: pointer;
+        }
+
+            .modal-btn.primary {
+                border-color: #4a4a4a;
+                background: #2b2b2b;
+            }
+
+            .modal-btn.danger {
+                border-color: #7f1d1d;
+                background: #3a1010;
+            }
+
+        .modal-error .modal-card {
+            background: linear-gradient(180deg, #2a0f0f, #160909);
+            border: 1px solid #7f1d1d;
+        }
+
+        .modal-error .modal-head {
+            border-bottom: 1px solid #7f1d1d;
+        }
+
+            .modal-error .modal-head h3 {
+                color: #fca5a5;
+            }
+
+        .modal-error .modal-body {
+            color: #fee2e2;
+        }
+
+        .modal-error .modal-x {
+            color: #fecaca;
+        }
+
+        .modal-error .modal-btn.primary {
+            background: #7f1d1d;
+            border-color: #991b1b;
+        }
+
+            .modal-error .modal-btn.primary:hover {
+                background: #991b1b;
+            }
+    </style>
+</head>
+<body>
+    <div class="frame">
+        <button id="closeBtn" class="close-btn">✕</button>
+
+        <div id="step-intro" class="step">
+            <div class="center">
+                <div>
+                    <h1>Pre Combination Drill</h1>
+                    <p style="margin-top:6px; font-size:0.95rem; color:#d4d4d4;">
+                        Quick setup for a combination drill. Define commands, display time, transitions to practice fast reaction and movement sequences.
+                    </p>
+                </div>
+                <button class="btn-primary" id="btnStartSetup">Start Setup</button>
+            </div>
+        </div>
+
+        <div id="step-questions" class="step hidden">
+            <div class="top-row">
+                <div>
+                    <div>Question <span id="qIndex">1</span> / <span id="qTotal">4</span></div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+                <div class="total-time-pill">
+                    Total time: <span id="totalTimeLabel">0</span> sec
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div>
+                    <div class="question-title" id="questionTitle"></div>
+                    <div class="question-desc" id="questionDesc"></div>
+                </div>
+                <div class="question-inputs" id="questionInputs"></div>
+            </div>
+
+            <div class="bottom-row">
+                <div class="nav-arrows">
+                    <button class="arrow-btn" id="btnPrev">&lt;</button>
+                    <button class="arrow-btn" id="btnNext">&gt;</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="step-ready" class="step hidden">
+            <div class="center">
+                <div id="descAtEnd">
+                    <h2>Shall we begin?</h2>
+                    <p style="margin-top:6px; font-size:0.95rem; color:#d4d4d4;">
+                        Here is a quick summary of your Pre Combination Drill setup.
+                    </p>
+
+                    <div class="summary-list" id="summaryList"></div>
+                </div>
+
+                <button class="btn-primary" id="btnStartCountdown">Start Countdown</button>
+            </div>
+        </div>
+
+        <div id="step-countdown" class="step hidden">
+            <div class="center">
+                <div class="countdown-circle">
+                    <span id="countdownValue">3</span>
+                </div>
+                <p style="margin-top:10px; font-size:0.95rem;">Get ready…</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="appModal" class="modal hidden" aria-hidden="true">
+        <div class="modal-backdrop" data-close="1"></div>
+
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="appModalTitle">
+            <div class="modal-head">
+                <h3 id="appModalTitle">Title</h3>
+                <button class="modal-x" type="button" data-close="1" aria-label="Close">×</button>
+            </div>
+
+            <div id="appModalBody" class="modal-body"></div>
+
+            <div class="modal-actions" id="appModalActions"></div>
+        </div>
+    </div>
+
+    <script>
+        function uiModal({
+            title = "Info",
+            body = "",
+            variant = "default",
+            buttons = [{ text: "OK", value: true, className: "primary" }]
+        }) {
+            const modal = document.getElementById("appModal");
+            const titleEl = document.getElementById("appModalTitle");
+            const bodyEl = document.getElementById("appModalBody");
+            const actionsEl = document.getElementById("appModalActions");
+
+            if (!modal || !titleEl || !bodyEl || !actionsEl) {
+                console.warn("Modal DOM not found. Message:", title, body);
+                return Promise.resolve(true);
+            }
+
+            let resolve;
+            const p = new Promise(r => (resolve = r));
+
+            modal.classList.remove("modal-default", "modal-error", "modal-success", "modal-warning");
+            modal.classList.add(`modal-${variant}`);
+
+            const onKey = (e) => {
+                if (e.key === "Escape") close(false);
+            };
+
+            const close = (val) => {
+                modal.classList.add("hidden");
+                modal.setAttribute("aria-hidden", "true");
+                document.removeEventListener("keydown", onKey);
+                resolve(val);
+            };
+
+            titleEl.textContent = title;
+            bodyEl.textContent = body;
+            actionsEl.innerHTML = "";
+
+            modal.classList.remove("hidden");
+            modal.setAttribute("aria-hidden", "false");
+            document.addEventListener("keydown", onKey);
+
+            modal.querySelectorAll("[data-close='1']").forEach(el => {
+                el.onclick = () => close(false);
+            });
+
+            buttons.forEach(b => {
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = `modal-btn ${b.className || ""}`.trim();
+                btn.textContent = b.text || "OK";
+                btn.onclick = () => close(b.value);
+                actionsEl.appendChild(btn);
+            });
+
+            setTimeout(() => actionsEl.querySelector("button")?.focus(), 0);
+            return p;
+        }
+
+        function uiAlert(message, title = "Info", variant = "default") {
+            return uiModal({
+                title,
+                body: message,
+                variant,
+                buttons: [{ text: "OK", value: true, className: "primary" }]
+            });
+        }
+
+        function uiConfirm(message, title = "Confirm") {
+            return uiModal({
+                title,
+                body: message,
+                variant: "error",
+                buttons: [
+                    { text: "Cancel", value: false },
+                    { text: "Exit", value: true, className: "danger" }
+                ]
+            });
+        }
+
+        (function () {
+            const stored = localStorage.getItem("currentUser");
+            if (!stored) {
+                window.location.href = "/login.html";
+                return;
+            }
+        })();
+
+        const formState = {
+            drillName: "Pre Combination Drill",
+            drillDescription: "",
+            commandList: [""],
+            commandsPerCombination: 2,
+            combinationDisplaySec: 2,
+            transitionSec: 1,
+            isRandomOrder: true,
+            allowRepetition: false,
+            difficultyLevel: "Easy",
+            totalDurationSec: 0,     
+            minDurationSec: 0      
+        };
+
+        function computeMinDurationSec() {
+            const cmdCount = (formState.commandList || [])
+                .map(x => (x || "").trim())
+                .filter(x => x.length > 0).length;
+
+            const show = Math.max(Number(formState.combinationDisplaySec) || 0, 0);
+            const trans = Math.max(Number(formState.transitionSec) || 0, 0);
+
+            const min = Math.round(cmdCount * (show + trans));
+            formState.minDurationSec = min;
+            return { cmdCount, show, trans, min };
+        }
+
+        const questions = [
+            {
+                id: "commands",
+                title: "Commands",
+                desc: "Add commands (max 7).",
+                render(container) {
+                    container.innerHTML = `
+                    <div id="cmdList" style="display:flex; flex-direction:column; gap:10px;"></div>
+                    <button type="button" id="btnAddCmd" class="btn-primary" style="align-self:flex-start; margin-top:8px;">Add Command</button>
+                    <div id="cmdCountLabel" style="margin-top:8px; font-size:0.9rem; color:#d4d4d4;"></div>
+                    <div class="error-text" id="qCommandsError"></div>
+                `;
+
+                    const cmdList = document.getElementById("cmdList");
+                    const cmdCountLabel = document.getElementById("cmdCountLabel");
+                    const btnAddCmd = document.getElementById("btnAddCmd");
+
+                    function renderRows() {
+                        cmdList.innerHTML = "";
+
+                        formState.commandList.forEach((val, idx) => {
+                            const wrapper = document.createElement("div");
+                            wrapper.style.border = "1px solid #333";
+                            wrapper.style.borderRadius = "8px";
+                            wrapper.style.padding = "10px";
+                            wrapper.style.display = "flex";
+                            wrapper.style.flexDirection = "column";
+                            wrapper.style.gap = "6px";
+
+                            wrapper.innerHTML = `
+                            <label>Command ${idx + 1}</label>
+                            <input type="text" class="cmd-item" data-index="${idx}" placeholder="e.g. Jab, Cross, Hook" />
+                            ${formState.commandList.length > 1
+                                    ? `<button type="button" class="arrow-btn" data-remove="${idx}"
+                                           style="width:auto; height:32px; font-size:0.8rem; margin-top:4px;">
+                                        Remove
+                                   </button>`
+                                    : ""}
+                        `;
+
+                            cmdList.appendChild(wrapper);
+                        });
+
+                        cmdList.querySelectorAll(".cmd-item").forEach(inp => {
+                            const i = Number(inp.getAttribute("data-index"));
+                            inp.value = formState.commandList[i] || "";
+                            inp.addEventListener("input", () => {
+                                formState.commandList[i] = inp.value;
+                                const { cmdCount } = computeMinDurationSec();
+                                if (cmdCountLabel) cmdCountLabel.textContent = `Total commands: ${cmdCount} (max 7)`;
+                            });
+                        });
+
+                        cmdList.querySelectorAll("[data-remove]").forEach(btn => {
+                            btn.addEventListener("click", () => {
+                                const i = Number(btn.getAttribute("data-remove"));
+                                formState.commandList.splice(i, 1);
+                                if (!formState.commandList.length) formState.commandList = [""];
+                                renderRows();
+                            });
+                        });
+
+                        const { cmdCount } = computeMinDurationSec();
+                        if (cmdCountLabel) cmdCountLabel.textContent = `Total commands: ${cmdCount} (max 7)`;
+                    }
+
+                    btnAddCmd.addEventListener("click", async () => {
+                        const count = formState.commandList.filter(x => (x || "").trim().length > 0).length;
+                        if (count >= 7) {
+                            await uiAlert("You can add maximum 7 commands.", "Limit", "error");
+                            return;
+                        }
+                        formState.commandList.push("");
+                        renderRows();
+                    });
+
+                    if (!formState.commandList || !formState.commandList.length) formState.commandList = [""];
+                    renderRows();
+                },
+                collect() {
+                    const qContainer = document.getElementById("questionInputs");
+                    const cmdInputs = qContainer.querySelectorAll(".cmd-item");
+                    formState.commandList = [];
+                    cmdInputs.forEach((inp, idx) => {
+                        formState.commandList[idx] = (inp.value || "").trim();
+                    });
+                    computeMinDurationSec();
+                }
+            },
+
+            {
+                id: "timing",
+                title: "Timing",
+                desc: "Set how combinations are shown and transition time.",
+                render(container) {
+                    const { cmdCount, min } = computeMinDurationSec();
+
+                    container.innerHTML = `
+                    <label for="inpCPC">Commands per combination</label>
+                    <input id="inpCPC" type="number" min="1" max="7" placeholder="e.g. 2" />
+                    <div class="error-text" id="errCPC"></div>
+
+                    <label for="inpShowSec" style="margin-top:6px;">Combination display (sec)</label>
+                    <input id="inpShowSec" type="number" min="0.1" step="0.1" placeholder="e.g. 2" />
+                    <div class="error-text" id="errShowSec"></div>
+
+                    <label for="inpTransSec" style="margin-top:6px;">Transition (sec)</label>
+                    <input id="inpTransSec" type="number" min="0" step="0.1" placeholder="e.g. 1" />
+                    <div class="error-text" id="errTransSec"></div>
+
+                    <div style="margin-top:12px; font-size:0.9rem; color:#d4d4d4;">
+                        Commands: <strong>${cmdCount}</strong> · Minimum required duration: <strong><span id="minPreview">${min || 0}</span> sec</strong>
+                    </div>
+                `;
+
+                    const inpCPC = document.getElementById("inpCPC");
+                    const inpShowSec = document.getElementById("inpShowSec");
+                    const inpTransSec = document.getElementById("inpTransSec");
+                    const minPreview = document.getElementById("minPreview");
+
+                    if (inpCPC) inpCPC.value = String(formState.commandsPerCombination || 2);
+                    if (inpShowSec) inpShowSec.value = String(formState.combinationDisplaySec ?? 2);
+                    if (inpTransSec) inpTransSec.value = String(formState.transitionSec ?? 1);
+
+                    function onAnyChange() {
+                        formState.commandsPerCombination = Number(inpCPC?.value) || 1;
+                        formState.combinationDisplaySec = Number(inpShowSec?.value) || 0;
+                        formState.transitionSec = Number(inpTransSec?.value) || 0;
+
+                        const { min } = computeMinDurationSec();
+                        if (minPreview) minPreview.textContent = String(min || 0);
+                    }
+
+                    inpCPC?.addEventListener("input", onAnyChange);
+                    inpShowSec?.addEventListener("input", onAnyChange);
+                    inpTransSec?.addEventListener("input", onAnyChange);
+                },
+                collect() {
+                    const inpCPC = document.getElementById("inpCPC");
+                    const inpShowSec = document.getElementById("inpShowSec");
+                    const inpTransSec = document.getElementById("inpTransSec");
+
+                    formState.commandsPerCombination = Number(inpCPC?.value) || 1;
+                    formState.combinationDisplaySec = Number(inpShowSec?.value) || 0;
+                    formState.transitionSec = Number(inpTransSec?.value) || 0;
+
+                    computeMinDurationSec();
+                }
+            },
+
+            {
+                id: "options",
+                title: "Options",
+                desc: "Choose repetition.",
+                render(container) {
+                    container.innerHTML = `
+                    
+
+                    <div style="margin-top:4px;">
+                        <label style="display:flex; align-items:center; gap:8px;">
+                            <input type="checkbox" id="chkRepeat" />
+                            Allow repetition (same command can repeat in a combination)
+                        </label>
+                    </div>
+                `;
+
+                    const chkRepeat = document.getElementById("chkRepeat");
+
+                    if (chkRepeat) chkRepeat.checked = !!formState.allowRepetition;
+
+                    chkRepeat?.addEventListener("change", () => {
+                        formState.allowRepetition = !!chkRepeat.checked;
+                    });
+                },
+                collect() {
+                    const chkRepeat = document.getElementById("chkRepeat");
+                    formState.allowRepetition = !!chkRepeat?.checked;
+                }
+            },
+
+            {
+                id: "difficulty_total",
+                title: "Total duration",
+                desc: "Set total drill duration. Total duration cannot be less than minimum required.",
+                render(container) {
+                    const { min } = computeMinDurationSec();
+
+                    container.innerHTML = `
+
+                    <label for="inpTotalDur" style="margin-top:10px;">Total duration (sec)</label>
+                    <input id="inpTotalDur" type="number" min="1" step="1" placeholder="e.g. 60" />
+                    <div class="error-text" id="errTotalDur"></div>
+
+                    <div style="margin-top:12px; font-size:0.9rem; color:#d4d4d4;">
+                        Minimum required: <strong><span id="minPreview2">${min || 0}</span> sec</strong>
+                    </div>
+                `;
+
+                   
+                    const inpTotalDur = document.getElementById("inpTotalDur");
+
+                    if (inpTotalDur) inpTotalDur.value = formState.totalDurationSec ? String(formState.totalDurationSec) : "";
+
+                
+
+                    inpTotalDur?.addEventListener("input", () => {
+                        formState.totalDurationSec = Number(inpTotalDur.value) || 0;
+                        updateTotalTimeLabel();
+                    });
+
+                    updateTotalTimeLabel();
+                },
+                collect() {
+                   
+                    formState.totalDurationSec = Number(document.getElementById("inpTotalDur")?.value) || 0;
+                    computeMinDurationSec();
+                    updateTotalTimeLabel();
+                }
+            }
+        ];
+
+        const stepIntro = document.getElementById("step-intro");
+        const stepQuestions = document.getElementById("step-questions");
+        const stepReady = document.getElementById("step-ready");
+        const stepCountdown = document.getElementById("step-countdown");
+
+        const qIndexSpan = document.getElementById("qIndex");
+        const qTotalSpan = document.getElementById("qTotal");
+        const progressFill = document.getElementById("progressFill");
+        const questionTitle = document.getElementById("questionTitle");
+        const questionDesc = document.getElementById("questionDesc");
+        const questionInputs = document.getElementById("questionInputs");
+        const totalTimeLabel = document.getElementById("totalTimeLabel");
+        const summaryList = document.getElementById("summaryList");
+        const countdownValue = document.getElementById("countdownValue");
+
+        const btnStartSetup = document.getElementById("btnStartSetup");
+        const btnPrev = document.getElementById("btnPrev");
+        const btnNext = document.getElementById("btnNext");
+        const btnStartCountdown = document.getElementById("btnStartCountdown");
+
+        let currentQuestionIndex = 0;
+        qTotalSpan.textContent = questions.length.toString();
+
+        function showStep(step) {
+            [stepIntro, stepQuestions, stepReady, stepCountdown].forEach(s => s.classList.add("hidden"));
+            step.classList.remove("hidden");
+        }
+
+        function renderQuestion() {
+            const q = questions[currentQuestionIndex];
+            qIndexSpan.textContent = (currentQuestionIndex + 1).toString();
+            questionTitle.textContent = q.title;
+            questionDesc.textContent = q.desc;
+            q.render(questionInputs);
+
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            progressFill.style.width = progress + "%";
+
+            btnPrev.disabled = currentQuestionIndex === 0;
+            btnNext.textContent = ">";
+        }
+
+        function updateTotalTimeLabel() {
+            totalTimeLabel.textContent = formState.totalDurationSec || 0;
+        }
+
+        function buildSummary() {
+            const cmds = (formState.commandList || [])
+                .map(x => (x || "").trim())
+                .filter(x => x.length > 0);
+
+            computeMinDurationSec();
+
+            summaryList.innerHTML = `
+            <div><strong>Drill name:</strong> ${formState.drillName}</div>
+            <div><strong>Total duration:</strong> ${formState.totalDurationSec || 0} sec</div>
+            <div><strong>Minimum required:</strong> ${formState.minDurationSec || 0} sec</div>
+            <div><strong>Command count:</strong> ${cmds.length}</div>
+            <div><strong>Commands/Combination:</strong> ${formState.commandsPerCombination}</div>
+            <div><strong>Display sec:</strong> ${formState.combinationDisplaySec}</div>
+            <div><strong>Transition sec:</strong> ${formState.transitionSec}</div>
+            <div><strong>Allow repetition:</strong> ${formState.allowRepetition ? "Yes" : "No"}</div>
+            <div style="margin-top:8px;"><strong>Commands</strong></div>
+            ${cmds.map((c, i) => `<div>${i + 1}) ${c}</div>`).join("")}
+        `;
+        }
+
+        function clearValidationErrors() {
+            ["qCommandsError", "errCPC", "errShowSec", "errTransSec", "errTotalDur"].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = "";
+            });
+        }
+
+        btnStartSetup.addEventListener("click", () => {
+            showStep(stepQuestions);
+            renderQuestion();
+            updateTotalTimeLabel();
+        });
+
+        btnPrev.addEventListener("click", () => {
+            questions[currentQuestionIndex].collect();
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion();
+                updateTotalTimeLabel();
+            }
+        });
+
+        btnNext.addEventListener("click", () => {
+            questions[currentQuestionIndex].collect();
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion();
+                updateTotalTimeLabel();
+            } else {
+                updateTotalTimeLabel();
+                buildSummary();
+                showStep(stepReady);
+            }
+        });
+
+        btnStartCountdown.addEventListener("click", () => {
+            showStep(stepCountdown);
+            let counter = 3;
+            countdownValue.textContent = counter.toString();
+
+            const interval = setInterval(() => {
+                counter--;
+                if (counter <= 0) {
+                    clearInterval(interval);
+                    countdownValue.textContent = "GO";
+                    createPreCombDrillAndRedirect();
+                } else {
+                    countdownValue.textContent = counter.toString();
+                }
+            }, 1000);
+        });
+
+        async function createPreCombDrillAndRedirect() {
+            let currentUser = {};
+            try {
+                currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+            } catch { }
+
+            const userId = currentUser.id ?? currentUser.Id ?? 0;
+            if (!userId) {
+                await uiAlert("User not found, please login again.", "Error", "error");
+                window.location.href = "/login.html";
+                return;
+            }
+
+            clearValidationErrors();
+
+            const cmds = (formState.commandList || [])
+                .map(x => (x || "").trim())
+                .filter(x => x.length > 0);
+
+            if (!cmds.length) {
+                await uiAlert("Please add at least 1 command.", "Validation", "error");
+                showStep(stepQuestions);
+                currentQuestionIndex = 0;
+                renderQuestion();
+                const qErr = document.getElementById("qCommandsError");
+                if (qErr) qErr.textContent = "Please add at least 1 command.";
+                return;
+            }
+
+            if (cmds.length > 7) {
+                await uiAlert("Command count must be between 1 and 7.", "Validation", "error");
+                return;
+            }
+
+            const cpc = Number(formState.commandsPerCombination) || 1;
+            if (cpc <= 0) {
+                const e = document.getElementById("errCPC");
+                if (e) e.textContent = "Commands per combination must be > 0.";
+                await uiAlert("Commands per combination must be greater than 0.", "Validation", "error");
+                return;
+            }
+
+            const showSec = Number(formState.combinationDisplaySec) || 0;
+            if (showSec <= 0) {
+                const e = document.getElementById("errShowSec");
+                if (e) e.textContent = "Display time must be > 0.";
+                await uiAlert("Combination display time must be greater than 0 seconds.", "Validation", "error");
+                return;
+            }
+
+            const transSec = Number(formState.transitionSec) || 0;
+            if (transSec < 0) {
+                const e = document.getElementById("errTransSec");
+                if (e) e.textContent = "Transition must be >= 0.";
+                await uiAlert("Transition time must be zero or greater.", "Validation", "error");
+                return;
+            }
+
+            const { min } = computeMinDurationSec();
+
+            if (!formState.totalDurationSec || Number(formState.totalDurationSec) <= 0) {
+                await uiAlert("Please enter a valid total duration.", "Validation", "error");
+                showStep(stepQuestions);
+                currentQuestionIndex = questions.length - 1; 
+                renderQuestion();
+                const e = document.getElementById("errTotalDur");
+                if (e) e.textContent = "Total duration is required.";
+                return;
+            }
+
+            if (Number(formState.totalDurationSec) < Number(min || 0)) {
+                await uiAlert(`Total duration cannot be less than minimum required (${min} sec).`, "Validation", "error");
+                showStep(stepQuestions);
+                currentQuestionIndex = questions.length - 1;
+                renderQuestion();
+                const e = document.getElementById("errTotalDur");
+                if (e) e.textContent = `Min required: ${min} sec`;
+                return;
+            }
+
+            const dto = {
+                id: 0,
+                userId: userId,
+                name: formState.drillName || "Pre Combination Drill",
+                description: formState.drillDescription || "",
+                commandCount: cmds.length,
+                commandList: cmds.join(","),
+                commandsPerCombination: cpc,
+                combinationDisplaySec: showSec,
+                transitionSec: transSec,
+                isRandomOrder: true,
+                allowRepetition: !!formState.allowRepetition,
+                totalDurationSec: Number(formState.totalDurationSec),
+                difficultyLevel: "Easy"
+            };
+
+            try {
+                const addRes = await fetch("/api/PCombDrill/Add", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(dto)
+                });
+
+                const text = await addRes.text();
+                let json = null;
+                try { json = text ? JSON.parse(text) : null; } catch { }
+
+                console.log("PCombDrill Add status:", addRes.status, "raw:", text, "json:", json);
+
+                if (!addRes.ok && json && Array.isArray(json.errors)) {
+                    showStep(stepQuestions);
+                    currentQuestionIndex = 0;
+                    renderQuestion();
+
+                    const qErr = document.getElementById("qCommandsError");
+                    json.errors.forEach(e => {
+                        if (qErr) qErr.textContent += (e.error || "") + " ";
+                    });
+
+                    await uiAlert(json.message || "Validation failed.", "Validation", "error");
+                    return;
+                }
+
+                if (!addRes.ok) {
+                    await uiAlert("Drill could not be created. (Status: " + addRes.status + ")", "Error", "error");
+                    return;
+                }
+
+                if (json && json.drill && (json.drill.id || json.drill.Id)) {
+                    const newId = json.drill.id ?? json.drill.Id;
+                    window.location.href = `/comb-drill.html?id=${newId}`;
+                    return;
+                }
+
+                try {
+                    const listRes = await fetch(`/api/PCombDrill/GetByUser?userId=${userId}`);
+                    if (listRes.ok) {
+                        const drills = await listRes.json();
+                        if (Array.isArray(drills) && drills.length > 0) {
+                            const active = drills.filter(d => !d.deletedAt && !d.DeletedAt);
+                            const source = active.length ? active : drills;
+
+                            const latest = source.sort((a, b) => {
+                                const aid = a.id ?? a.Id ?? 0;
+                                const bid = b.id ?? b.Id ?? 0;
+                                return bid - aid;
+                            })[0];
+
+                            if (latest && (latest.id || latest.Id)) {
+                                const latestId = latest.id ?? latest.Id;
+                                window.location.href = `/comb-drill.html?id=${latestId}`;
+                                return;
+                            }
+                        }
+                    }
+
+                    await uiAlert("Drill created but redirect failed.", "Error", "error");
+                } catch (e) {
+                    console.error("Fallback redirect error:", e);
+                    await uiAlert("Drill created but redirect failed.", "Error", "error");
+                }
+            } catch (err) {
+                console.error("Unexpected error:", err);
+                await uiAlert("Beklenmeyen bir hata oluştu.", "Error", "error");
+            }
+        }
+
+        document.getElementById("closeBtn")?.addEventListener("click", async () => {
+            const ok = await uiConfirm("Exit setup? Your changes won't be saved.", "Exit Setup");
+            if (!ok) return;
+            window.location.href = "user.html";
+        });
+
+        updateTotalTimeLabel();
+    </script>
+
+
+</body>
+</html>

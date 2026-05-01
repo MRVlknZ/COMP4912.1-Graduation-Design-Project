@@ -1,0 +1,709 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QuickFeet-Challenge</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: radial-gradient(circle at top, rgba(239,68,68,0.16), transparent 30%), #0f0f10;
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        .page {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* center yerine */
+            padding: 80px 24px 24px; /* üstten boşluk verdik */
+            position: relative;
+        }
+
+        .challenge-card {
+            width: 100%;
+            max-width: 900px;
+            background: linear-gradient(180deg, rgba(239,68,68,0.10), rgba(255,255,255,0.02));
+            border: 2px solid rgba(239,68,68,0.40);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+        }
+
+        h1 {
+            margin: 0 0 24px;
+            font-size: 34px;
+        }
+
+        /* PANELS */
+        .setup-panel,
+        .session-panel {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(239,68,68,0.25);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* LIST */
+        .info-list {
+            margin: 0 0 18px;
+            padding-left: 18px;
+            color: rgba(255,255,255,0.82);
+            line-height: 1.7;
+        }
+
+            .info-list li {
+                margin-bottom: 6px;
+            }
+
+        /* BUTTONS */
+        .primary-btn,
+        .secondary-btn,
+        .danger-btn {
+            padding: 12px 18px;
+            border-radius: 12px;
+            border: 1px solid transparent;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .primary-btn {
+            background: rgba(239,68,68,0.18);
+            color: #ffeaea;
+            border-color: rgba(239,68,68,0.55);
+            box-shadow: 0 0 0 1px rgba(239,68,68,0.20) inset;
+        }
+
+            .primary-btn:hover {
+                background: linear-gradient(135deg, rgba(239,68,68,0.35), rgba(239,68,68,0.18));
+                box-shadow: 0 8px 20px rgba(239,68,68,0.28);
+            }
+
+        .secondary-btn {
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            border-color: rgba(255,255,255,0.18);
+        }
+
+            .secondary-btn:hover:not(:disabled) {
+                background: rgba(255,255,255,0.13);
+            }
+
+        .danger-btn {
+            background: rgba(239,68,68,0.18);
+            color: #ffeaea;
+            border-color: rgba(239,68,68,0.55);
+        }
+
+            .danger-btn:hover {
+                background: rgba(239,68,68,0.28);
+            }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* STATS */
+        .top-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.10);
+            border-radius: 14px;
+            padding: 14px;
+        }
+
+        .stat-label {
+            display: block;
+            color: rgba(255,255,255,0.65);
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        /* EXERCISE DISPLAY */
+        .exercise-display {
+            min-height: 430px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 18px;
+            border: 1px solid rgba(239,68,68,0.25);
+            background: linear-gradient(180deg, rgba(239,68,68,0.16), rgba(239,68,68,0.06));
+            text-align: center;
+            padding: 20px;
+        }
+
+        .exercise-name {
+            font-size: 34px;
+            font-weight: 900;
+            line-height: 1.2;
+            margin-bottom: 18px;
+        }
+
+        .exercise-media-wrap {
+            width: 100%;
+            max-width: 420px;
+            margin: 0 auto 18px;
+        }
+
+        .exercise-media {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: contain;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.14);
+            background: rgba(0,0,0,0.18);
+            padding: 10px;
+            display: block;
+        }
+
+        .exercise-next {
+            font-size: 16px;
+            color: rgba(255,255,255,0.78);
+            margin-bottom: 10px;
+        }
+
+        .exercise-phase {
+            font-size: 14px;
+            font-weight: 700;
+            color: #ffb4b4;
+        }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        /* CLOSE BUTTON (AYNI KALDI) */
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 28px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #d4d4d4;
+            background: transparent;
+            color: #d4d4d4;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .close-btn:hover {
+                background: #d4d4d43d;
+                transform: scale(1.08);
+            }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+        }
+
+        .modal-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,.6);
+        }
+
+        .modal-card {
+            position: relative;
+            width: min(560px,92vw);
+            max-height: 80vh;
+            margin: 8vh auto 0;
+            background: #1b1b1b;
+            border: 1px solid #333;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,.55);
+            overflow: hidden;
+        }
+
+        .modal-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+            .modal-head h3 {
+                margin: 0;
+                font-size: 1rem;
+            }
+
+        .modal-x {
+            background: transparent;
+            border: none;
+            color: #ddd;
+            font-size: 22px;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .modal-body {
+            padding: 14px 16px;
+            color: #eaeaea;
+            overflow: auto;
+            max-height: calc(80vh - 110px);
+            white-space: pre-line;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            padding: 12px 16px;
+            border-top: 1px solid #2a2a2a;
+        }
+
+        .modal-btn {
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid #3a3a3a;
+            background: #232323;
+            color: #f5f5f5;
+            cursor: pointer;
+        }
+
+            .modal-btn.primary {
+                border-color: #4a4a4a;
+                background: #2b2b2b;
+            }
+
+            .modal-btn.danger {
+                border-color: #7f1d1d;
+                background: #3a1010;
+            }
+
+        .modal-error .modal-card {
+            background: linear-gradient(180deg,#2a0f0f,#160909);
+            border: 1px solid #7f1d1d;
+        }
+
+        .modal-error .modal-head {
+            border-bottom: 1px solid #7f1d1d;
+        }
+
+            .modal-error .modal-head h3 {
+                color: #fca5a5;
+            }
+
+        .modal-error .modal-body {
+            color: #fee2e2;
+        }
+
+        .modal-error .modal-x {
+            color: #fecaca;
+        }
+
+        .modal-error .modal-btn.primary {
+            background: #7f1d1d;
+            border-color: #991b1b;
+        }
+
+            .modal-error .modal-btn.primary:hover {
+                background: #991b1b;
+            }
+        /* MOBILE */
+        @media (max-width: 700px) {
+            .top-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .exercise-name {
+                font-size: 28px;
+            }
+
+            .exercise-display {
+                min-height: 360px;
+            }
+
+            .page {
+                padding-top: 90px; /* mobile’da daha fazla boşluk */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <button id="closeBtn" class="close-btn">✕</button>
+
+        <div class="challenge-card">
+            <h1>Quick Feet Challenge</h1>
+
+            <div class="setup-panel" id="setupPanel">
+                <ul class="info-list">
+                    <li>Total Duration: 15 minutes</li>
+                    <li>Fixed program flow</li>
+                    <li>Each exercise is shown with its own image</li>
+                </ul>
+
+                <button id="startBtn" class="primary-btn">Start Drill</button>
+            </div>
+
+            <div class="session-panel hidden" id="sessionPanel">
+                <div class="top-stats">
+                    <div class="stat-box">
+                        <span class="stat-label">Program</span>
+                        <span class="stat-value">Quick Feet</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Time Left</span>
+                        <span class="stat-value" id="timeLeftLabel">15:00</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Step</span>
+                        <span class="stat-value" id="stepLabel">1 / 20</span>
+                    </div>
+                </div>
+
+                <div class="exercise-display">
+                    <div class="exercise-name" id="exerciseName">Press Start</div>
+
+                    <div class="exercise-media-wrap">
+                        <img id="exerciseMedia"
+                             class="exercise-media"
+                             src="assets/exercises/default.png"
+                             alt="Exercise visual" />
+                    </div>
+
+                    <div class="exercise-next" id="nextChangeLabel">Next change in: -</div>
+                    <div class="exercise-phase" id="phaseLabel">Ready</div>
+                </div>
+
+                <div class="controls">
+                    <button id="pauseBtn" class="secondary-btn">Pause</button>
+                    <button id="continueBtn" class="secondary-btn" disabled>Continue</button>
+                    <button id="restartBtn" class="danger-btn">Restart</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="appModal" class="modal hidden" aria-hidden="true">
+        <div class="modal-backdrop" data-close="1"></div>
+
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="appModalTitle">
+            <div class="modal-head">
+                <h3 id="appModalTitle">Title</h3>
+                <button class="modal-x" type="button" data-close="1" aria-label="Close">×</button>
+            </div>
+
+            <div id="appModalBody" class="modal-body"></div>
+            <div class="modal-actions" id="appModalActions"></div>
+        </div>
+    </div>
+
+    <script>
+        const QUICK_FEET_PROGRAM = [
+            { name: "Right Foot Hop", duration: 30, media: "assets/exercises/right-foot-hop.png" },
+            { name: "Left Foot Hop", duration: 30, media: "assets/exercises/left-foot-hop.png" },
+            { name: "Forward-Backward Line Hop", duration: 60, media: "assets/exercises/frw-bckw-leg-line-hop.png" },
+            { name: "Right Foot Side to Side Hop", duration: 30, media: "assets/exercises/right-foot-side-to-side-hop.png" },
+            { name: "Left Foot Side to Side Hop", duration: 30, media: "assets/exercises/left-foot-side-to-side-hop.png" },
+            { name: "Side to Side Hop", duration: 30, media: "assets/exercises/side-to-side-jump.png" },
+            { name: "Split Stance Hop", duration: 60, media: "assets/exercises/split-stance-hop.png" },
+
+            { name: "Break", duration: 30, media: "assets/exercises/break.png", isBreak: true },
+
+            { name: "Scissor Line Hop", duration: 60, media: "assets/exercises/scissor-line-hop.png" },
+            { name: "Skatter Line Hop", duration: 60, media: "assets/exercises/skatter-line-hop.png" },
+            { name: "U Hops", duration: 60, media: "assets/exercises/u-hops.png" },
+            { name: "2 Step Forward - 2 Step Backward Line Hop", duration: 60, media: "assets/exercises/2-step-frw-2-stp-bckw.png" },
+            { name: "Star Line Hop", duration: 30, media: "assets/exercises/star-line-hop.png" },
+
+            { name: "Break", duration: 30, media: "assets/exercises/break.png", isBreak: true },
+
+            { name: "Cross Step Line Hop", duration: 60, media: "assets/exercises/cross-step-line-hop.gif" },
+            { name: "Right Foot In-Out Line Hop", duration: 30, media: "assets/exercises/right-foot-in-out-line-hop.png" },
+            { name: "Left Foot In-Out Line Hop", duration: 30, media: "assets/exercises/single-leg-in-out-line-hop.png" },
+            { name: "Right Foot U-Hops", duration: 30, media: "assets/exercises/right-foot-u-hops.gif" },
+            { name: "Left Foot U-Hops", duration: 30, media: "assets/exercises/left-foot-u-hops.gif" },
+            { name: "Right-Left Side Turn Line Hop", duration: 60, media: "assets/exercises/right-left-side-turn-line-hop.gif" },
+            { name: "Right Foot U-Hops", duration: 30, media: "assets/exercises/right-foot-u-hops.gif" },
+            { name: "Left Foot U-Hops", duration: 30, media: "assets/exercises/left-foot-u-hops.gif" }
+        ];
+
+        const TOTAL_DURATION = QUICK_FEET_PROGRAM.reduce((sum, item) => sum + item.duration, 0);
+
+        const setupPanel = document.getElementById("setupPanel");
+        const sessionPanel = document.getElementById("sessionPanel");
+
+        const startBtn = document.getElementById("startBtn");
+        const pauseBtn = document.getElementById("pauseBtn");
+        const continueBtn = document.getElementById("continueBtn");
+        const restartBtn = document.getElementById("restartBtn");
+
+        const timeLeftLabel = document.getElementById("timeLeftLabel");
+        const stepLabel = document.getElementById("stepLabel");
+        const exerciseName = document.getElementById("exerciseName");
+        const exerciseMedia = document.getElementById("exerciseMedia");
+        const nextChangeLabel = document.getElementById("nextChangeLabel");
+        const phaseLabel = document.getElementById("phaseLabel");
+
+        let currentIndex = 0;
+        let timeLeft = TOTAL_DURATION;
+        let currentExerciseRemaining = 0;
+
+        let isPaused = false;
+        let sessionFinished = false;
+
+        let sessionTimer = null;
+        let nextChangeCountdownTimer = null;
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+        }
+
+        function clearAllTimers() {
+            clearInterval(sessionTimer);
+            clearInterval(nextChangeCountdownTimer);
+        }
+
+        function updateTopTime() {
+            timeLeftLabel.textContent = formatTime(timeLeft);
+        }
+
+        function setCurrentExercise() {
+            if (currentIndex >= QUICK_FEET_PROGRAM.length) {
+                finishSession();
+                return;
+            }
+
+            const current = QUICK_FEET_PROGRAM[currentIndex];
+
+            exerciseName.textContent = current.name;
+            exerciseMedia.src = current.media;
+            exerciseMedia.alt = current.name;
+            currentExerciseRemaining = current.duration;
+
+            stepLabel.textContent = `${currentIndex + 1} / ${QUICK_FEET_PROGRAM.length}`;
+            nextChangeLabel.textContent = `Next change in: ${currentExerciseRemaining}s`;
+            phaseLabel.textContent = current.isBreak ? "Break Time" : "Exercise Running";
+        }
+
+        function startCountdownForCurrentExercise() {
+            clearInterval(nextChangeCountdownTimer);
+
+            nextChangeCountdownTimer = setInterval(() => {
+                if (isPaused || sessionFinished) return;
+
+                currentExerciseRemaining--;
+
+                if (currentExerciseRemaining > 0) {
+                    nextChangeLabel.textContent = `Next change in: ${currentExerciseRemaining}s`;
+                    return;
+                }
+
+                clearInterval(nextChangeCountdownTimer);
+                currentIndex++;
+                setCurrentExercise();
+                if (!sessionFinished) {
+                    startCountdownForCurrentExercise();
+                }
+            }, 1000);
+        }
+
+        function startSession() {
+            isPaused = false;
+            sessionFinished = false;
+            currentIndex = 0;
+            timeLeft = TOTAL_DURATION;
+
+            updateTopTime();
+
+            setupPanel.classList.add("hidden");
+            sessionPanel.classList.remove("hidden");
+
+            pauseBtn.disabled = false;
+            continueBtn.disabled = true;
+
+            clearAllTimers();
+            setCurrentExercise();
+            startCountdownForCurrentExercise();
+
+            sessionTimer = setInterval(() => {
+                if (isPaused || sessionFinished) return;
+
+                timeLeft--;
+                updateTopTime();
+
+                if (timeLeft <= 0) {
+                    finishSession();
+                }
+            }, 1000);
+        }
+
+        function pauseSession() {
+            if (sessionFinished) return;
+
+            isPaused = true;
+            pauseBtn.disabled = true;
+            continueBtn.disabled = false;
+            nextChangeLabel.textContent = "Paused";
+            phaseLabel.textContent = "Session Paused";
+        }
+
+        function continueSession() {
+            if (sessionFinished) return;
+
+            isPaused = false;
+            pauseBtn.disabled = false;
+            continueBtn.disabled = true;
+            nextChangeLabel.textContent = `Next change in: ${currentExerciseRemaining}s`;
+            phaseLabel.textContent = QUICK_FEET_PROGRAM[currentIndex]?.isBreak ? "Break Time" : "Exercise Running";
+        }
+
+        function finishSession() {
+            sessionFinished = true;
+            clearAllTimers();
+
+            timeLeft = 0;
+            updateTopTime();
+
+            exerciseName.textContent = "Great job!";
+            exerciseMedia.src = "assets/exercises/finished.png";
+            exerciseMedia.alt = "Session finished";
+            nextChangeLabel.textContent = "Challenge finished.";
+            phaseLabel.textContent = "Session Complete";
+
+            pauseBtn.disabled = true;
+            continueBtn.disabled = true;
+        }
+
+        function restartSession() {
+            clearAllTimers();
+
+            currentIndex = 0;
+            timeLeft = TOTAL_DURATION;
+            currentExerciseRemaining = 0;
+            isPaused = false;
+            sessionFinished = false;
+
+            setupPanel.classList.remove("hidden");
+            sessionPanel.classList.add("hidden");
+
+            exerciseName.textContent = "Press Start";
+            exerciseMedia.src = "assets/exercises/default.png";
+            exerciseMedia.alt = "Exercise visual";
+            nextChangeLabel.textContent = "Next change in: -";
+            phaseLabel.textContent = "Ready";
+            stepLabel.textContent = `1 / ${QUICK_FEET_PROGRAM.length}`;
+            updateTopTime();
+        }
+
+        function uiModal({
+            title = "Info",
+            body = "",
+            variant = "default",
+            buttons = [{ text: "OK", value: true, className: "primary" }]
+        }) {
+            const modal = document.getElementById("appModal");
+            const titleEl = document.getElementById("appModalTitle");
+            const bodyEl = document.getElementById("appModalBody");
+            const actionsEl = document.getElementById("appModalActions");
+
+            let resolve;
+            const p = new Promise(r => (resolve = r));
+
+            modal.classList.remove("modal-default", "modal-error", "modal-success", "modal-warning");
+            modal.classList.add(`modal-${variant}`);
+
+            const onKey = (e) => {
+                if (e.key === "Escape") close(false);
+            };
+
+            const close = (val) => {
+                modal.classList.add("hidden");
+                modal.setAttribute("aria-hidden", "true");
+                document.removeEventListener("keydown", onKey);
+                resolve(val);
+            };
+
+            titleEl.textContent = title;
+            bodyEl.textContent = body;
+            actionsEl.innerHTML = "";
+
+            modal.classList.remove("hidden");
+            modal.setAttribute("aria-hidden", "false");
+            document.addEventListener("keydown", onKey);
+
+            modal.querySelectorAll("[data-close='1']").forEach(el => {
+                el.onclick = () => close(false);
+            });
+
+            buttons.forEach(b => {
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = `modal-btn ${b.className || ""}`.trim();
+                btn.textContent = b.text || "OK";
+                btn.onclick = () => close(b.value);
+                actionsEl.appendChild(btn);
+            });
+
+            setTimeout(() => actionsEl.querySelector("button")?.focus(), 0);
+            return p;
+        }
+
+        function uiConfirm(message, title = "Confirm") {
+            return uiModal({
+                title,
+                body: message,
+                variant: "error",
+                buttons: [
+                    { text: "Cancel", value: false },
+                    { text: "Exit", value: true, className: "danger" }
+                ]
+            });
+        }
+
+        startBtn.addEventListener("click", startSession);
+        pauseBtn.addEventListener("click", pauseSession);
+        continueBtn.addEventListener("click", continueSession);
+        restartBtn.addEventListener("click", restartSession);
+
+        document.getElementById("closeBtn")?.addEventListener("click", async () => {
+            const ok = await uiConfirm("Exit setup? Your changes won't be saved.", "Exit Setup");
+            if (!ok) return;
+            window.location.href = "user.html";
+        });
+
+        updateTopTime();
+        stepLabel.textContent = `1 / ${QUICK_FEET_PROGRAM.length}`;
+    </script>
+</body>
+</html>
