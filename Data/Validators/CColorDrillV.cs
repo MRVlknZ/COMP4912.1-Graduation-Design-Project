@@ -1,4 +1,4 @@
-using Data.Models;
+﻿using Data.Models;
 using FluentValidation;
 using System;
 
