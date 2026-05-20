@@ -46,6 +46,9 @@ namespace Business.AutoFac
 
             b.RegisterType<PCombDrillService>().As<IPCombDrillService>();
             b.RegisterType<PCombDrillDao>().As<IPCombDrillDao>();
+
+            b.RegisterType<ScheduleService>().As<IScheduleService>();
+            b.RegisterType<ScheduleDao>().As<IScheduleDao>();
         }
     }
 }

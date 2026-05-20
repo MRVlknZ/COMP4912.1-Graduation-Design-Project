@@ -51,24 +51,34 @@ namespace Business.Concrete
         public IResult Ban(int userid)
         {
             var u = _dao.Get(x => x.Id == userid);
+
             if (u == null)
             {
                 return new ErrorResult(ResultConstant.RecordNotFound);
             }
+
             u.IsActive = false;
+            u.UpdatedAt = DateTime.Now;
+
             _dao.Update(u);
+
             return new SuccessResult("Kullanıcı banlandı");
         }
 
         public IResult Unban(int userid)
         {
             var u = _dao.Get(x => x.Id == userid);
+
             if (u == null)
             {
                 return new ErrorResult(ResultConstant.RecordNotFound);
             }
+
             u.IsActive = true;
+            u.UpdatedAt = DateTime.Now;
+
             _dao.Update(u);
+
             return new SuccessResult("Kullanıcı aktive edildi");
         }
     }

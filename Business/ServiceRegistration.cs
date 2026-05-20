@@ -28,6 +28,8 @@ namespace Business
             services.AddScoped<IPFocusDrillService, PFocusDrillService>();
             services.AddScoped<IPCombDrillService, PCombDrillService>();
 
+            services.AddScoped<IScheduleService, ScheduleService>();
+
             return services;
         }
     }
