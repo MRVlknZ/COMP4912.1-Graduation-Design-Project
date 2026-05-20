@@ -1,0 +1,1018 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stance Defense Challenge</title>
+
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            font-family: Arial,sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: #0f0f0f;
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        .close-btn {
+            position: fixed;
+            top: 18px;
+            right: 24px;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 2px solid #ddd;
+            background: transparent;
+            color: #ddd;
+            font-size: 22px;
+            cursor: pointer;
+            z-index: 20;
+        }
+
+        .page {
+            max-width: 1250px;
+            margin: auto;
+            padding: 70px 24px 30px;
+        }
+
+        .panel {
+            border: 2px solid #333;
+            background: #171717;
+            border-radius: 22px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: 34px;
+        }
+
+        .desc {
+            color: #aaa;
+            margin-bottom: 24px;
+        }
+
+        .setup-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2,1fr);
+            gap: 14px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            background: #101010;
+            color: white;
+            border: 1px solid #444;
+            outline: none;
+        }
+
+            input:focus,
+            select:focus {
+                border-color: #22c55e;
+            }
+
+        .btn {
+            padding: 14px 18px;
+            border: none;
+            border-radius: 14px;
+            font-weight: 800;
+            color: white;
+            cursor: pointer;
+            background: #16a34a;
+            width: 100%;
+            margin-top: 18px;
+            font-size: 15px;
+        }
+
+        .workspace-preview {
+            height: 380px;
+            background: #101010;
+            border: 1px solid #333;
+            border-radius: 22px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .court-shape {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%,-50%);
+            border: 4px dashed rgba(34,197,94,.65);
+            background: rgba(34,197,94,.06);
+        }
+
+            .court-shape.rectangle {
+                width: 72%;
+                height: 58%;
+                border-radius: 24px;
+            }
+
+            .court-shape.circle {
+                width: 230px;
+                height: 230px;
+                border-radius: 50%;
+            }
+
+            .court-shape.triangle {
+                width: 0;
+                height: 0;
+                border-left: 130px solid transparent;
+                border-right: 130px solid transparent;
+                border-bottom: 230px solid rgba(34,197,94,.18);
+                background: transparent;
+                border-top: none;
+            }
+
+            .court-shape.zigzag {
+                width: 75%;
+                height: 55%;
+                border: none;
+                background: repeating-linear-gradient( 135deg, rgba(34,197,94,.15) 0 15px, transparent 15px 30px );
+                outline: 4px dashed rgba(34,197,94,.65);
+                border-radius: 20px;
+            }
+
+        .player-dot {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%,-50%);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #e11d48;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .workspace-info {
+            position: absolute;
+            left: 18px;
+            bottom: 16px;
+            color: #aaa;
+            font-size: 13px;
+        }
+
+        .command-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .command-chip {
+            border: 1px solid #333;
+            background: #101010;
+            padding: 8px 10px;
+            border-radius: 999px;
+            color: #ddd;
+            font-size: 13px;
+        }
+
+        .hud {
+            display: grid;
+            grid-template-columns: repeat(4,1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .hud-box {
+            background: #101010;
+            border: 1px solid #333;
+            border-radius: 14px;
+            padding: 14px;
+        }
+
+            .hud-box span {
+                color: #aaa;
+                font-size: 13px;
+            }
+
+            .hud-box strong {
+                display: block;
+                margin-top: 6px;
+                font-size: 22px;
+            }
+
+        .game-area {
+            height: 520px;
+            border: 2px solid #333;
+            border-radius: 24px;
+            background: radial-gradient(circle,#181818,#0b0b0b);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-zone {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%,-50%);
+            border: 4px dashed rgba(255,255,255,.28);
+        }
+
+            .game-zone.rectangle {
+                width: 72%;
+                height: 58%;
+                border-radius: 30px;
+            }
+
+            .game-zone.circle {
+                width: 280px;
+                height: 280px;
+                border-radius: 50%;
+            }
+
+            .game-zone.triangle {
+                width: 0;
+                height: 0;
+                border-left: 150px solid transparent;
+                border-right: 150px solid transparent;
+                border-bottom: 260px solid rgba(255,255,255,.12);
+                background: transparent;
+                border-top: none;
+            }
+
+            .game-zone.zigzag {
+                width: 72%;
+                height: 55%;
+                border: none;
+                background: repeating-linear-gradient( 135deg, rgba(255,255,255,.08) 0 16px, transparent 16px 32px );
+                outline: 4px dashed rgba(255,255,255,.28);
+                border-radius: 25px;
+            }
+
+        .cue {
+            position: absolute;
+            top: 32px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 48px;
+            font-weight: 900;
+            text-align: center;
+        }
+
+        .subcue {
+            position: absolute;
+            top: 94px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #aaa;
+            font-size: 15px;
+        }
+
+        .player {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%,-50%);
+            font-size: 64px;
+        }
+
+        .reminder {
+            position: absolute;
+            bottom: 26px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 16px;
+            border-radius: 999px;
+            background: rgba(34,197,94,.16);
+            border: 1px solid rgba(34,197,94,.35);
+            color: #86efac;
+            font-weight: 800;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media(max-width:950px) {
+
+            .setup-grid,
+            .hud {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .game-area {
+                height: 430px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <button class="close-btn"
+            onclick="window.location.href='user.html'">
+        ×
+    </button>
+
+    <div class="page">
+
+        <div class="panel" id="setupPanel">
+
+            <h1>Stance Defense Challenge</h1>
+
+            <div class="desc">
+                Defensive reaction drill for basketball, football and agility training.
+            </div>
+
+            <div class="setup-grid">
+
+                <div>
+
+                    <div class="form-grid">
+
+                        <div>
+                            <label>Training Time / sec</label>
+                            <input id="duration" type="number" value="60">
+                        </div>
+
+                        <div>
+                            <label>Difficulty</label>
+                            <select id="difficulty">
+                                <option value="easy">Easy</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="hard">Hard</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label>Body Fitness Level</label>
+                            <select id="bodyLevel">
+                                <option value="pro">Pro Athlete</option>
+                                <option value="good">Good</option>
+                                <option value="normal" selected>Normal</option>
+                                <option value="bad">Bad / Beginner</option>
+                                <option value="heavy">Heavy Body / Low Mobility</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label>Cue System</label>
+                            <select id="cueType">
+                                <option value="text">Text</option>
+                                <option value="arrow">Arrow</option>
+                                <option value="color">Color Flash</option>
+                                <option value="audio">Audio</option>
+                                <option value="hybrid">Text + Audio</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label>Failure Mode</label>
+                            <select id="failureMode">
+                                <option value="casual">Casual</option>
+                                <option value="competitive">Competitive</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label>Area Preset</label>
+                            <select id="areaPreset"
+                                    onchange="applyPreset()">
+
+                                <option value="small">Small Area - 1m²</option>
+                                <option value="medium" selected>Medium Area</option>
+                                <option value="large">Large Area</option>
+                                <option value="custom">Custom</option>
+
+                            </select>
+                        </div>
+
+                        <div>
+                            <label>Shape</label>
+
+                            <select id="shape"
+                                    onchange="updateWorkspacePreview()">
+
+                                <option value="rectangle">Rectangle</option>
+                                <option value="circle">Circle</option>
+                                <option value="triangle">Triangle</option>
+                                <option value="zigzag">Zigzag Lanes</option>
+
+                            </select>
+                        </div>
+
+                        <div>
+                            <label>Width / meter</label>
+                            <input id="areaWidth"
+                                   type="number"
+                                   value="3"
+                                   oninput="updateWorkspacePreview()">
+                        </div>
+
+                        <div>
+                            <label>Height / meter</label>
+                            <input id="areaHeight"
+                                   type="number"
+                                   value="2"
+                                   oninput="updateWorkspacePreview()">
+                        </div>
+
+                        <div>
+                            <label>Stance Reminders</label>
+                            <select id="stanceMode">
+                                <option value="on" selected>On</option>
+                                <option value="off">Off</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label>Fake Cue Priority</label>
+                            <select id="fakePriority">
+                                <option value="visual">Visual Priority</option>
+                                <option value="audio">Audio Priority</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <div class="command-list">
+
+                        <div class="command-chip">Left Slide</div>
+                        <div class="command-chip">Right Slide</div>
+                        <div class="command-chip">Forward Step</div>
+                        <div class="command-chip">Back Pedal</div>
+                        <div class="command-chip">Floor Touch</div>
+                        <div class="command-chip">Split Step</div>
+                        <div class="command-chip">Freeze</div>
+                        <div class="command-chip">Double Slide</div>
+                        <div class="command-chip">Diagonal</div>
+                        <div class="command-chip">Shuffle + Touch</div>
+                        <div class="command-chip">Fake Cue</div>
+                        <div class="command-chip">Reaction Chain</div>
+
+                    </div>
+
+                    <button class="btn"
+                            onclick="startChallenge()">
+
+                        Start Challenge
+
+                    </button>
+
+                </div>
+
+                <div class="workspace-preview">
+
+                    <div id="courtShape"
+                         class="court-shape rectangle">
+                    </div>
+
+                    <div class="player-dot">
+                        🏃
+                    </div>
+
+                    <div class="workspace-info"
+                         id="workspaceInfo">
+
+                        Work Area: 3m x 2m
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="hud hidden"
+             id="hud">
+
+            <div class="hud-box">
+                <span>Time Left</span>
+                <strong id="timeLeft">0</strong>
+            </div>
+
+            <div class="hud-box">
+                <span>Score</span>
+                <strong id="score">0</strong>
+            </div>
+
+            <div class="hud-box">
+                <span>Current Command</span>
+                <strong id="currentCommand">-</strong>
+            </div>
+
+            <div class="hud-box">
+                <span>Status</span>
+                <strong id="status">Ready</strong>
+            </div>
+
+        </div>
+
+        <div class="game-area hidden"
+             id="gameArea">
+
+            <div id="gameZone"
+                 class="game-zone rectangle">
+            </div>
+
+            <div class="cue"
+                 id="cue">
+                READY
+            </div>
+
+            <div class="subcue"
+                 id="subcue">
+                Stay in stance
+            </div>
+
+            <div class="player">
+                🏀
+            </div>
+
+            <div class="reminder"
+                 id="reminder">
+                Stay low
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        const storedUser =
+            localStorage.getItem("currentUser");
+
+        if (!storedUser)
+            window.location.href = "login.html";
+
+        const baseCommands = [
+
+            {
+                key: "left",
+                text: "LEFT SLIDE",
+                arrow: "←",
+                color: "BLUE",
+                speak: "go left"
+            },
+
+            {
+                key: "right",
+                text: "RIGHT SLIDE",
+                arrow: "→",
+                color: "YELLOW",
+                speak: "go right"
+            },
+
+            {
+                key: "forward",
+                text: "FORWARD STEP",
+                arrow: "↑",
+                color: "GREEN",
+                speak: "forward"
+            },
+
+            {
+                key: "back",
+                text: "BACK PEDAL",
+                arrow: "↓",
+                color: "PURPLE",
+                speak: "back"
+            },
+
+            {
+                key: "touch",
+                text: "FLOOR TOUCH",
+                arrow: "⬇",
+                color: "RED",
+                speak: "floor touch"
+            },
+
+            {
+                key: "split",
+                text: "SPLIT STEP",
+                arrow: "↕",
+                color: "CYAN",
+                speak: "split step"
+            },
+
+            {
+                key: "freeze",
+                text: "FREEZE",
+                arrow: "✋",
+                color: "ORANGE",
+                speak: "freeze"
+            }
+
+        ];
+
+        const mediumCommands = [
+
+            {
+                key: "doubleLeft",
+                text: "LEFT LEFT",
+                arrow: "← ←",
+                color: "BLUE",
+                speak: "left left"
+            },
+
+            {
+                key: "doubleRight",
+                text: "RIGHT RIGHT",
+                arrow: "→ →",
+                color: "YELLOW",
+                speak: "right right"
+            },
+
+            {
+                key: "diagLeftForward",
+                text: "LEFT FORWARD",
+                arrow: "↖",
+                color: "LIME",
+                speak: "left forward"
+            },
+
+            {
+                key: "diagRightBack",
+                text: "RIGHT BACK",
+                arrow: "↘",
+                color: "PINK",
+                speak: "right back"
+            },
+
+            {
+                key: "shuffleTouch",
+                text: "SLIDE + TOUCH",
+                arrow: "← ↓",
+                color: "RED",
+                speak: "slide and touch"
+            }
+
+        ];
+
+        const hardCommands = [
+
+            {
+                key: "fake",
+                text: "FAKE CUE",
+                arrow: "⚠",
+                color: "GRAY",
+                speak: "fake cue",
+                fake: true
+            },
+
+            {
+                key: "chain1",
+                text: "LEFT → RIGHT → TOUCH",
+                arrow: "← → ↓",
+                color: "WHITE",
+                speak: "left right touch"
+            },
+
+            {
+                key: "chain2",
+                text: "FORWARD → BACK → FREEZE",
+                arrow: "↑ ↓ ✋",
+                color: "WHITE",
+                speak: "forward back freeze"
+            }
+
+        ];
+
+        const reminders = [
+
+            "Stay low",
+            "Hands up",
+            "Wide feet",
+            "Chest up",
+            "Do not cross feet"
+
+        ];
+
+        let gameTimer;
+        let cueTimer;
+        let reminderTimer;
+
+        let timeLeft = 0;
+        let score = 0;
+
+        function applyPreset() {
+
+            const preset =
+                document.getElementById("areaPreset").value;
+
+            const w =
+                document.getElementById("areaWidth");
+
+            const h =
+                document.getElementById("areaHeight");
+
+            if (preset === "small") {
+                w.value = 1;
+                h.value = 1;
+            }
+
+            if (preset === "medium") {
+                w.value = 3;
+                h.value = 2;
+            }
+
+            if (preset === "large") {
+                w.value = 5;
+                h.value = 3;
+            }
+
+            updateWorkspacePreview();
+        }
+
+        function updateWorkspacePreview() {
+
+            const shape =
+                document.getElementById("shape").value;
+
+            const w =
+                document.getElementById("areaWidth").value;
+
+            const h =
+                document.getElementById("areaHeight").value;
+
+            const court =
+                document.getElementById("courtShape");
+
+            court.className =
+                `court-shape ${shape}`;
+
+            document.getElementById("workspaceInfo").innerText =
+                `Work Area: ${w}m x ${h}m`;
+        }
+
+        function startChallenge() {
+
+            const duration =
+                Number(document.getElementById("duration").value);
+
+            if (!duration || duration < 10) {
+                alert("Training time must be at least 10 seconds.");
+                return;
+            }
+
+            timeLeft = duration;
+            score = 0;
+
+            document.getElementById("setupPanel")
+                .classList.add("hidden");
+
+            document.getElementById("hud")
+                .classList.remove("hidden");
+
+            document.getElementById("gameArea")
+                .classList.remove("hidden");
+
+            document.getElementById("timeLeft").innerText =
+                timeLeft;
+
+            document.getElementById("score").innerText =
+                score;
+
+            document.getElementById("status").innerText =
+                "Active";
+
+            const shape =
+                document.getElementById("shape").value;
+
+            document.getElementById("gameZone").className =
+                `game-zone ${shape}`;
+
+            clearInterval(gameTimer);
+            clearTimeout(cueTimer);
+            clearInterval(reminderTimer);
+
+            if (document.getElementById("stanceMode").value === "on") {
+
+                reminderTimer = setInterval(() => {
+
+                    document.getElementById("reminder").innerText =
+                        reminders[Math.floor(Math.random() * reminders.length)];
+
+                }, 2500);
+            }
+
+            nextCue();
+
+            gameTimer = setInterval(() => {
+
+                timeLeft--;
+
+                document.getElementById("timeLeft").innerText =
+                    timeLeft;
+
+                if (timeLeft <= 0) {
+                    endChallenge();
+                }
+
+            }, 1000);
+        }
+
+        function getCommandPool() {
+
+            const difficulty =
+                document.getElementById("difficulty").value;
+
+            if (difficulty === "easy")
+                return baseCommands;
+
+            if (difficulty === "medium")
+                return [...baseCommands, ...mediumCommands];
+
+            return [...baseCommands, ...mediumCommands, ...hardCommands];
+        }
+
+        function getCueDelay(difficulty) {
+
+            const bodyLevel =
+                document.getElementById("bodyLevel").value;
+
+            const delayMap = {
+                pro: {
+                    easy: [1400, 2000],
+                    medium: [900, 1400],
+                    hard: [5500, 9500]
+                },
+
+                good: {
+                    easy: [1800, 2400],
+                    medium: [1200, 1800],
+                    hard: [8000, 13000]
+                },
+
+                normal: {
+                    easy: [2300, 3200],
+                    medium: [1600, 2300],
+                    hard: [11000, 17000]
+                },
+
+                bad: {
+                    easy: [3200, 4300],
+                    medium: [2400, 3300],
+                    hard: [17000, 25000]
+                },
+
+                heavy: {
+                    easy: [4200, 5500],
+                    medium: [3200, 4300],
+                    hard: [24000, 34000]
+                }
+            };
+
+            const range =
+                delayMap[bodyLevel]?.[difficulty]
+                || delayMap.normal.medium;
+
+            return randomBetween(range[0], range[1]);
+        }
+
+        function nextCue() {
+
+            if (timeLeft <= 0)
+                return;
+
+            const difficulty =
+                document.getElementById("difficulty").value;
+
+            const cueType =
+                document.getElementById("cueType").value;
+
+            const pool =
+                getCommandPool();
+
+            const command =
+                pool[Math.floor(Math.random() * pool.length)];
+
+            const cue =
+                document.getElementById("cue");
+
+            const subcue =
+                document.getElementById("subcue");
+
+            if (cueType === "text")
+                cue.innerText = command.text;
+
+            if (cueType === "arrow")
+                cue.innerText = command.arrow;
+
+            if (cueType === "color")
+                cue.innerText = command.color;
+
+            if (cueType === "audio")
+                cue.innerText = "LISTEN";
+
+            if (cueType === "hybrid")
+                cue.innerText = command.text;
+
+            subcue.innerText =
+                command.fake
+                    ? "Fake cue detected"
+                    : "Move now";
+
+            document.getElementById("currentCommand").innerText =
+                command.text;
+
+            if (cueType === "audio" || cueType === "hybrid") {
+                speak(command.speak);
+            }
+
+            score++;
+
+            if (command.fake)
+                score--;
+
+            document.getElementById("score").innerText =
+                score;
+
+            let delay =
+                getCueDelay(difficulty);
+
+            cueTimer =
+                setTimeout(nextCue, delay);
+        }
+
+        function speak(text) {
+
+            if (!("speechSynthesis" in window))
+                return;
+
+            const utter =
+                new SpeechSynthesisUtterance(text);
+
+            utter.rate = 1.1;
+
+            speechSynthesis.cancel();
+            speechSynthesis.speak(utter);
+        }
+
+        function endChallenge() {
+
+            clearInterval(gameTimer);
+            clearTimeout(cueTimer);
+            clearInterval(reminderTimer);
+
+            document.getElementById("cue").innerText =
+                "FINISHED";
+
+            document.getElementById("subcue").innerText =
+                `Score: ${score}`;
+
+            document.getElementById("status").innerText =
+                "Done";
+
+            setTimeout(() => {
+
+                const again =
+                    confirm(`Challenge finished.\nScore: ${score}\nReplay?`);
+
+                if (again)
+                    location.reload();
+
+                else
+                    window.location.href = "user.html";
+
+            }, 400);
+        }
+
+        function randomBetween(min, max) {
+
+            return Math.floor(
+                Math.random() * (max - min + 1)
+            ) + min;
+        }
+
+        updateWorkspacePreview();
+
+    </script>
+
+</body>
+</html>

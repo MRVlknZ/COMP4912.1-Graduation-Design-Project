@@ -1,811 +1,798 @@
-﻿<!doctype html>
-<html lang="tr">
+﻿<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Admin Panel (Simple)</title>
-    <style>
-        :root {
-            --bg: #0f0f10;
-            --card: #17181a;
-            --card2: #1f2023;
-            --line: #2b2c31;
-            --txt: #eaeaea;
-            --muted: #a9a9b3;
-            --danger: #ff4d4d;
-            --ok: #5ee07a;
-            --warn: #ffcc66;
-            --btn: #2a2b2f;
-            --btn2: #32343a;
-            --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-            --sans: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-        }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Panel</title>
 
+    <style>
         * {
-            box-sizing: border-box
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Segoe UI, sans-serif;
         }
 
         body {
-            margin: 0;
-            background: var(--bg);
-            color: var(--txt);
-            font-family: var(--sans);
-            min-height: 100vh
+            background: #0f0f0f;
+            color: white;
+            padding: 30px;
         }
 
-        .wrap {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 18px 16px 40px
+        .page-header {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto 25px auto;
+            padding: 28px 30px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, #181818, #111);
+            border: 2px solid #333;
         }
 
-        .topbar {
+            .page-header h1 {
+                font-size: 2rem;
+                margin-bottom: 6px;
+            }
+
+            .page-header p {
+                color: #aaa;
+            }
+
+        .frame {
+            width: 100%;
+            max-width: 1400px;
+            margin: auto;
+            border: 2px solid #333;
+            border-radius: 20px;
+            padding: 30px;
+            background: #171717;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            margin-bottom: 20px;
+        }
+
+            .section-title h2 {
+                font-size: 1.45rem;
+                margin-bottom: 6px;
+            }
+
+        .top-row {
             display: flex;
-            gap: 12px;
-            align-items: center;
             justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
             flex-wrap: wrap;
-            padding: 14px 16px;
-            border: 1px solid var(--line);
-            border-radius: 14px;
-            background: linear-gradient(180deg,#15161a,#121317);
-            position: sticky;
-            top: 10px;
-            z-index: 5;
+            gap: 15px;
         }
 
-        .brand {
-            display: flex;
-            flex-direction: column;
-            gap: 2px
+        .subtitle {
+            color: #aaa;
+            margin-top: 5px;
         }
 
-            .brand b {
-                font-size: 16px
-            }
-
-            .brand span {
-                font-size: 12px;
-                color: var(--muted)
-            }
-
-        .row {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap
+        .message {
+            color: #facc15;
+            margin-bottom: 15px;
+            min-height: 20px;
         }
 
-        .pill {
-            display: inline-flex;
-            gap: 8px;
-            align-items: center;
-            padding: 8px 10px;
-            border-radius: 999px;
-            border: 1px solid var(--line);
-            background: rgba(255,255,255,.03);
-            font-size: 12px;
-            color: var(--muted)
+        .table-wrap {
+            overflow-x: auto;
+            border: 1px solid #333;
+            border-radius: 16px;
         }
 
-            .pill input {
-                background: transparent;
-                border: none;
-                outline: none;
-                color: var(--txt);
-                width: 320px;
-                font-family: var(--mono);
-                font-size: 12px
-            }
-
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
-            margin-top: 14px
-        }
-
-        @media(max-width:980px) {
-            .grid {
-                grid-template-columns: 1fr
-            }
-        }
-
-        .card {
-            border: 1px solid var(--line);
-            border-radius: 14px;
-            background: var(--card);
-            overflow: hidden
-        }
-
-            .card h3 {
-                margin: 0;
-                padding: 12px 14px;
-                font-size: 14px;
-                border-bottom: 1px solid var(--line);
-                background: linear-gradient(180deg,#1a1b20,#15161a);
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 10px
-            }
-
-                .card h3 small {
-                    color: var(--muted);
-                    font-weight: 500;
-                    font-size: 12px
-                }
-
-        .body {
-            padding: 12px 14px
-        }
-
-        select, button, input, textarea {
-            font-family: var(--sans)
-        }
-
-            select, input[type="text"] {
-                background: var(--card2);
-                color: var(--txt);
-                border: 1px solid var(--line);
-                border-radius: 10px;
-                padding: 10px 10px;
-                outline: none;
-            }
-
-        button {
-            background: var(--btn);
-            color: var(--txt);
-            border: 1px solid var(--line);
-            border-radius: 10px;
-            padding: 10px 12px;
-            cursor: pointer;
-            transition: .15s ease;
-        }
-
-            button:hover {
-                background: var(--btn2);
-                transform: translateY(-1px)
-            }
-
-            button:disabled {
-                opacity: .45;
-                cursor: not-allowed;
-                transform: none
-            }
-
-        .btn-ok {
-            border-color: rgba(94,224,122,.35)
-        }
-
-        .btn-danger {
-            border-color: rgba(255,77,77,.35)
-        }
-
-        .btn-warn {
-            border-color: rgba(255,204,102,.35)
-        }
-
-        .muted {
-            color: var(--muted);
-            font-size: 12px
-        }
-
-        .k {
-            font-family: var(--mono);
-            font-size: 12px;
-            color: var(--muted)
-        }
-
-        .hr {
-            height: 1px;
-            background: var(--line);
-            margin: 12px 0
-        }
-
-        .table {
+        table {
             width: 100%;
             border-collapse: collapse;
-            border: 1px solid var(--line);
-            border-radius: 12px;
-            overflow: hidden
+            background: #111;
         }
 
-            .table th, .table td {
-                padding: 10px 10px;
-                border-bottom: 1px solid var(--line);
-                vertical-align: top;
-                font-size: 13px
-            }
+        th {
+            background: #202020;
+            color: #ddd;
+        }
 
-            .table th {
-                font-size: 12px;
-                color: var(--muted);
-                text-align: left;
-                background: rgba(255,255,255,.03)
-            }
+        th, td {
+            padding: 16px;
+            border-bottom: 1px solid #2f2f2f;
+            text-align: left;
+        }
 
-            .table tr:last-child td {
-                border-bottom: none
-            }
+        tr:hover td {
+            background: #1c1c1c;
+        }
+
+        .status-active {
+            color: #22c55e;
+            font-weight: bold;
+        }
+
+        .status-banned {
+            color: #ef4444;
+            font-weight: bold;
+        }
 
         .actions {
             display: flex;
-            gap: 6px;
-            flex-wrap: wrap
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
-        .status {
-            font-family: var(--mono);
-            font-size: 12px
-        }
-
-            .status.ok {
-                color: var(--ok)
-            }
-
-            .status.err {
-                color: var(--danger)
-            }
-
-            .status.warn {
-                color: var(--warn)
-            }
-
-        pre {
-            margin: 0;
-            white-space: pre-wrap;
-            word-break: break-word;
-            max-height: 260px;
-            overflow: auto;
-            background: rgba(0,0,0,.25);
-            border: 1px solid var(--line);
+        button {
+            border: none;
             border-radius: 12px;
-            padding: 10px;
-            font-family: var(--mono);
-            font-size: 12px;
-            line-height: 1.35
+            padding: 11px 18px;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            transition: .18s ease;
         }
-        .lock {
+
+            button:hover:not(:disabled) {
+                transform: translateY(-2px);
+            }
+
+            button:disabled {
+                opacity: .7;
+                cursor: not-allowed;
+            }
+
+        .btn-primary {
+            background: #e11d48;
+        }
+
+        .btn-select {
+            background: #2563eb;
+        }
+
+        .btn-ban {
+            background: #dc2626;
+        }
+
+        .btn-unban {
+            background: #16a34a;
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg,#dc2626,#991b1b);
+            color: white;
+            font-weight: 700;
+            padding: 12px 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(220,38,38,.35);
+            transition: .2s ease;
+        }
+
+            .btn-delete:hover:not(:disabled) {
+                transform: scale(1.05);
+                box-shadow: 0 0 22px rgba(220,38,38,.55);
+            }
+
+            .btn-delete:disabled {
+                background: #2b2b2b;
+                color: #777;
+                box-shadow: none;
+                opacity: .8;
+                cursor: not-allowed;
+            }
+
+        .selected-user-box {
+            margin-bottom: 15px;
+            border: 1px solid #333;
+            background: #101010;
+            border-radius: 12px;
+            padding: 14px;
+            color: #ccc;
+        }
+
+        select {
+            background: #222;
+            color: white;
+            border: 1px solid #444;
+            border-radius: 12px;
+            padding: 10px 16px;
+            font-weight: 600;
+        }
+
+        .admin-lock {
             position: fixed;
             inset: 0;
+            background: rgba(0,0,0,.92);
             z-index: 9999;
-            display: grid;
-            place-items: center;
-            background: radial-gradient(800px 500px at 50% 30%, rgba(255,255,255,.06), rgba(0,0,0,.72));
-            backdrop-filter: blur(6px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-            .lock.hidden {
-                display: none
+        .lock-card {
+            width: 400px;
+            max-width: 95vw;
+            background: #181818;
+            border: 2px solid #333;
+            border-radius: 18px;
+            padding: 30px;
+            text-align: center;
+        }
+
+            .lock-card input {
+                width: 100%;
+                margin: 18px 0;
+                padding: 12px;
+                background: #111;
+                color: white;
+                border: 1px solid #444;
+                border-radius: 12px;
             }
 
-        .lockCard {
-            width: min(520px,92vw);
-            background: linear-gradient(180deg,#1a1b20,#15161a);
-            border: 1px solid var(--line);
-            border-radius: 16px;
-            padding: 18px;
-            box-shadow: 0 30px 80px rgba(0,0,0,.65);
-        }
-
-        .lockTitle {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 6px
-        }
-
-        .lockDesc {
-            color: var(--muted);
-            font-size: 12px;
-            margin-bottom: 12px
-        }
-
-        .lockInput {
-            width: 100%;
-            background: var(--card2);
-            color: var(--txt);
-            border: 1px solid var(--line);
-            border-radius: 12px;
-            padding: 12px 12px;
-            outline: none;
-            font-family: var(--mono);
-            font-size: 13px
-        }
-
-        .lockErr {
+        .error {
+            color: #ef4444;
             margin-top: 10px;
-            color: var(--danger);
-            font-size: 12px;
-            min-height: 16px
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+        }
+
+        .modal-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.65);
+        }
+
+        .modal-card {
+            position: relative;
+            width: min(520px, 92vw);
+            margin: 12vh auto 0;
+            background: #1b1b1b;
+            border: 1px solid #333;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+        }
+
+        .modal-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .modal-x {
+            background: transparent;
+            color: #ddd;
+            font-size: 24px;
+            padding: 0;
+            border-radius: 0;
+        }
+
+        .modal-body {
+            padding: 16px;
+            color: #eaeaea;
+            white-space: pre-line;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding: 14px 16px;
+            border-top: 1px solid #2a2a2a;
+        }
+
+        .modal-btn {
+            background: #2b2b2b;
+            border-radius: 10px;
+        }
+
+            .modal-btn.primary {
+                background: #e11d48;
+            }
+
+            .modal-btn.danger {
+                background: #991b1b;
+            }
+
+        .modal-error .modal-card {
+            border-color: #7f1d1d;
+        }
+
+        .modal-warning .modal-card {
+            border-color: #facc15;
+        }
+
+        .modal-success .modal-card {
+            border-color: #22c55e;
         }
     </style>
 </head>
 
 <body>
-    <!-- Admin Lock (kalıcı oturum yok: her açılışta şifre) -->
-    <div id="adminLock" class="lock hidden" aria-hidden="true">
-        <div class="lockCard" role="dialog" aria-modal="true">
-            <div class="lockTitle">Admin Girişi</div>
-            <div class="lockDesc">Şifreyi gir (DB yok). Şifre: <span class="k">1234</span></div>
-            <input id="adminPass" class="lockInput" type="password" placeholder="Şifre" autocomplete="off" />
-            <div class="row" style="margin-top:12px">
-                <button id="adminEnter" class="btn-ok">Giriş</button>
-                <button id="adminExit" class="btn-danger">Kapat</button>
-            </div>
-            <div id="adminErr" class="lockErr"></div>
+
+    <div class="admin-lock" id="adminLock">
+        <div class="lock-card">
+            <h2>Admin Login</h2>
+            <p>Enter admin password</p>
+
+            <input type="password" id="adminPassword" placeholder="Password" />
+
+            <button class="btn-primary" id="btnAdminLogin">
+                Login
+            </button>
+
+            <div class="error" id="lockError"></div>
         </div>
     </div>
 
-    <div class="wrap">
-        <div class="topbar">
-            <div class="brand">
-                <b>Admin Panel (Simple)</b>
-                <span>Users + Drills (tablo) • Delete/SoftDelete + Ban/Unban</span>
+    <div class="page-header">
+        <h1>Admin Panel</h1>
+        <p>Manage users, ban/unban accounts, and control custom drills.</p>
+    </div>
+
+    <div class="frame">
+        <div class="top-row">
+            <div class="section-title">
+                <h2>Users</h2>
+                <div class="subtitle">View users and manage account access.</div>
             </div>
-            <div class="row">
-                <span class="pill">
-                    Base URL:
-                    <input id="baseUrl" placeholder="örn: https://localhost:7188" />
-                </span>
-                <button id="btnPing" class="btn-warn">Ping</button>
+
+            <button class="btn-primary" id="btnLoadUsers">
+                Refresh Users
+            </button>
+        </div>
+
+        <div class="message" id="message"></div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody id="usersTableBody">
+                    <tr>
+                        <td colspan="5">No users loaded.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="frame">
+        <div class="top-row">
+            <div class="section-title">
+                <h2>Custom Drills</h2>
+                <div class="subtitle">Select a user and manage their custom drills.</div>
+            </div>
+
+            <div class="actions">
+                <select id="drillType">
+                    <option value="CColorDrill">CColorDrill</option>
+                    <option value="CTextDrill">CTextDrill</option>
+                    <option value="CCombDrill">CCombDrill</option>
+                    <option value="CFocusDrill">CFocusDrill</option>
+                    <option value="CSoundDrill">CSoundDrill</option>
+                </select>
+
+                <button class="btn-primary" id="btnLoadDrills">
+                    Load Drills
+                </button>
             </div>
         </div>
 
-        <div class="grid">
-            <!-- USERS -->
-            <div class="card">
-                <h3>
-                    <span>Users</span>
-                    <small id="usersMeta">—</small>
-                </h3>
-                <div class="body">
-                    <div class="row">
-                        <button id="btnLoadUsers" class="btn-ok">Load Users</button>
-                        <span class="muted">Satırdan Ban/Unban yap.</span>
-                    </div>
-
-                    <div class="hr"></div>
-
-                    <div style="overflow:auto">
-                        <table class="table" id="usersTable">
-                            <thead>
-                                <tr>
-                                    <th style="width:70px">ID</th>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th style="width:180px">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr><td colspan="4" class="muted">No data.</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="hr"></div>
-
-                    <div class="row">
-                        <span class="muted">Seçili User:</span>
-                        <span class="k" id="selectedUser">—</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- DRILLS -->
-            <div class="card">
-                <h3>
-                    <span>Drills</span>
-                    <small id="drillsMeta">—</small>
-                </h3>
-                <div class="body">
-                    <div class="row">
-                        <select id="drillType">
-                            <option value="CColorDrill">CColorDrill</option>
-                            <option value="CTextDrill">CTextDrill</option>
-                            <option value="CCombDrill">CCombDrill</option>
-                            <option value="CFocusDrill">CFocusDrill</option>
-                            <option value="CSoundDrill">CSoundDrill</option>
-                            <option value="P4ColorDrill">P4ColorDrill</option>
-                            <option value="PTextDrill">PTextDrill</option>
-                            <option value="PCombDrill">PCombDrill</option>
-                            <option value="PFocusDrill">PFocusDrill</option>
-                            <option value="PSoundDrill">PSoundDrill</option>
-                        </select>
-
-                        <button id="btnLoadDrills" class="btn-ok">Load By Selected User</button>
-                    </div>
-
-                    <div class="hr"></div>
-
-                    <div style="overflow:auto">
-                        <table class="table" id="drillsTable">
-                            <thead>
-                                <tr>
-                                    <th style="width:70px">ID</th>
-                                    <th>Name</th>
-                                    <th style="width:170px">DeletedAt</th>
-                                    <th style="width:240px">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr><td colspan="4" class="muted">No data.</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="hr"></div>
-                    <div class="muted">
-                        Not: Delete/SoftDelete bazen backend’de POST bekliyor. Bu panel otomatik “fallback” deniyor.
-                    </div>
-                </div>
-            </div>
+        <div class="selected-user-box">
+            Selected User:
+            <strong id="selectedUserText">None</strong>
         </div>
 
-        <!-- RESPONSE LOG -->
-        <div class="card" style="margin-top:14px">
-            <h3>
-                <span>Last Response</span>
-                <small class="status warn" id="respStatus">—</small>
-            </h3>
-            <div class="body">
-                <div class="muted k" id="respUrl">—</div>
-                <div style="height:8px"></div>
-                <pre id="respBox">—</pre>
+        <div class="message" id="drillMessage"></div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Drill Name</th>
+                        <th>Description</th>
+                        <th>Difficulty</th>
+                        <th>Total Duration</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody id="drillsTableBody">
+                    <tr>
+                        <td colspan="5">No drills loaded.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="appModal" class="modal hidden" aria-hidden="true">
+        <div class="modal-backdrop" data-close="1"></div>
+
+        <div class="modal-card" role="dialog" aria-modal="true">
+            <div class="modal-head">
+                <h3 id="appModalTitle">Title</h3>
+                <button class="modal-x" type="button" data-close="1">×</button>
             </div>
+
+            <div id="appModalBody" class="modal-body"></div>
+
+            <div class="modal-actions" id="appModalActions"></div>
         </div>
     </div>
 
     <script>
-        const ENDPOINTS = {
-            Users: {
-                list: { method: "GET", path: "/api/Users/GetUsers" },
-                ban: { method: "POST", path: "/api/Users/Ban" },
-                unban: { method: "POST", path: "/api/Users/Unban" },
+        const ADMIN_PASSWORD = "1234";
+
+        const CUSTOM_DRILL_ENDPOINTS = {
+            CColorDrill: {
+                getByUser: "/api/CColorDrill/GetByUser",
+                softDelete: "/api/CColorDrill/SoftDelete"
             },
-            CColorDrill: { getByUser: { method: "GET", path: "/api/CColorDrill/GetByUser" }, soft: { method: "POST", path: "/api/CColorDrill/SoftDelete" }, del: { method: "DELETE", path: "/api/CColorDrill/Delete" } },
-            CTextDrill: { getByUser: { method: "GET", path: "/api/CTextDrill/GetByUser" }, soft: { method: "POST", path: "/api/CTextDrill/SoftDelete" }, del: { method: "DELETE", path: "/api/CTextDrill/Delete" } },
-            CCombDrill: { getByUser: { method: "GET", path: "/api/CCombDrill/GetByUser" }, soft: { method: "POST", path: "/api/CCombDrill/SoftDelete" }, del: { method: "DELETE", path: "/api/CCombDrill/Delete" } },
-            CFocusDrill: { getByUser: { method: "GET", path: "/api/CFocusDrill/GetByUser" }, soft: { method: "POST", path: "/api/CFocusDrill/SoftDelete" }, del: { method: "DELETE", path: "/api/CFocusDrill/Delete" } },
-            CSoundDrill: { getByUser: { method: "GET", path: "/api/CSoundDrill/GetByUser" }, soft: { method: "POST", path: "/api/CSoundDrill/SoftDelete" }, del: { method: "DELETE", path: "/api/CSoundDrill/Delete" } },
-            P4ColorDrill: { getByUser: { method: "GET", path: "/api/P4ColorDrill/GetByUser" }, soft: { method: "POST", path: "/api/P4ColorDrill/SoftDelete" }, soft2: { method: "POST", path: "/api/P4ColorDrill/Softdelete" }, del: { method: "DELETE", path: "/api/P4ColorDrill/Delete" } },
-            PTextDrill: { getByUser: { method: "GET", path: "/api/PTextDrill/GetByUser" }, soft: { method: "POST", path: "/api/PTextDrill/SoftDelete" }, del: { method: "DELETE", path: "/api/PTextDrill/Delete" } },
-            PCombDrill: { getByUser: { method: "GET", path: "/api/PCombDrill/GetByUser" }, soft: { method: "POST", path: "/api/PCombDrill/SoftDelete" }, del: { method: "DELETE", path: "/api/PCombDrill/Delete" } },
-            PFocusDrill: { getByUser: { method: "GET", path: "/api/PFocusDrill/GetByUser" }, soft: { method: "POST", path: "/api/PFocusDrill/SoftDelete" }, del: { method: "DELETE", path: "/api/PFocusDrill/Delete" } },
-            PSoundDrill: { getByUser: { method: "GET", path: "/api/PSoundDrill/GetByUser" }, soft: { method: "POST", path: "/api/PSoundDrill/SoftDelete" }, del: { method: "DELETE", path: "/api/PSoundDrill/Delete" } },
+            CTextDrill: {
+                getByUser: "/api/CTextDrill/GetByUser",
+                softDelete: "/api/CTextDrill/SoftDelete"
+            },
+            CCombDrill: {
+                getByUser: "/api/CCombDrill/GetByUser",
+                softDelete: "/api/CCombDrill/SoftDelete"
+            },
+            CFocusDrill: {
+                getByUser: "/api/CFocusDrill/GetByUser",
+                softDelete: "/api/CFocusDrill/SoftDelete"
+            },
+            CSoundDrill: {
+                getByUser: "/api/CSoundDrill/GetByUser",
+                softDelete: "/api/CSoundDrill/SoftDelete"
+            }
         };
 
-        const $ = (s) => document.querySelector(s);
-        const esc = (str = "") => String(str).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch] || ch));
+        let selectedUserId = null;
+        let autoRefreshTimer = null;
 
-        function baseUrl() {
-            const v = ($("#baseUrl").value || "").trim();
-            if (!v) return "";  
-            return v.replace(/\/+$/, "");
-        }
+        const adminLock = document.getElementById("adminLock");
+        const adminPassword = document.getElementById("adminPassword");
+        const btnAdminLogin = document.getElementById("btnAdminLogin");
+        const lockError = document.getElementById("lockError");
 
-        async function rawFetch(method, path, query = "", body = null) {
-            const url = baseUrl() + path + (query || "");
-            const opts = { method, headers: {} };
-            if (body !== null && body !== undefined && method !== "GET") {
-                opts.headers["Content-Type"] = "application/json";
-                opts.body = JSON.stringify(body);
+        const usersTableBody = document.getElementById("usersTableBody");
+        const drillsTableBody = document.getElementById("drillsTableBody");
+
+        const messageBox = document.getElementById("message");
+        const drillMessage = document.getElementById("drillMessage");
+        const drillType = document.getElementById("drillType");
+        const selectedUserText = document.getElementById("selectedUserText");
+
+        document.getElementById("btnLoadUsers").addEventListener("click", loadUsers);
+        document.getElementById("btnLoadDrills").addEventListener("click", loadCustomDrills);
+        btnAdminLogin.addEventListener("click", adminLogin);
+
+        adminPassword.addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+                adminLogin();
             }
-            const res = await fetch(url, opts);
-            const ct = (res.headers.get("content-type") || "").toLowerCase();
-            let data = null;
-            if (ct.includes("application/json")) data = await res.json().catch(() => null);
-            else data = await res.text().catch(() => "");
-            return { res, data, url };
-        }
+        });
 
-        function setResp(r) {
-            const st = $("#respStatus");
-            st.className = "status " + (r?.res?.ok ? "ok" : "err");
-            st.textContent = r?.res ? `${r.res.status} ${r.res.ok ? "OK" : "ERR"}` : "—";
-            $("#respUrl").textContent = r?.url || "—";
-            $("#respBox").textContent = (typeof r?.data === "string") ? r.data : JSON.stringify(r?.data, null, 2);
-        }
+        async function adminLogin() {
+            if (adminPassword.value.trim() === ADMIN_PASSWORD) {
+                adminLock.style.display = "none";
+                await loadUsers();
 
-        async function callWithFallback({ method, path, idValue, alsoTryPost = false }) {
-            const keys = ["id", "userId", "Id", "UserId"];
-            const baseMethod = String(method || "GET").toUpperCase();
-            const methods = [baseMethod];
-
-            if (alsoTryPost && baseMethod !== "POST") methods.push("POST");
-
-            let last = null;
-
-            for (const m of methods) {
-                for (const k of keys) {
-                    const q = `?${k}=${encodeURIComponent(String(idValue))}`;
-                    try {
-                        const r = await rawFetch(m, path, q, null);
-                        last = r;
-                        if (r.res.ok && r.data !== false) return r; 
-                    } catch (e) {
-                        last = { res: { ok: false, status: 0 }, data: String(e), url: baseUrl() + path };
-                    }
+                if (!autoRefreshTimer) {
+                    autoRefreshTimer = setInterval(loadUsers, 5000);
                 }
-
-                if (m === "POST") {
-                    for (const k of keys) {
-                        const body = { [k]: idValue };
-                        try {
-                            const r = await rawFetch("POST", path, "", body);
-                            last = r;
-                            if (r.res.ok && r.data !== false) return r;
-                        } catch (e) {
-                            last = { res: { ok: false, status: 0 }, data: String(e), url: baseUrl() + path };
-                        }
-                    }
-                }
+            } else {
+                lockError.textContent = "Wrong password.";
             }
-
-            return last;
         }
-
-        const ADMIN_PASS = "1234";
-
-        function showLock() {
-            $("#adminLock").classList.remove("hidden");
-            $("#adminLock").setAttribute("aria-hidden", "false");
-            $("#adminErr").textContent = "";
-            $("#adminPass").value = "";
-            setTimeout(() => $("#adminPass").focus(), 50);
-        }
-        function hideLock() {
-            $("#adminLock").classList.add("hidden");
-            $("#adminLock").setAttribute("aria-hidden", "true");
-        }
-
-        let selectedUserId = 0;
-        let lastDrills = [];
-        let lastDrillType = "CColorDrill";
-
 
         async function loadUsers() {
-            $("#usersMeta").textContent = "Loading...";
-            try {
-                const r = await rawFetch(ENDPOINTS.Users.list.method, ENDPOINTS.Users.list.path);
-                setResp(r);
-                if (!r.res.ok) {
-                    $("#usersMeta").textContent = `Error ${r.res.status}`;
-                    return;
-                }
+            showMessage("Loading users...");
 
-                const users = Array.isArray(r.data) ? r.data : [];
-                $("#usersMeta").textContent = `${users.length} users`;
+            const response = await fetch("/api/Users/GetUsers");
+            const users = await response.json();
 
-                const tbody = $("#usersTable tbody");
-                if (users.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="4" class="muted">No data.</td></tr>`;
-                    return;
-                }
+            usersTableBody.innerHTML = "";
 
-                tbody.innerHTML = users.map(u => {
-                    const id = u.id ?? u.Id ?? "";
-                    const fn = u.firstName ?? u.FirstName ?? u.name ?? u.Name ?? "";
-                    const ln = u.lastName ?? u.LastName ?? "";
-                    const email = u.email ?? u.Email ?? "";
-                    const full = `${fn} ${ln}`.trim() || "(no name)";
-                    return `
-                    <tr>
-                      <td class="k">${esc(String(id))}</td>
-                      <td>${esc(full)}</td>
-                      <td class="k">${esc(String(email))}</td>
-                      <td>
-                        <div class="actions">
-                          <button class="btn-ok" data-act="select" data-id="${esc(String(id))}">Select</button>
-                          <button class="btn-warn" data-act="ban" data-id="${esc(String(id))}">Ban</button>
-                          <button class="btn-ok" data-act="unban" data-id="${esc(String(id))}">Unban</button>
-                        </div>
-                      </td>
-                    </tr>
-                  `;
-                }).join("");
+            users.forEach(user => {
+                const id = user.id ?? user.Id;
+                const firstName = user.firstName ?? user.FirstName ?? "";
+                const lastName = user.lastName ?? user.LastName ?? "";
+                const email = user.email ?? user.Email ?? "";
+                const isActive = user.isActive ?? user.IsActive ?? false;
 
-                tbody.querySelectorAll("button[data-act]").forEach(btn => {
-                    btn.addEventListener("click", async () => {
-                        const act = btn.dataset.act;
-                        const id = Number(btn.dataset.id || 0) || 0;
-                        if (!id) return;
+                const row = document.createElement("tr");
 
-                        if (act === "select") {
-                            selectedUserId = id;
-                            $("#selectedUser").textContent = String(id);
-                            $("#drillsMeta").textContent = "User selected. Choose drill type and Load.";
-                            return;
-                        }
+                row.innerHTML = `
+                        <td>${escapeHtml(firstName)}</td>
+                        <td>${escapeHtml(lastName)}</td>
+                        <td>${escapeHtml(email)}</td>
+                        <td>
+                            <span class="${isActive ? "status-active" : "status-banned"}">
+                                ${isActive ? "Active" : "Banned"}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="actions">
+                                <button
+                                    class="btn-select"
+                                    onclick="selectUser(${id}, '${escapeJs(firstName + " " + lastName)}')">
+                                    View Drills
+                                </button>
 
-                        if (!confirm(`${act.toUpperCase()} userId=${id} ?`)) return;
+                                <button
+                                    class="btn-ban"
+                                    onclick="banUser(${id})"
+                                    ${!isActive ? "disabled" : ""}>
+                                    Ban
+                                </button>
 
-                        if (act === "ban") {
-                            const rr = await callWithFallback({
-                                method: ENDPOINTS.Users.ban.method,
-                                path: ENDPOINTS.Users.ban.path,
-                                idValue: id,
-                                alsoTryPost: true
-                            });     
-                            setResp(rr);
-                            await loadUsers();
-                            return;
-                        }
+                                <button
+                                    class="btn-unban"
+                                    onclick="unbanUser(${id})"
+                                    ${isActive ? "disabled" : ""}>
+                                    Unban
+                                </button>
+                            </div>
+                        </td>
+                    `;
 
-                        if (act === "unban") {
-                            const rr = await callWithFallback({
-                                method: ENDPOINTS.Users.unban.method,
-                                path: ENDPOINTS.Users.unban.path,
-                                idValue: id,
-                                alsoTryPost: true
-                            });
-                            setResp(rr);
-                            await loadUsers();
-                            return;
-                        }
-                    });
-                });
+                usersTableBody.appendChild(row);
+            });
 
-            } catch (err) {
-                $("#usersMeta").textContent = "ERROR";
-                setResp({ res: { ok: false, status: 0 }, data: String(err), url: "" });
-            }
+            showMessage("Users loaded successfully.");
         }
-        async function loadDrills() {
-            const type = $("#drillType").value;
-            lastDrillType = type;
 
+        async function banUser(userId) {
+            const ok = await uiConfirm(
+                "Are you sure you want to ban this user?",
+                "Ban User",
+                "Ban"
+            );
+
+            if (!ok) return;
+
+            await fetch(`/api/Users/Ban?userId=${userId}`, {
+                method: "POST"
+            });
+
+            showMessage("User banned successfully.");
+            await loadUsers();
+        }
+
+        async function unbanUser(userId) {
+            const ok = await uiConfirm(
+                "Are you sure you want to unban this user?",
+                "Unban User",
+                "Unban"
+            );
+
+            if (!ok) return;
+
+            await fetch(`/api/Users/Unban?userId=${userId}`, {
+                method: "POST"
+            });
+
+            showMessage("User unbanned successfully.");
+            await loadUsers();
+        }
+
+        function selectUser(userId, userName) {
+            selectedUserId = userId;
+            selectedUserText.textContent = userName;
+            loadCustomDrills();
+        }
+
+        async function loadCustomDrills() {
             if (!selectedUserId) {
-                alert("Önce Users tablosundan Select ile bir user seç.");
+                showDrillMessage("Please select a user first.");
                 return;
             }
 
-            $("#drillsMeta").textContent = `Loading ${type} for userId=${selectedUserId}...`;
+            const type = drillType.value;
+            const endpoint = CUSTOM_DRILL_ENDPOINTS[type];
 
-            const cfg = ENDPOINTS[type];
-            const query = `?userId=${encodeURIComponent(String(selectedUserId))}`;
+            const response = await fetch(`${endpoint.getByUser}?userId=${selectedUserId}`);
+            const drills = await response.json();
 
-            try {
-                const r = await rawFetch(cfg.getByUser.method, cfg.getByUser.path, query);
-                setResp(r);
+            renderCustomDrills(drills);
 
-                if (!r.res.ok) {
-                    $("#drillsMeta").textContent = `Error ${r.res.status}`;
-                    renderDrillsTable([], type);
-                    return;
-                }
-
-                const arr = Array.isArray(r.data) ? r.data : [];
-                lastDrills = arr;
-
-                $("#drillsMeta").textContent = `${type}: ${arr.length} item(s)`;
-                renderDrillsTable(arr, type);
-
-            } catch (err) {
-                $("#drillsMeta").textContent = "ERROR";
-                setResp({ res: { ok: false, status: 0 }, data: String(err), url: "" });
-                renderDrillsTable([], type);
-            }
+            showDrillMessage(`${type} loaded successfully.`);
         }
 
-        function renderDrillsTable(items, type) {
-            const tbody = $("#drillsTable tbody");
-            if (!items || items.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="muted">No data.</td></tr>`;
+        function renderCustomDrills(drills) {
+            drillsTableBody.innerHTML = "";
+
+            if (!drills || drills.length === 0) {
+                drillsTableBody.innerHTML = `
+                        <tr>
+                            <td colspan="5">No drills found.</td>
+                        </tr>
+                    `;
                 return;
             }
 
-            const list = [...items].sort((a, b) => Number(b.id ?? b.Id ?? 0) - Number(a.id ?? a.Id ?? 0));
+            drills.forEach(drill => {
+                const id = drill.id ?? drill.Id;
 
-            tbody.innerHTML = list.map(d => {
-                const id = d.id ?? d.Id ?? "";
-                const name = d.drillName ?? d.DrillName ?? d.name ?? d.Name ?? "(no name)";
-                const del = d.deletedAt ?? d.DeletedAt;
-                const delText = (del === null || del === undefined) ? "—" : String(del);
+                const name =
+                    drill.name ??
+                    drill.Name ??
+                    drill.drillName ??
+                    drill.DrillName ??
+                    "-";
 
-                return `
-                  <tr>
-                    <td class="k">${esc(String(id))}</td>
-                    <td>${esc(String(name))}</td>
-                    <td class="k">${esc(delText)}</td>
-                    <td>
-                      <div class="actions">
-                        <button class="btn-ok" data-act="view" data-id="${esc(String(id))}">View</button>
-                        <button class="btn-warn" data-act="soft" data-id="${esc(String(id))}">SoftDelete</button>
-                        <button class="btn-danger" data-act="del" data-id="${esc(String(id))}">Delete</button>
-                      </div>
-                    </td>
-                  </tr>
-                `;
-            }).join("");
+                const description =
+                    drill.description ??
+                    drill.Description ??
+                    "-";
 
-            tbody.querySelectorAll("button[data-act]").forEach(btn => {
-                btn.addEventListener("click", async () => {
-                    const act = btn.dataset.act;
-                    const idStr = btn.dataset.id;
-                    const id = Number(idStr || 0) || 0;
-                    if (!id) return;
+                const difficulty =
+                    drill.difficultyLevel ??
+                    drill.DifficultyLevel ??
+                    "-";
 
-                    if (act === "view") {
-                        const found = list.find(x => String(x.id ?? x.Id) === String(id));
-                        setResp({ res: { ok: true, status: 200 }, data: found ?? {}, url: "(local) view" });
-                        return;
-                    }
+                const totalDuration =
+                    drill.totalDurationSec ??
+                    drill.TotalDurationSec ??
+                    drill.duration ??
+                    drill.Duration ??
+                    "-";
 
-                    if (!confirm(`${act === "soft" ? "SoftDelete" : "Delete"} • ${type} • id=${id} ?`)) return;
+                const deletedAtRaw = drill.deletedAt ?? drill.DeletedAt;
+                const isDeleted = !!deletedAtRaw;
 
-                    const cfg = ENDPOINTS[type];
+                const row = document.createElement("tr");
 
-                    if (act === "soft") {
-                        const rr = await callWithFallback({
-                            method: cfg.soft.method,
-                            path: cfg.soft.path,
-                            idValue: id,
-                            alsoTryPost: true
-                        });
-                        setResp(rr);
-                        await loadDrills();
-                        return;
-                    }
+                row.innerHTML = `
+                        <td>${escapeHtml(name)}</td>
+                        <td>${escapeHtml(description)}</td>
+                        <td>${escapeHtml(difficulty)}</td>
+                        <td>${escapeHtml(totalDuration)} sec</td>
+                        <td>
+                            <div class="actions">
+                                <button
+                                    class="btn-delete"
+                                    onclick="softDeleteDrill(${id})"
+                                    ${isDeleted ? "disabled" : ""}>
+                                    ${isDeleted ? "Soft Deleted" : "Soft Delete"}
+                                </button>
+                            </div>
+                        </td>
+                    `;
 
-                    if (act === "del") {
-                        const rr = await callWithFallback({
-                            method: cfg.del.method,
-                            path: cfg.del.path,
-                            idValue: id,
-                            alsoTryPost: true
-                        });
-                        setResp(rr);
-                        await loadDrills();
-                        return;
-                    }
-                });
+                drillsTableBody.appendChild(row);
             });
         }
 
-        async function ping() {
-            setResp({ res: { ok: true, status: 0 }, data: "Sending...", url: "—" });
-            try {
-                const r = await rawFetch(ENDPOINTS.Users.list.method, ENDPOINTS.Users.list.path);
-                setResp(r);
-            } catch (err) {
-                setResp({ res: { ok: false, status: 0 }, data: String(err), url: "" });
-            }
+        async function softDeleteDrill(drillId) {
+            const ok = await uiConfirm(
+                "Are you sure you want to soft delete this drill?",
+                "Soft Delete Drill",
+                "Delete"
+            );
+
+            if (!ok) return;
+
+            const type = drillType.value;
+            const endpoint = CUSTOM_DRILL_ENDPOINTS[type];
+
+            await fetch(`${endpoint.softDelete}?id=${drillId}`, {
+                method: "POST"
+            });
+
+            showDrillMessage("Drill soft deleted successfully.");
+            await loadCustomDrills();
         }
 
-        (function init() {
-            showLock();
+        function showMessage(message) {
+            messageBox.textContent = message;
+        }
 
-            $("#adminEnter").addEventListener("click", () => {
-                const v = ($("#adminPass").value || "").trim();
-                if (v === ADMIN_PASS) {
-                    hideLock(); 
-                } else {
-                    $("#adminErr").textContent = "Şifre yanlış.";
-                    $("#adminPass").focus();
-                    $("#adminPass").select?.();
-                }
+        function showDrillMessage(message) {
+            drillMessage.textContent = message;
+        }
+
+        function escapeHtml(value) {
+            return String(value)
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
+
+        function escapeJs(value) {
+            return String(value)
+                .replaceAll("\\", "\\\\")
+                .replaceAll("'", "\\'")
+                .replaceAll('"', '\\"');
+        }
+
+        function uiModal({
+            title = "Info",
+            body = "",
+            variant = "default",
+            buttons = [{ text: "OK", value: true, className: "primary" }]
+        }) {
+            const modal = document.getElementById("appModal");
+            const titleEl = document.getElementById("appModalTitle");
+            const bodyEl = document.getElementById("appModalBody");
+            const actionsEl = document.getElementById("appModalActions");
+
+            let resolve;
+            const p = new Promise(r => (resolve = r));
+
+            modal.classList.remove("modal-default", "modal-error", "modal-success", "modal-warning");
+            modal.classList.add(`modal-${variant}`);
+
+            const close = (val) => {
+                modal.classList.add("hidden");
+                modal.setAttribute("aria-hidden", "true");
+                document.removeEventListener("keydown", onKey);
+                resolve(val);
+            };
+
+            const onKey = (e) => {
+                if (e.key === "Escape") close(false);
+            };
+
+            titleEl.textContent = title;
+            bodyEl.textContent = body;
+            actionsEl.innerHTML = "";
+
+            modal.classList.remove("hidden");
+            modal.setAttribute("aria-hidden", "false");
+
+            document.addEventListener("keydown", onKey);
+
+            modal.querySelectorAll("[data-close='1']").forEach(el => {
+                el.onclick = () => close(false);
             });
 
-            $("#adminPass").addEventListener("keydown", (e) => {
-                if (e.key === "Enter") $("#adminEnter").click();
-                if (e.key === "Escape") $("#adminExit").click();
+            buttons.forEach(b => {
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = `modal-btn ${b.className || ""}`.trim();
+                btn.textContent = b.text || "OK";
+                btn.onclick = () => close(b.value);
+                actionsEl.appendChild(btn);
             });
 
-            $("#adminExit").addEventListener("click", () => {
-            
-                showLock();
+            setTimeout(() => actionsEl.querySelector("button")?.focus(), 0);
+
+            return p;
+        }
+
+        function uiConfirm(message, title = "Confirm", okText = "Delete") {
+            return uiModal({
+                title,
+                body: message,
+                variant: "error",
+                buttons: [
+                    { text: "Cancel", value: false },
+                    { text: okText, value: true, className: "danger" }
+                ]
             });
-
-            $("#baseUrl").value = ""; 
-
-            $("#btnPing").addEventListener("click", ping);
-            $("#btnLoadUsers").addEventListener("click", loadUsers);
-            $("#btnLoadDrills").addEventListener("click", loadDrills);
-
-            $("#selectedUser").textContent = "—";
-            $("#drillsMeta").textContent = "Önce user seç.";
-        })();
+        }
     </script>
+
 </body>
 </html>

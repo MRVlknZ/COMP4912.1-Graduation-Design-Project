@@ -1,0 +1,1158 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Diet Recommendation</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Segoe UI, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #0f0f0f;
+            color: white;
+            padding: 30px;
+            overflow-x: hidden;
+        }
+
+        .page {
+            max-width: 1350px;
+            margin: auto;
+        }
+
+        .header {
+            border: 2px solid #333;
+            background: linear-gradient(135deg, #181818, #111);
+            border-radius: 22px;
+            padding: 30px;
+            margin-bottom: 25px;
+        }
+
+            .header h1 {
+                font-size: 2.1rem;
+                margin-bottom: 8px;
+            }
+
+            .header p {
+                color: #aaa;
+            }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 420px 1fr;
+            gap: 25px;
+        }
+
+        @media(max-width: 950px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: #171717;
+            border: 2px solid #333;
+            border-radius: 22px;
+            padding: 25px;
+        }
+
+            .card h2 {
+                margin-bottom: 18px;
+            }
+
+        label {
+            display: block;
+            color: #ccc;
+            margin-top: 14px;
+            margin-bottom: 7px;
+            font-size: 0.95rem;
+        }
+
+        input, select {
+            width: 100%;
+            background: #101010;
+            color: white;
+            border: 1px solid #444;
+            border-radius: 13px;
+            padding: 12px;
+            outline: none;
+        }
+
+            input:focus, select:focus {
+                border-color: #e11d48;
+            }
+
+        button {
+            border: none;
+            border-radius: 13px;
+            padding: 13px 18px;
+            font-weight: 800;
+            color: white;
+            cursor: pointer;
+            transition: .18s ease;
+        }
+
+            button:hover {
+                transform: translateY(-2px);
+            }
+
+        .btn-primary {
+            width: 100%;
+            margin-top: 22px;
+            background: #e11d48;
+        }
+
+        .btn-clear {
+            width: 100%;
+            margin-top: 12px;
+            background: #7f1d1d;
+        }
+
+        .two {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .profile-box {
+            border: 1px solid #333;
+            background: #101010;
+            border-radius: 17px;
+            padding: 18px;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+            .profile-box strong {
+                color: white;
+            }
+
+            .profile-box span {
+                color: #aaa;
+            }
+
+        .macro-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+
+        @media(max-width: 800px) {
+            .macro-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .macro {
+            background: #101010;
+            border: 1px solid #333;
+            border-radius: 17px;
+            padding: 17px;
+        }
+
+            .macro span {
+                color: #aaa;
+                font-size: 0.9rem;
+            }
+
+            .macro h3 {
+                margin-top: 8px;
+                color: #22c55e;
+            }
+
+        .meal {
+            border: 1px solid #333;
+            background: #101010;
+            border-radius: 17px;
+            padding: 18px;
+            margin-bottom: 15px;
+        }
+
+        .meal-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+
+            .meal-head h3 {
+                color: white;
+            }
+
+        .calorie {
+            color: #facc15;
+            font-weight: 800;
+        }
+
+        ul {
+            padding-left: 20px;
+            color: #ddd;
+            line-height: 1.7;
+        }
+
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            margin-top: 20px;
+        }
+
+        @media(max-width: 800px) {
+            .tips-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .tip {
+            background: #101010;
+            border: 1px solid #333;
+            border-radius: 17px;
+            padding: 16px;
+        }
+
+            .tip h4 {
+                margin-bottom: 8px;
+                color: #e11d48;
+            }
+
+            .tip p {
+                color: #ddd;
+                line-height: 1.5;
+            }
+
+
+
+        .hidden {
+            display: none;
+        }
+
+        .close-btn {
+            position: fixed;
+            top: 18px;
+            right: 26px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #d4d4d4;
+            background: transparent;
+            color: #d4d4d4;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+
+            .close-btn:hover {
+                background: #d4d4d43d;
+                transform: scale(1.08);
+            }
+
+        @media (max-width: 1200px) {
+            .page {
+                max-width: 100%;
+            }
+
+            .grid {
+                grid-template-columns: 380px 1fr;
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 950px) {
+            body {
+                padding: 22px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                padding: 24px;
+            }
+
+                .header h1 {
+                    font-size: 1.8rem;
+                }
+
+            .card {
+                padding: 22px;
+            }
+        }
+
+        @media (max-width: 700px) {
+            body {
+                padding: 16px;
+            }
+
+            .close-btn {
+                top: 12px;
+                right: 14px;
+                width: 36px;
+                height: 36px;
+                font-size: 18px;
+                z-index: 999;
+            }
+
+            .header {
+                padding: 22px 18px;
+                border-radius: 18px;
+                margin-top: 35px;
+            }
+
+                .header h1 {
+                    font-size: 1.55rem;
+                }
+
+                .header p {
+                    font-size: 0.9rem;
+                    line-height: 1.5;
+                }
+
+            .card {
+                padding: 18px;
+                border-radius: 18px;
+            }
+
+            .two {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+
+            .macro-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .macro {
+                padding: 14px;
+            }
+
+                .macro h3 {
+                    font-size: 1rem;
+                }
+
+            .meal {
+                padding: 15px;
+            }
+
+            .meal-head {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .tips-grid {
+                grid-template-columns: 1fr;
+            }
+
+            input,
+            select,
+            button {
+                font-size: 0.95rem;
+            }
+        }
+
+        @media (max-width: 430px) {
+            body {
+                padding: 12px;
+            }
+
+            .header {
+                margin-top: 38px;
+                padding: 18px 15px;
+            }
+
+                .header h1 {
+                    font-size: 1.35rem;
+                }
+
+            .card h2 {
+                font-size: 1.2rem;
+            }
+
+            .macro-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-box {
+                padding: 14px;
+                font-size: 0.92rem;
+            }
+
+            .btn-primary,
+            .btn-clear {
+                padding: 12px;
+            }
+
+            ul {
+                padding-left: 18px;
+            }
+        }
+
+        /* App Modal */
+        .modal.hidden {
+            display: none;
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+        }
+
+        .modal-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.65);
+        }
+
+        .modal-card {
+            position: relative;
+            width: min(520px, 92vw);
+            margin: 9vh auto 0;
+            background: #1b1b1b;
+            border: 1px solid #333;
+            border-radius: 18px;
+            box-shadow: 0 24px 70px rgba(0,0,0,0.6);
+            overflow: hidden;
+        }
+
+        .modal-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 17px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+            .modal-head h3 {
+                margin: 0;
+                font-size: 1rem;
+            }
+
+        .modal-x {
+            background: transparent;
+            border: none;
+            color: #ddd;
+            font-size: 24px;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0;
+        }
+
+        .modal-body {
+            padding: 17px;
+            color: #eaeaea;
+            line-height: 1.5;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            padding: 13px 17px;
+            border-top: 1px solid #2a2a2a;
+        }
+
+        .modal-btn {
+            padding: 10px 14px;
+            border-radius: 11px;
+            border: 1px solid #3a3a3a;
+            background: #232323;
+            color: #f5f5f5;
+            cursor: pointer;
+            font-weight: 800;
+        }
+
+            .modal-btn.primary {
+                border-color: rgba(225,29,72,.55);
+                background: #e11d48;
+            }
+
+        .modal-error .modal-head {
+            border-bottom-color: rgba(225,29,72,.35);
+        }
+
+        .modal-success .modal-head {
+            border-bottom-color: rgba(34,197,94,.35);
+        }
+
+        .modal-success .modal-btn.primary {
+            background: #16a34a;
+            border-color: rgba(34,197,94,.55);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="page">
+        <button id="closeBtn" class="close-btn">✕</button>
+
+        <div class="header">
+            <h1>Diet Recommendation</h1>
+            <p>Personalized nutrition plan for training goal, body type, muscle focus and daily activity.</p>
+        </div>
+
+        <div class="grid">
+
+            <div class="card">
+                <h2>Athlete Profile</h2>
+
+                <div class="two">
+                    <div>
+                        <label>Age</label>
+                        <input type="number" id="age" placeholder="22">
+                    </div>
+
+                    <div>
+                        <label>Weight / kg</label>
+                        <input type="number" id="weight" placeholder="78">
+                    </div>
+                </div>
+
+                <div class="two">
+                    <div>
+                        <label>Height / cm</label>
+                        <input type="number" id="height" placeholder="180">
+                    </div>
+
+                    <div>
+                        <label>Meals per day</label>
+                        <select id="mealsPerDay">
+                            <option value="3">3 Meals</option>
+                            <option value="4" selected>4 Meals</option>
+                            <option value="5">5 Meals</option>
+                        </select>
+                    </div>
+                </div>
+
+                <label>Body Type</label>
+                <select id="bodyType">
+                    <option value="ectomorph">Ectomorph - Slim / hard to gain weight</option>
+                    <option value="mesomorph" selected>Mesomorph - Athletic / balanced</option>
+                    <option value="endomorph">Endomorph - Easy fat gain</option>
+                </select>
+
+                <label>Main Goal</label>
+                <select id="goal">
+                    <option value="reaction">Reaction Speed / Agility</option>
+                    <option value="muscle">Muscle Gain</option>
+                    <option value="fatloss">Fat Loss</option>
+                    <option value="endurance">Endurance</option>
+                    <option value="maintenance">Healthy Maintenance</option>
+                </select>
+
+                <label>Muscle Focus</label>
+                <select id="muscleFocus">
+                    <option value="fullbody">Full Body</option>
+                    <option value="upper">Upper Body</option>
+                    <option value="lower">Lower Body / Legs</option>
+                    <option value="core">Core / Abs</option>
+                    <option value="explosive">Explosive Power</option>
+                </select>
+
+                <label>Training Intensity</label>
+                <select id="intensity">
+                    <option value="light">Light</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="hard">Hard</option>
+                </select>
+
+                <label>Diet Style</label>
+                <select id="dietStyle">
+                    <option value="normal">Normal</option>
+                    <option value="highprotein">High Protein</option>
+                    <option value="vegetarian">Vegetarian</option>
+                    <option value="lowcarb">Low Carb</option>
+                </select>
+
+                <label>Food Restriction / Allergy</label>
+                <select id="restriction">
+                    <option value="none">None</option>
+                    <option value="lactose">Lactose-free</option>
+                    <option value="gluten">Gluten-free</option>
+                    <option value="nuts">No nuts</option>
+                </select>
+
+                <div class="two">
+                    <div>
+                        <label>Budget</label>
+                        <select id="budget">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>Sleep Quality</label>
+                        <select id="sleep">
+                            <option value="bad">Bad</option>
+                            <option value="average" selected>Average</option>
+                            <option value="good">Good</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="btn-primary" onclick="generatePlan()">
+                    Generate Recommendation
+                </button>
+
+                <button class="btn-clear" onclick="clearPlan()">
+                    Clear Plan
+                </button>
+
+            </div>
+
+            <div class="card">
+                <h2>Daily Nutrition Plan</h2>
+
+                <div class="profile-box" id="profileBox">
+                    <div><strong>Age:</strong> <span>-</span></div>
+                    <div><strong>Weight:</strong> <span>-</span></div>
+                    <div><strong>Goal:</strong> <span>-</span></div>
+                    <div><strong>Body Type:</strong> <span>-</span></div>
+                    <div><strong>Muscle Focus:</strong> <span>-</span></div>
+                </div>
+
+                <div class="macro-grid">
+                    <div class="macro">
+                        <span>Calories</span>
+                        <h3 id="calories">-</h3>
+                    </div>
+
+                    <div class="macro">
+                        <span>Protein</span>
+                        <h3 id="protein">-</h3>
+                    </div>
+
+                    <div class="macro">
+                        <span>Carbs</span>
+                        <h3 id="carbs">-</h3>
+                    </div>
+
+                    <div class="macro">
+                        <span>Water</span>
+                        <h3 id="water">-</h3>
+                    </div>
+                </div>
+
+                <div id="mealPlan">
+                    <div class="meal">
+                        <div class="meal-head">
+                            <h3>No plan generated.</h3>
+                        </div>
+                        <ul>
+                            <li>Fill the profile and click Generate Recommendation.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="tips-grid hidden" id="tipsGrid">
+                    <div class="tip">
+                        <h4>Training Fuel</h4>
+                        <p id="trainingTip">-</p>
+                    </div>
+
+                    <div class="tip">
+                        <h4>Muscle Focus Tip</h4>
+                        <p id="muscleTip">-</p>
+                    </div>
+
+                    <div class="tip">
+                        <h4>Recovery Tip</h4>
+                        <p id="recoveryTip">-</p>
+                    </div>
+
+                    <div class="tip">
+                        <h4>Shopping Tip</h4>
+                        <p id="budgetTip">-</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div id="appModal" class="modal hidden" aria-hidden="true">
+        <div class="modal-backdrop" data-close="1"></div>
+
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="appModalTitle">
+            <div class="modal-head">
+                <h3 id="appModalTitle">Title</h3>
+                <button class="modal-x" type="button" data-close="1" aria-label="Close">×</button>
+            </div>
+
+            <div id="appModalBody" class="modal-body"></div>
+            <div class="modal-actions" id="appModalActions"></div>
+        </div>
+    </div>
+
+    <script>
+
+        function uiModal({
+            title = "Info",
+            body = "",
+            variant = "default",
+            buttons = [{ text: "OK", value: true, className: "primary" }]
+        }) {
+            const modal = document.getElementById("appModal");
+            const titleEl = document.getElementById("appModalTitle");
+            const bodyEl = document.getElementById("appModalBody");
+            const actionsEl = document.getElementById("appModalActions");
+
+            if (!modal || !titleEl || !bodyEl || !actionsEl) {
+                console.warn("Modal DOM not found:", title, body);
+                return Promise.resolve(true);
+            }
+
+            let resolve;
+            const p = new Promise(r => (resolve = r));
+
+            modal.classList.remove("modal-default", "modal-error", "modal-success", "modal-warning");
+            modal.classList.add(`modal-${variant}`);
+
+            const close = (val) => {
+                modal.classList.add("hidden");
+                modal.setAttribute("aria-hidden", "true");
+                document.removeEventListener("keydown", onKey);
+                resolve(val);
+            };
+
+            const onKey = (e) => {
+                if (e.key === "Escape") close(false);
+            };
+
+            titleEl.textContent = title;
+            bodyEl.textContent = body;
+            actionsEl.innerHTML = "";
+
+            modal.classList.remove("hidden");
+            modal.setAttribute("aria-hidden", "false");
+
+            document.addEventListener("keydown", onKey);
+
+            modal.querySelectorAll("[data-close='1']").forEach(el => {
+                el.onclick = () => close(false);
+            });
+
+            buttons.forEach(b => {
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = `modal-btn ${b.className || ""}`.trim();
+                btn.textContent = b.text || "OK";
+                btn.onclick = () => close(b.value);
+                actionsEl.appendChild(btn);
+            });
+
+            setTimeout(() => actionsEl.querySelector("button")?.focus(), 0);
+
+            return p;
+        }
+
+        function uiAlert(message, title = "Info", variant = "default") {
+            return uiModal({
+                title,
+                body: message,
+                variant,
+                buttons: [{ text: "OK", value: true, className: "primary" }]
+            });
+        }
+
+        const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+        if (!currentUser) {
+            window.location.href = "/login.html";
+        }
+
+        const userId = currentUser.id ?? currentUser.Id;
+
+        if (!userId) {
+            window.location.href = "/login.html";
+        }
+
+        const storageKey = `dietRecommendation_user_${userId}`;
+
+        async function generatePlan() {
+            const age = Number(document.getElementById("age").value);
+            const weight = Number(document.getElementById("weight").value);
+            const height = Number(document.getElementById("height").value);
+
+            if (!age || !weight || !height) {
+                await uiAlert("Please enter age, weight and height.", "Missing Information", "error");
+                return;
+            }
+
+            const goal = document.getElementById("goal").value;
+            const bodyType = document.getElementById("bodyType").value;
+            const muscleFocus = document.getElementById("muscleFocus").value;
+            const intensity = document.getElementById("intensity").value;
+            const dietStyle = document.getElementById("dietStyle").value;
+            const restriction = document.getElementById("restriction").value;
+            const budget = document.getElementById("budget").value;
+            const sleep = document.getElementById("sleep").value;
+            const mealsPerDay = Number(document.getElementById("mealsPerDay").value);
+
+            let multiplier = 30;
+
+            if (intensity === "light") multiplier = 28;
+            if (intensity === "medium") multiplier = 32;
+            if (intensity === "hard") multiplier = 36;
+
+            if (bodyType === "ectomorph") multiplier += 3;
+            if (bodyType === "endomorph") multiplier -= 2;
+
+            let calories = Math.round(weight * multiplier);
+
+            if (goal === "fatloss") calories -= 350;
+            if (goal === "muscle") calories += 350;
+            if (goal === "endurance") calories += 180;
+            if (goal === "reaction") calories += 80;
+
+            if (sleep === "bad") calories -= 100;
+
+            let proteinMultiplier = 1.7;
+            let carbMultiplier = 3.3;
+
+            if (goal === "muscle") proteinMultiplier = 2.0;
+            if (goal === "fatloss") proteinMultiplier = 2.1;
+            if (goal === "endurance") carbMultiplier = 4.2;
+            if (goal === "reaction") carbMultiplier = 3.6;
+
+            if (dietStyle === "highprotein") proteinMultiplier += 0.3;
+            if (dietStyle === "lowcarb") carbMultiplier -= 1.0;
+
+            const protein = Math.round(weight * proteinMultiplier);
+            const carbs = Math.max(80, Math.round(weight * carbMultiplier));
+            const water = Math.round((weight * 35 / 1000) * 10) / 10;
+
+            const plan = {
+                age,
+                weight,
+                height,
+                goal,
+                bodyType,
+                muscleFocus,
+                intensity,
+                dietStyle,
+                restriction,
+                budget,
+                sleep,
+                mealsPerDay,
+                calories,
+                protein,
+                carbs,
+                water,
+                meals: createMeals({
+                    goal,
+                    calories,
+                    mealsPerDay,
+                    dietStyle,
+                    restriction,
+                    budget
+                }),
+                tips: createTips({
+                    goal,
+                    muscleFocus,
+                    sleep,
+                    budget,
+                    bodyType
+                })
+            };
+
+            localStorage.setItem(storageKey, JSON.stringify(plan));
+            renderPlan(plan);
+        }
+
+        function createMeals(options) {
+            const { goal, calories, mealsPerDay, dietStyle, restriction, budget } = options;
+
+            let baseFoods = {
+                breakfast: ["Oatmeal", "Banana", "Eggs"],
+                lunch: ["Chicken breast", "Rice", "Salad"],
+                dinner: ["Fish", "Sweet potato", "Vegetables"],
+                snack: ["Greek yogurt", "Fruit"],
+                extra: ["Protein shake", "Nuts"]
+            };
+
+            if (dietStyle === "vegetarian") {
+                baseFoods = {
+                    breakfast: ["Oatmeal", "Banana", "Peanut butter"],
+                    lunch: ["Lentils", "Rice", "Salad"],
+                    dinner: ["Chickpeas", "Sweet potato", "Vegetables"],
+                    snack: ["Greek yogurt", "Fruit"],
+                    extra: ["Cottage cheese", "Granola"]
+                };
+            }
+
+            if (restriction === "lactose") {
+                baseFoods.snack = ["Fruit", "Rice cakes"];
+                baseFoods.extra = ["Lactose-free protein", "Banana"];
+            }
+
+            if (restriction === "gluten") {
+                baseFoods.breakfast = ["Rice porridge", "Banana", "Eggs"];
+                baseFoods.lunch = ["Chicken", "Potato", "Salad"];
+            }
+
+            if (restriction === "nuts") {
+                baseFoods.extra = ["Protein shake", "Fruit"];
+            }
+
+            if (budget === "low") {
+                baseFoods.lunch = ["Eggs or tuna", "Rice", "Seasonal salad"];
+                baseFoods.dinner = ["Chicken thighs", "Potato", "Vegetables"];
+            }
+
+            if (goal === "fatloss") {
+                baseFoods.dinner = ["Lean protein", "Big salad", "Vegetables"];
+            }
+
+            if (goal === "muscle") {
+                baseFoods.extra = ["Protein shake", "Banana", "Rice cakes"];
+            }
+
+            const templates = [
+                {
+                    title: "Breakfast",
+                    foods: baseFoods.breakfast
+                },
+                {
+                    title: "Lunch",
+                    foods: baseFoods.lunch
+                },
+                {
+                    title: "Dinner",
+                    foods: baseFoods.dinner
+                },
+                {
+                    title: "Snack",
+                    foods: baseFoods.snack
+                },
+                {
+                    title: "Extra Meal",
+                    foods: baseFoods.extra
+                }
+            ];
+
+            const selected = templates.slice(0, mealsPerDay);
+
+            return selected.map((meal, index) => {
+                let ratio = 1 / mealsPerDay;
+
+                if (index === 1) ratio += 0.05;
+                if (index === 2) ratio += 0.03;
+                if (index === mealsPerDay - 1) ratio -= 0.04;
+
+                return {
+                    title: meal.title,
+                    calories: Math.round(calories * ratio),
+                    foods: meal.foods
+                };
+            });
+        }
+
+        function createTips({ goal, muscleFocus, sleep, budget, bodyType }) {
+            let trainingTip = "Eat a balanced meal 2-3 hours before training and drink water regularly.";
+
+            if (goal === "reaction") {
+                trainingTip = "For reaction and agility drills, prefer light carbs before training: banana, oatmeal or rice cakes.";
+            }
+
+            if (goal === "muscle") {
+                trainingTip = "For muscle gain, add protein and carbs after training to support recovery.";
+            }
+
+            if (goal === "fatloss") {
+                trainingTip = "For fat loss, keep protein high and avoid very heavy meals before training.";
+            }
+
+            let muscleTip = "Use balanced protein distribution across the day.";
+
+            if (muscleFocus === "upper") {
+                muscleTip = "For upper body focus, prioritize protein in lunch and dinner to support chest, shoulders and arms.";
+            }
+
+            if (muscleFocus === "lower") {
+                muscleTip = "For legs, increase carbs around training because lower body sessions use more energy.";
+            }
+
+            if (muscleFocus === "core") {
+                muscleTip = "For core focus, avoid bloating foods before training and keep meals lighter.";
+            }
+
+            if (muscleFocus === "explosive") {
+                muscleTip = "For explosive power, use carbs before training and protein after training.";
+            }
+
+            let recoveryTip = "Sleep and hydration are key for recovery.";
+
+            if (sleep === "bad") {
+                recoveryTip = "Your sleep quality is low. Avoid caffeine late, add magnesium-rich foods and keep dinner lighter.";
+            }
+
+            let budgetTip = "Use simple foods: eggs, rice, chicken, oats, yogurt and seasonal vegetables.";
+
+            if (budget === "high") {
+                budgetTip = "You can add salmon, lean beef, avocado, quality olive oil and whey protein.";
+            }
+
+            if (bodyType === "ectomorph") {
+                budgetTip += " Since you are ectomorph, increase meal portions gradually.";
+            }
+
+            if (bodyType === "endomorph") {
+                budgetTip += " Since you are endomorph, control carb portions especially at night.";
+            }
+
+            return {
+                trainingTip,
+                muscleTip,
+                recoveryTip,
+                budgetTip
+            };
+        }
+
+        function renderPlan(plan) {
+            document.getElementById("profileBox").innerHTML = `
+                    <div><strong>Age:</strong> <span>${plan.age}</span></div>
+                    <div><strong>Weight:</strong> <span>${plan.weight} kg</span></div>
+                    <div><strong>Goal:</strong> <span>${formatGoal(plan.goal)}</span></div>
+                    <div><strong>Body Type:</strong> <span>${formatText(plan.bodyType)}</span></div>
+                    <div><strong>Muscle Focus:</strong> <span>${formatMuscle(plan.muscleFocus)}</span></div>
+                `;
+
+            document.getElementById("calories").innerText = `${plan.calories} kcal`;
+            document.getElementById("protein").innerText = `${plan.protein} g`;
+            document.getElementById("carbs").innerText = `${plan.carbs} g`;
+            document.getElementById("water").innerText = `${plan.water} L`;
+
+            const mealPlan = document.getElementById("mealPlan");
+            mealPlan.innerHTML = "";
+
+            plan.meals.forEach(meal => {
+                const div = document.createElement("div");
+                div.className = "meal";
+
+                div.innerHTML = `
+                        <div class="meal-head">
+                            <h3>${meal.title}</h3>
+                            <span class="calorie">${meal.calories} kcal</span>
+                        </div>
+
+                        <ul>
+                            ${meal.foods.map(food => `<li>${food}</li>`).join("")}
+                        </ul>
+                    `;
+
+                mealPlan.appendChild(div);
+            });
+
+            document.getElementById("tipsGrid").classList.remove("hidden");
+            document.getElementById("trainingTip").innerText = plan.tips.trainingTip;
+            document.getElementById("muscleTip").innerText = plan.tips.muscleTip;
+            document.getElementById("recoveryTip").innerText = plan.tips.recoveryTip;
+            document.getElementById("budgetTip").innerText = plan.tips.budgetTip;
+        }
+
+        function fillInputs(plan) {
+            document.getElementById("age").value = plan.age;
+            document.getElementById("weight").value = plan.weight;
+            document.getElementById("height").value = plan.height;
+            document.getElementById("goal").value = plan.goal;
+            document.getElementById("bodyType").value = plan.bodyType;
+            document.getElementById("muscleFocus").value = plan.muscleFocus;
+            document.getElementById("intensity").value = plan.intensity;
+            document.getElementById("dietStyle").value = plan.dietStyle;
+            document.getElementById("restriction").value = plan.restriction;
+            document.getElementById("budget").value = plan.budget;
+            document.getElementById("sleep").value = plan.sleep;
+            document.getElementById("mealsPerDay").value = plan.mealsPerDay;
+        }
+
+        function clearPlan() {
+            localStorage.removeItem(storageKey);
+
+            document.querySelectorAll("input").forEach(i => i.value = "");
+
+            document.getElementById("goal").value = "reaction";
+            document.getElementById("bodyType").value = "mesomorph";
+            document.getElementById("muscleFocus").value = "fullbody";
+            document.getElementById("intensity").value = "medium";
+            document.getElementById("dietStyle").value = "normal";
+            document.getElementById("restriction").value = "none";
+            document.getElementById("budget").value = "medium";
+            document.getElementById("sleep").value = "average";
+            document.getElementById("mealsPerDay").value = "4";
+
+            document.getElementById("profileBox").innerHTML = `
+                    <div><strong>Age:</strong> <span>-</span></div>
+                    <div><strong>Weight:</strong> <span>-</span></div>
+                    <div><strong>Goal:</strong> <span>-</span></div>
+                    <div><strong>Body Type:</strong> <span>-</span></div>
+                    <div><strong>Muscle Focus:</strong> <span>-</span></div>
+                `;
+
+            document.getElementById("calories").innerText = "-";
+            document.getElementById("protein").innerText = "-";
+            document.getElementById("carbs").innerText = "-";
+            document.getElementById("water").innerText = "-";
+
+            document.getElementById("mealPlan").innerHTML = `
+                    <div class="meal">
+                        <div class="meal-head">
+                            <h3>No plan generated.</h3>
+                        </div>
+                        <ul>
+                            <li>Fill the profile and click Generate Recommendation.</li>
+                        </ul>
+                    </div>
+                `;
+
+            document.getElementById("tipsGrid").classList.add("hidden");
+        }
+
+        function formatGoal(goal) {
+            if (goal === "reaction") return "Reaction Speed / Agility";
+            if (goal === "muscle") return "Muscle Gain";
+            if (goal === "fatloss") return "Fat Loss";
+            if (goal === "endurance") return "Endurance";
+            if (goal === "maintenance") return "Healthy Maintenance";
+            return goal;
+        }
+
+        function formatMuscle(value) {
+            if (value === "fullbody") return "Full Body";
+            if (value === "upper") return "Upper Body";
+            if (value === "lower") return "Lower Body / Legs";
+            if (value === "core") return "Core / Abs";
+            if (value === "explosive") return "Explosive Power";
+            return value;
+        }
+
+        function formatText(text) {
+            return String(text).charAt(0).toUpperCase() + String(text).slice(1);
+        }
+        document.getElementById("closeBtn")?.addEventListener("click", () => {
+            window.location.href = "user.html";
+        });
+    </script>
+
+</body>
+</html>

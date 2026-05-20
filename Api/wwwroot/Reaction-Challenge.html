@@ -1,0 +1,643 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aim Reaction Challenge</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #0f0f10;
+            color: white;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .page {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .intro-panel {
+            width: min(760px, 92vw);
+            margin: 80px auto 0;
+            background: linear-gradient(180deg, rgba(239,68,68,0.10), rgba(255,255,255,0.02));
+            border: 2px solid rgba(239,68,68,0.40);
+            border-radius: 20px;
+            padding: 26px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+        }
+
+            .intro-panel h1 {
+                margin: 0 0 14px;
+                font-size: 34px;
+            }
+
+            .intro-panel p {
+                color: rgba(255,255,255,0.78);
+                line-height: 1.6;
+            }
+
+        .rules {
+            margin: 18px 0;
+            padding-left: 20px;
+            color: rgba(255,255,255,0.85);
+            line-height: 1.8;
+        }
+
+        .primary-btn {
+            padding: 12px 18px;
+            border-radius: 12px;
+            border: 1px solid rgba(239,68,68,0.55);
+            background: rgba(239,68,68,0.18);
+            color: #ffeaea;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+            .primary-btn:hover {
+                background: linear-gradient(135deg, rgba(239,68,68,0.35), rgba(239,68,68,0.18));
+                box-shadow: 0 8px 20px rgba(239,68,68,0.28);
+            }
+
+        .countdown-screen {
+            position: fixed;
+            inset: 0;
+            background: #0f0f10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+        }
+
+        .countdown-circle {
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            border: 4px solid #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 54px;
+            font-weight: 900;
+        }
+
+        .ui {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            font-size: 18px;
+            z-index: 10;
+            background: rgba(0,0,0,0.35);
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.12);
+        }
+
+        .game-area {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .target {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .green {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 20px rgba(34,197,94,0.35);
+        }
+
+        .fake {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #eab308;
+        }
+
+        .bomb {
+            width: 80px;
+            height: 80px;
+            background: transparent;
+        }
+
+            .bomb svg {
+                transition: 0.2s;
+            }
+
+            .bomb:hover svg {
+                transform: scale(1.1);
+            }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 28px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #d4d4d4;
+            background: transparent;
+            color: #d4d4d4;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.15s ease;
+            z-index: 50;
+        }
+
+            .close-btn:hover {
+                background: #d4d4d43d;
+                transform: scale(1.08);
+            }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+        }
+
+        .modal-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,.6);
+        }
+
+        .modal-card {
+            position: relative;
+            width: min(560px,92vw);
+            max-height: 80vh;
+            margin: 8vh auto 0;
+            background: #1b1b1b;
+            border: 1px solid #333;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,.55);
+            overflow: hidden;
+        }
+
+        .modal-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+            .modal-head h3 {
+                margin: 0;
+                font-size: 1rem;
+            }
+
+        .modal-x {
+            background: transparent;
+            border: none;
+            color: #ddd;
+            font-size: 22px;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .modal-body {
+            padding: 14px 16px;
+            color: #eaeaea;
+            overflow: auto;
+            max-height: calc(80vh - 110px);
+            white-space: pre-line;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            padding: 12px 16px;
+            border-top: 1px solid #2a2a2a;
+        }
+
+        .modal-btn {
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid #3a3a3a;
+            background: #232323;
+            color: #f5f5f5;
+            cursor: pointer;
+        }
+
+            .modal-btn.primary {
+                border-color: #4a4a4a;
+                background: #2b2b2b;
+            }
+
+            .modal-btn.danger {
+                border-color: #7f1d1d;
+                background: #3a1010;
+            }
+
+        .modal-error .modal-card {
+            background: linear-gradient(180deg,#2a0f0f,#160909);
+            border: 1px solid #7f1d1d;
+        }
+
+        .modal-error .modal-head {
+            border-bottom: 1px solid #7f1d1d;
+        }
+
+            .modal-error .modal-head h3 {
+                color: #fca5a5;
+            }
+
+        .modal-error .modal-body {
+            color: #fee2e2;
+        }
+
+        .modal-error .modal-x {
+            color: #fecaca;
+        }
+
+        .modal-error .modal-btn.primary {
+            background: #7f1d1d;
+            border-color: #991b1b;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page">
+        <button id="closeBtn" class="close-btn">✕</button>
+
+        <div id="introPanel" class="intro-panel">
+            <h1>Aim Reaction Challenge</h1>
+
+            <p>
+                This challenge is designed like a shooting reflex trainer.
+                Click only when you see the green target. On mobile, tap the green target.
+            </p>
+
+            <ul class="rules">
+                <li>Green target: +1 score</li>
+                <li>Bomb target: game over</li>
+                <li>Fake colors appear after a while. Clicking fake color gives -1 score.</li>
+                <li>Targets become faster as time passes.</li>
+                <li>Total challenge duration: 5 minutes</li>
+            </ul>
+
+            <button id="startBtn" class="primary-btn">Start Challenge</button>
+        </div>
+
+        <div id="countdownScreen" class="countdown-screen hidden">
+            <div class="countdown-circle">
+                <span id="countdownValue">3</span>
+            </div>
+        </div>
+
+        <div id="gameUI" class="ui hidden">
+            Score: <span id="score">0</span><br>
+            Time: <span id="time">0</span>s
+        </div>
+
+        <div id="game" class="game-area hidden"></div>
+    </div>
+
+    <div id="appModal" class="modal hidden" aria-hidden="true">
+        <div class="modal-backdrop" data-close="1"></div>
+
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="appModalTitle">
+            <div class="modal-head">
+                <h3 id="appModalTitle">Title</h3>
+                <button class="modal-x" type="button" data-close="1" aria-label="Close">×</button>
+            </div>
+
+            <div id="appModalBody" class="modal-body"></div>
+            <div class="modal-actions" id="appModalActions"></div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const stored = localStorage.getItem("currentUser");
+            if (!stored) {
+                window.location.href = "/login.html";
+                return;
+            }
+        })();
+
+        let score = 0;
+        let startTime = 0;
+        let gameRunning = false;
+        let spawnTimeoutId = null;
+        let timeAnimationId = null;
+
+        const introPanel = document.getElementById("introPanel");
+        const countdownScreen = document.getElementById("countdownScreen");
+        const countdownValue = document.getElementById("countdownValue");
+        const gameUI = document.getElementById("gameUI");
+        const game = document.getElementById("game");
+
+        const scoreLabel = document.getElementById("score");
+        const timeLabel = document.getElementById("time");
+
+        function getTime() {
+            return (Date.now() - startTime) / 1000;
+        }
+
+        function getDisplayTime(t) {
+            if (t < 60) return 1000;
+            if (t < 120) return Math.random() * 500 + 500;
+            if (t < 180) return 500;
+            return Math.random() * 200 + 300;
+        }
+
+        function getSpawnGap(t) {
+            if (t < 60) return 900;
+            if (t < 120) return 700;
+            if (t < 180) return 550;
+            return 400;
+        }
+
+        function getTargetType(t) {
+            if (t > 180) {
+                const r = Math.random();
+                if (r < 0.60) return "green";
+                if (r < 0.90) return "fake";
+                return "bomb";
+            }
+
+            if (t > 120) {
+                const r = Math.random();
+                if (r < 0.75) return "green";
+                if (r < 0.90) return "fake";
+                return "bomb";
+            }
+
+            const r = Math.random();
+            if (r < 0.82) return "green";
+            return "bomb";
+        }
+
+        function clearGameTimers() {
+            clearTimeout(spawnTimeoutId);
+            cancelAnimationFrame(timeAnimationId);
+        }
+
+        function resetGameState() {
+            clearGameTimers();
+            game.innerHTML = "";
+            score = 0;
+            startTime = 0;
+            gameRunning = false;
+            scoreLabel.textContent = "0";
+            timeLabel.textContent = "0";
+        }
+
+        function startCountdown() {
+            introPanel.classList.add("hidden");
+            countdownScreen.classList.remove("hidden");
+
+            let counter = 3;
+            countdownValue.textContent = counter;
+
+            const countdownInterval = setInterval(() => {
+                counter--;
+
+                if (counter <= 0) {
+                    clearInterval(countdownInterval);
+                    countdownValue.textContent = "GO";
+
+                    setTimeout(() => {
+                        countdownScreen.classList.add("hidden");
+                        startGame();
+                    }, 500);
+                } else {
+                    countdownValue.textContent = counter;
+                }
+            }, 1000);
+        }
+
+        function startGame() {
+            resetGameState();
+
+            game.classList.remove("hidden");
+            gameUI.classList.remove("hidden");
+
+            gameRunning = true;
+            startTime = Date.now();
+
+            spawnTarget();
+            updateTime();
+        }
+
+        function spawnTarget() {
+            if (!gameRunning) return;
+
+            const t = getTime();
+            const type = getTargetType(t);
+
+            const el = document.createElement("div");
+            el.classList.add("target", type);
+
+            if (type === "bomb") {
+                el.innerHTML = `
+                <svg viewBox="0 0 100 100" width="80" height="80">
+                    <circle cx="50" cy="60" r="25" fill="none" stroke="#fff" stroke-width="4"/>
+                    <line x1="50" y1="35" x2="50" y2="20" stroke="#fff" stroke-width="4"/>
+                    <circle cx="50" cy="15" r="4" fill="#fff"/>
+                </svg>`;
+            }
+
+            const targetSize = type === "green" ? 40 : 80;
+            const x = Math.random() * (window.innerWidth - targetSize);
+            const y = Math.random() * (window.innerHeight - targetSize);
+
+            el.style.left = x + "px";
+            el.style.top = y + "px";
+
+            el.addEventListener("click", () => {
+                if (!gameRunning) return;
+
+                if (type === "green") {
+                    score++;
+                } else if (type === "fake") {
+                    score--;
+                } else if (type === "bomb") {
+                    gameOver();
+                    return;
+                }
+
+                scoreLabel.textContent = score;
+                el.remove();
+            });
+
+            game.appendChild(el);
+
+            const visibleTime = getDisplayTime(t);
+
+            setTimeout(() => {
+                if (el && el.parentNode) el.remove();
+            }, visibleTime);
+
+            spawnTimeoutId = setTimeout(spawnTarget, getSpawnGap(t));
+        }
+
+        async function gameOver() {
+            gameRunning = false;
+            clearGameTimers();
+
+            await uiModal({
+                title: "Game Over",
+                body: "You clicked the bomb.\n\nFinal Score: " + score,
+                variant: "error",
+                buttons: [
+                    { text: "Restart", value: "restart", className: "primary" },
+                    { text: "Exit", value: "exit", className: "danger" }
+                ]
+            }).then(choice => {
+                if (choice === "restart") {
+                    resetGameState();
+                    introPanel.classList.remove("hidden");
+                    game.classList.add("hidden");
+                    gameUI.classList.add("hidden");
+                } else if (choice === "exit") {
+                    window.location.href = "user.html";
+                }
+            });
+        }
+
+        async function finishGame() {
+            gameRunning = false;
+            clearGameTimers();
+
+            await uiModal({
+                title: "Challenge Finished",
+                body: "Great job!\n\nFinal Score: " + score,
+                variant: "default",
+                buttons: [
+                    { text: "Restart", value: "restart", className: "primary" },
+                    { text: "Exit", value: "exit", className: "danger" }
+                ]
+            }).then(choice => {
+                if (choice === "restart") {
+                    resetGameState();
+                    introPanel.classList.remove("hidden");
+                    game.classList.add("hidden");
+                    gameUI.classList.add("hidden");
+                } else if (choice === "exit") {
+                    window.location.href = "user.html";
+                }
+            });
+        }
+
+        function updateTime() {
+            if (!gameRunning) return;
+
+            const t = Math.floor(getTime());
+            timeLabel.textContent = t;
+
+            if (t >= 300) {
+                finishGame();
+                return;
+            }
+
+            timeAnimationId = requestAnimationFrame(updateTime);
+        }
+
+        document.getElementById("startBtn").addEventListener("click", startCountdown);
+
+        document.getElementById("closeBtn")?.addEventListener("click", async () => {
+            const ok = await uiConfirm("Exit challenge? Your current score won't be saved.", "Exit Challenge");
+            if (!ok) return;
+            window.location.href = "user.html";
+        });
+
+        function uiModal({
+            title = "Info",
+            body = "",
+            variant = "default",
+            buttons = [{ text: "OK", value: true, className: "primary" }]
+        }) {
+            const modal = document.getElementById("appModal");
+            const titleEl = document.getElementById("appModalTitle");
+            const bodyEl = document.getElementById("appModalBody");
+            const actionsEl = document.getElementById("appModalActions");
+
+            if (!modal || !titleEl || !bodyEl || !actionsEl) {
+                console.warn("Modal DOM not found. Message:", title, body);
+                return Promise.resolve(true);
+            }
+
+            let resolve;
+            const p = new Promise(r => (resolve = r));
+
+            modal.classList.remove("modal-default", "modal-error", "modal-success", "modal-warning");
+            modal.classList.add(`modal-${variant}`);
+
+            const close = (val) => {
+                modal.classList.add("hidden");
+                modal.setAttribute("aria-hidden", "true");
+                document.removeEventListener("keydown", onKey);
+                resolve(val);
+            };
+
+            const onKey = (e) => {
+                if (e.key === "Escape") close(false);
+            };
+
+            titleEl.textContent = title;
+            bodyEl.textContent = body;
+            actionsEl.innerHTML = "";
+
+            modal.classList.remove("hidden");
+            modal.setAttribute("aria-hidden", "false");
+
+            document.addEventListener("keydown", onKey);
+
+            modal.querySelectorAll("[data-close='1']").forEach(el => {
+                el.onclick = () => close(false);
+            });
+
+            buttons.forEach(b => {
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = `modal-btn ${b.className || ""}`.trim();
+                btn.textContent = b.text || "OK";
+                btn.onclick = () => close(b.value);
+                actionsEl.appendChild(btn);
+            });
+
+            setTimeout(() => actionsEl.querySelector("button")?.focus(), 0);
+
+            return p;
+        }
+
+        function uiConfirm(message, title = "Confirm") {
+            return uiModal({
+                title,
+                body: message,
+                variant: "error",
+                buttons: [
+                    { text: "Cancel", value: false },
+                    { text: "Exit", value: true, className: "danger" }
+                ]
+            });
+        }
+    </script>
+</body>
+</html>
+```
