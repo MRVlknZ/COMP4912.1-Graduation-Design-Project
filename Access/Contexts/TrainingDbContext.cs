@@ -36,6 +36,9 @@ namespace Access.Contexts
         public DbSet<PFocusDrill> PFocusDrills { get; set; }
         public DbSet<PCombDrill> PCombDrills { get; set; }
 
-       
+        // Schedules
+        public DbSet<Schedule> Schedules { get; set; }
+
+
     }
 }
